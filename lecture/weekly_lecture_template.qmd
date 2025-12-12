@@ -1,0 +1,15 @@
+---
+title: "Lecture Week Number: Topic"
+format: html
+editor: visual
+---
+
+## Overview
+
+## Setup
+
+### Libraries
+
+### Data
+
+## Outline
