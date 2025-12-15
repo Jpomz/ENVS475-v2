@@ -82,9 +82,9 @@ This week we will introduce the course, go over the syllabus and set up our R St
 
 -   11 graded homework assignments (70% of grade)
 
--   1 homework grade will be dropped
+    -   1 homework grade will be dropped
 
--   each HW is worth 7% of your final grade
+    -   10 HWs each worth \~7% of your final grade
 
 -   Final project (30% of grade)
 
@@ -133,7 +133,7 @@ This week we will introduce the course, go over the syllabus and set up our R St
     -   50% penalty for submissions made after the grace period.
 
 | Attribute    | Full points                                                                                                       | Most points                                                                                                                                                | Partial points                                                                                                       | No Points                                                                                                                                         |
-|--------------|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|---------------|---------------|---------------|---------------|---------------|
 | Completeness | 5 points. Complete assignment is submitted. An attempt is made to answer all questions.                           | 3 points. At least half the assignment is complete. An attempt is made to answer most questions                                                            | 2 Point. Less than half the assignment is complete.                                                                  | 0 Points. Assignment is not turned in.                                                                                                            |
 | Values       | 4 points. All the graded parts are correct. The values/plots/interpretations match the solution key.              | 3 points. Most of the graded sections are correct and match the solution key.                                                                              | 2 points. Some of the graded sections are correct and match the solution key.                                        | 0 points. None of the graded sections are correct and match the solution key.                                                                     |
 | Syntax       | 1 point. All code runs correctly. There is no superfluous code in the document. Quarto documents render correctly | 0.9 points. Nearly all code runs correctly, with only a minor error and/or very little superfluous code in the document. Quarto documents render correctly | 0.5 points. Not all the code runs correctly. There are a few minor or one major errors and/or some superfluous code. | 0 points. Very little or none of the code runs correctly. There are several minor or more than two major errors and/or excessive superfluouscode. |
@@ -247,9 +247,23 @@ x
 
 ### Libraries
 
-Run the following line of code:
+Run the following line of code once on each machine you will use:
 
-`install.packages(c("tidyverse", "lme4", "multcomp", "car", "MASS", "fitdistrplus", "broom", "cowplot", "emmmeans", "aod", "lmtest", "qqconf"))`
+`install.packages(c("tidyverse", "lme4", "multcomp", "car", "MASS", "here", "fitdistrplus", "broom", "cowplot", "emmmeans", "aod", "lmtest", "qqconf"))`
+
+::: callout-important
+-   You only need to install the package ONCE
+
+-   Every time you start/open R Studio, you need to load the packages by using the `library()` function
+
+-   i.e., at the top of each script you write, you should have something like the following:
+
+    -   `library(tidyverse)`
+
+    -   `library(MASS)`
+
+    -   etc.
+:::
 
 ### Download Data
 

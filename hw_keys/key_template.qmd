@@ -1,0 +1,71 @@
+---
+title: "Key_template"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+number-sections: true
+---
+
+::: callout-warning
+## Instructions for writing KEY and HW
+
+1.  update libraries and data
+    1.  In setup block (hidden) and in **SETUP** sections below
+2.  Once Key is complete
+    1.  Delete this instruction callout
+    2.  Render
+3.  After key is complete
+    1.  "save as" appropriate HW in `assignment/` folder
+    2.  Change `echo:` and `eval:` to `false` in YAML
+    3.  Render assignment
+        1.  Ensure that code and output are not visible
+:::
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Learning Objectives
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "galapago-finches.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the data into R with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+finch <- read.csv("data/galapago-finches.csv",
+                  stringsAsFactors = TRUE)
+
+```
+
+# Problems

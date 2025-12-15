@@ -1,15 +1,33 @@
 ---
 title: "Lecture Week Number: Topic"
-format: html
+format: 
+  html:
+    embed-resources: true
 editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
 ---
 
-## Overview
+```{r}
+#| label: setup
+#| include: false
 
-## Setup
+# libraries
+library(tidyverse)
+
+# data objects
+rxp <- read.csv(here::here("data/RxP.csv"), stringsAsFactors = TRUE)
+```
+
+# Overview
+
+# Setup
 
 ### Libraries
 
 ### Data
 
-## Outline
+# Lecture Outline
+
+# Summary

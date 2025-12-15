@@ -1,0 +1,392 @@
+---
+title: "HW 02 intro R"
+execute: 
+  echo: false
+  eval: false
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Learning Objectives
+
+Following this assignment students should be able to:
+
+-   Load data into R from a sub folder
+
+-   Look at the data object to understand basic information about it
+
+-   Determine the modes of all columns in the object
+
+-   Explore, manipulate, and summarize the data using `dplyr`
+
+-   Visualize the data using `ggplot2`
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "galapago-finches.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the data into R with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+finch <- read.csv("data/galapago-finches.csv",
+                  stringsAsFactors = TRUE)
+
+```
+
+-   `blength` and `bdepth` are the length and depth, in mm, of individual's beaks, respectively.
+-   See note about the data below
+
+# Problems
+
+## Problem 1 - get to know your data
+
+1.1 Print out the names of all columns in your script.
+
+```{r}
+names(finch)
+```
+
+1.2 Add a comment which tells me the names of the first 2 columns.
+
+```{r}
+# year and band
+```
+
+1.3 Print the structure of your data
+
+```{r}
+str(finch)
+```
+
+1.4 Write a comment and tell me which column is a factor. Also tell me how many levels there are, and what the levels of this factor are
+
+```{r}
+### GRADED 0.5 points ####
+# the "species" column is a factor 
+# it has 2 levels:
+# "fortis" and "scandens"
+```
+
+1.5 Add a comment and tell me what is the mode of the `year` column?
+
+```{r}
+### GRADED 0.5 points ####
+# the year column is "int" which is short for "integer" and this is a numeric mode
+```
+
+1.6 Display the `finch` data as a tibble in your console
+
+```{r}
+as_tibble(finch) |>
+  head()
+```
+
+1.7 Write code to display all the values which occur in the `year` column.
+
+```{r}
+unique(finch$year)
+# or
+distinct(finch, year)
+```
+
+1.8 Write code to display all the combinations of the `year` and `species` columns.
+
+```{r}
+distinct(finch, year, species)
+```
+
+## Problem 2 - basic plots
+
+2.1 Plot all the values in the `blength` column.
+
+-   Note that this stands for "beak length"
+
+```{r}
+### GRADED 0.5 points ####
+plot(finch$blength)
+```
+
+2.2 Add a comment describing what you see. Do any data points look concerning?
+
+```{r}
+# This question will not be graded. I'm just looking for interpetation here
+# the data appears to have distinct groupings
+# We haven't talked about this in class yet, but this indicative of differences in samples/populations
+# here, the "small" and "large" groups are probably difference species with different beak lengths
+# the groups left to right are likely due to the order of the data, with the left groups probably being data from 1975 and the data on the right being from 2012
+```
+
+2.3 Make a basic boxplot with the `blength` data on the y-axis, and the `species` information on the x-axis
+
+-   Hint use the `plot()` function. We will use `ggplot()` in part 4 below.
+
+```{r}
+### GRADED 0.5 points ####
+plot(blength ~ species, data = finch)
+```
+
+2.4 Add a comment describing what you see.
+
+```{r}
+# not graded
+# just look that students are properly interpretting plot
+# Means of species are different - height of median line in box
+# Generally look normally and symmetrically distributed within species
+```
+
+2.5 Make a basic plot showing the relationship between `blength` and `bdepth`
+
+-   `bdepth` is for "beak depth"
+
+```{r}
+plot(blength~bdepth, data = finch)
+```
+
+2.6 Add a comment to your script telling me what you see.
+
+```{r}
+# Not graded. 
+# length and depth are positively related
+# "small" and "large" group are probably the two different species
+```
+
+## Problem 3 - modifying the data
+
+3.1 Filter the data to include all individuals which had `blength` $\ge$ 15 mm.
+
+```{r}
+filter(finch, blength >= 15)
+# 15 individuals or rows
+```
+
+3.2 Add a comment telling me how many individuals (rows) the above code returned. In addition, which species and years are in this subset of the data?
+
+```{r}
+# 15 rows/individuals
+# Only scandens
+# mostly 1975, but a few from 2012
+```
+
+3.3 Filter the data to include all individuals which are in the "fortis" species and have `bdepth` which are $<$ 8 mm. Also add a comment telling me how many rows this returns.
+
+```{r}
+filter(finch,
+       species == "fortis",
+       bdepth < 8)
+# 35 rows
+```
+
+3.4 Filter the data to return all individuals which have `blength` exactly equal to 10 or 12 mm.
+
+-   Note that this should return exactly 23 rows.
+
+```{r}
+filter(finch, 
+       blength == 10 |
+         blength == 12)
+```
+
+3.5 Recall that the `year` column is an integer. Create a new object called `finch_year` which has the `year` column stored as a factor and have the levels be in the order of 1975 and then 2012. Print the new `finch_year` in your console as a tibble.
+
+```{r}
+### GRADED 0.5 points ####
+# check that year has <fct> in the output
+finch_year <- finch |>
+  mutate(year = factor(year, levels = c("1975", "2012")))
+
+finch_year |>
+  as_tibble()
+```
+
+3.6 Starting with the `finch_year` data, create groups of species and year and calculate the mean, SD, n, and SE of the `blength` values. Save these calculations in a new object called `finch_year_means` and print the results in your console.
+
+-   Remember to `ungroup()` at the end of your calculation
+
+```{r}
+### GRADED 0.5 points ####
+finch_year_means <- finch_year |>
+  group_by(species, year) |>
+  summarize(m_depth = mean(bdepth), 
+            sd_depth = sd(bdepth), 
+            n_depth = n()) |>
+  mutate(se_depth = sd_depth / sqrt(n_depth)) |>
+  ungroup()
+
+finch_year_means
+```
+
+## Problem 4 - `ggplot` 
+
+4.1 Using `ggplot()` , make a histogram of `bdepth` where the fill is mapped to the species column.
+
+-   Be sure to use the original, unmodified `finch` data
+
+-   Also set `position = "identity"` and have `alpha` be some value $<$ 1
+
+```{r}
+ggplot(finch, 
+       aes(x = bdepth,
+           fill = species)) +
+  geom_histogram(position = "identity", 
+                 alpha = 0.5)
+```
+
+4.2 Make the same histogram as in 4.1, but this time:
+
+-   facet the data based on the year column
+
+-   Change the x-axis legend to say "Beak depth (mm)"
+
+-   Use one of the "viridis" color palettes
+
+    -   May need to modify the `begin` or `end` values to make the two groups visible.
+
+-   Use `theme_bw()`
+
+```{r}
+### GRADED 0.5 points ####
+ggplot(finch, 
+       aes(x = bdepth,
+           fill = species)) +
+  geom_histogram(position = "identity", 
+                 alpha = 0.65) +
+  facet_wrap(.~year) +
+  labs(x = "Beak depth (mm)") +
+  scale_fill_viridis_d(option = "A",
+                       end = 0.6) +
+  theme_bw()
+```
+
+4.3 Using the `finch_year` data, make a boxplot of the `bdepth` data with:
+
+-   year on the x-axis
+
+-   fill according to species
+
+```{r}
+ggplot(finch_year, 
+       aes(x = year, 
+           y = bdepth, 
+           fill = species)) +
+  geom_boxplot()
+```
+
+4.4 Use the `finch_year_means` data to make a bar (column) graph showing the mean and SE of beak depth for each species and year combination. Also include:
+
+-   The arguments in `geom_col()` and `geom_errorbar()` should match what is in the lecture notes
+
+-   Choose a theme and a palette from Viridis
+
+    -   As before, make sure everything is visible by modifying the `begin` and `end` value accordingly.
+
+-   Change the y-axis label.
+
+-   Since the error bars are so small, you will also want to change the limits of the y-axis using `coord_cartesian()`.
+
+    -   Play around with the limits to make sure everything is visible.
+
+```{r}
+### GRADED 0.5 points ####
+ggplot(finch_year_means, 
+       aes(x = year, 
+           y = m_depth,
+           ymin = m_depth - se_depth,
+           ymax = m_depth + se_depth,
+           fill = species)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(position = position_dodge(0.9),
+                width = 0.4) +
+  theme_bw() +
+  scale_fill_viridis_d(option = "G",
+                       begin = 0.2, 
+                       end = 0.6) +
+  coord_cartesian(ylim = c(7, 9.5))
+```
+
+4.5 Finally, using the `finch_year` data, make a scatter plot of beak length and depth. Use color, facets, etc. to show how this relationship varies with all combinations of year and species.
+
+-   Note there are a number of ways to do this and you are free to Choose.
+
+-   All graphs need to have the following:
+
+    -   Appropriate axis titles (reminder that length and depth are both recorded in mm)
+
+    -   Some way to distinguish all 4 groups
+
+        -   Scandens and fortis in both 1975 and 2012
+
+    -   Some theme and some viridis scale
+
+```{r}
+ggplot(finch_year,
+       aes( 
+         y = blength, 
+         x = bdepth,
+         color = species)) +
+  geom_point(
+             size = 1.5) +
+  facet_wrap(.~year)+
+  labs(y = "Beak length (mm)",
+       x = "Beak depth (mm)") +
+  theme_dark() +
+  scale_color_viridis_d(option = "G",
+                        begin = 0.5)
+
+ggplot(finch_year,
+       aes( 
+         y = blength, 
+         x = bdepth,
+         color = year)) +
+  geom_point(alpha = 0.75,
+             size = 2) +
+  facet_wrap(.~species) +
+  scale_color_viridis_d(end = 0.6) +
+  theme_bw()
+```
+
+# Supplemental Information
+
+::: callout-note
+## Note on the finch data
+
+For this homework assignment, we will be working with real data from ["Darwin's Finches"](https://en.wikipedia.org/wiki/Darwin%27s_finches) in the Galapagos Islands. Famously, the variation in beak sizes of these birds is one of the observations which is often credited to Darwin's formulation of his Theory of Natural Selection (although in reality he just [brought back finch](https://www.sciencehistory.org/distillations/darwins-barnacles#:~:text=But%20the%20truth%20is%2C%20Darwin,an%20expert%20back%20in%20England) specimens, and museum archivists were the ones to realize the diversity of species on the islands).
+
+![Darwin's Finches. Figure By John Gould (14.Sep.1804 - 3.Feb.1881) - From "Voyage of the Beagle". Public Domain, available [here](http://darwin-online.org.uk/converted/published/1845_Beagle_F14/1845_Beagle_F14_fig07.jpg)](http://darwin-online.org.uk/converted/published/1845_Beagle_F14/1845_Beagle_F14_fig07.jpg)
+
+The beaks of the Galapagos finches was the primary detail of interest. For birds, beaks are the primary tool at their disposal, and the type (size, shape, etc.) of beak you have determines what type of food resources that are available to you, and the types of "jobs" you can do.
+
+Regardless of Darwin's personal affinity (or lack thereof) for these birds, they have nonetheless played an outsized role in the history of biology. In more recent times, Drs. Peter and Rosemary Grant have spent decades on the islands following the birds through time and documenting changes in Finch morphology in response to drought and other environmental conditions. Their work has been well documented, including in the popular science book [*Beak of the finch*](https://www.goodreads.com/en/book/show/125286.The_Beak_of_the_Finch) by Jonathan Weiner, and much of this work is summarized in an [educational documentary on HHMI](https://youtu.be/mcM23M-CCog).
+
+In this homework assignment, we will be working with a subset of the Grants' beak measurement data for two of the species, *Geospiza fortis*, and *G. scandens*, collected on Daphne Major Island in 1975 and 2012. The full data set is available at [Data Dryad](https://datadryad.org/stash/dataset/doi:10.5061/dryad.g6g3h)
+:::
