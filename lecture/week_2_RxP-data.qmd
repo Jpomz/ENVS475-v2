@@ -7,6 +7,9 @@ editor: visual
 toc: true
 toc-depth: 3
 number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ```{r}

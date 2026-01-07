@@ -10,6 +10,9 @@ editor: visual
 toc: true
 toc-depth: 2
 embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ```{r}
