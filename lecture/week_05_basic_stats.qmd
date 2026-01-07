@@ -1,0 +1,854 @@
+---
+title: "Lecture Week 05: Basic Statistics"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+
+# data objects
+rxp_clean <- read.csv(here::here("data/rxp_clean.csv"), stringsAsFactors = TRUE)
+```
+
+# Overview
+
+Statistics are a way of summarizing sample data and making inferences about the larger population that they come from. Statistics also allows us to test hypotheses such as "is the mean of two populations different?"; "Does changing the values of $x$ lead to a predictable, consistent, change in $y$?". Statistics also allows us to make predictions while accounting for uncertainty.
+
+> Statistics is detecting the $\text{Signal}$ in the $\text{Noise}$
+
+# Setup
+
+### Libraries
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+### Data
+
+```{r}
+#| eval: false
+rxp <- read.csv("data/RxP.csv",
+                stringsAsFactors = TRUE)
+```
+
+# Lecture Outline
+
+## Terms
+
+-   Let's start with defining the following terms:
+
+    -   Population
+
+    -   Samples
+
+    -   Parameters
+
+    -   Estimates
+
+### Populations vs. Samples
+
+-   Population
+
+    -   A complete collection of subjects of interest
+
+        -   Often, a biologically meaningful unit
+
+-   Described by parameters:
+
+    -   $\mu$ = "true" population mean
+
+    -   $\sigma$ = "true" population SD
+
+-   Sample
+
+    -   Finite subset of the population
+
+    -   Allow us to infer aspects of the population
+
+    -   Described by summary statistics or parameter estimates
+
+        -   Sample statistics are usually indicated with a "hat"
+
+        -   $\hat\mu$ = Sample mean
+
+            -   Also often shown to be a bar over the variable name
+
+            -   i.e., $\bar{y}$ is the sample mean for the variable $y$
+
+        -   $\hat\sigma$ = Sample SD
+
+    -   Samples should be collected such that they are:
+
+        -   Random
+
+        -   Representative
+
+        -   Sufficiently large
+
+-   $\mu$ is a measure of the location
+
+    -   Where the center or peak of a normal distribution is
+
+-   $\sigma$ is a measure of the spread or dispersion
+
+    -   How wide the normal distribution is
+
+-   Examples of a population vs. sample
+
+    -   **Population** - all CMU students; **Sample** - all CMU students in the library at a given time
+
+    -   **Population** - all corn plants in the state of Colorado; **Sample** - 10 corn plants each from 5 cornfields in Colorado
+
+### Parameters vs. estimates
+
+-   Parameters are the "true" values of the population
+
+-   Estimates or summary statistics are the value which describes a given samples
+
+-   Note that one assumption of frequentist statistics (what we're doing here) is that there is a single, true, value describing a population
+
+    -   Another Statistical framework Called Bayesian statistics assumes that there is a "distribution" of numbers describing populations
+
+-   Let's look at a "population" and a "sample"
+
+-   Our Example here will be the weight (kg) of Wolves in Yellowstone
+
+    -   Note that these values are based on wolf weights, but not actually representative of the population in Yellowstone.
+
+```{r}
+set.seed(99)
+true_mean <- 37
+true_sd <- 4
+
+# "huge" sample to represent a "perfectly normal population"
+x_pop <- rnorm(10000, mean = true_mean, sd = true_sd)
+
+plot(density(x_pop))
+hist(x_pop)
+```
+
+-   Now, let's "sample" 25 wolves from our population and see what the distribution looks like
+
+```{r}
+set.seed(295)
+x_samp <- sample(x_pop, size = 25)
+# round values for display
+round(x_samp, 2)
+plot(density(x_samp))
+hist(x_pop)
+```
+
+-   Note that changing the `size` in the `sample()` function can change how our sample looks
+
+-   Also recall that empirical samples can look "lumpy" and not look perfectly normal
+
+-   Sometimes histograms look less lumpy
+
+## Summary stats - Summarize the **sample**
+
+-   Measures of central tendency
+
+-   Mean or average
+
+    -   Location of the middle or peak of a normal distribution
+
+$\large \bar{y} = \frac{\sum_{i=1}^n y_i}{n}$
+
+-   Median
+
+    -   Middle of the data
+
+    -   In normally distributed data, mean = median
+
+    -   Median is particularly useful in non-normal data
+
+        -   50% of the data is above, and 50% below this value
+
+-   Mode
+
+    -   Most frequent observation in the data
+
+        -   We won't really use this in class
+
+-   Measures of dispersion
+
+-   Sample Variance
+
+    -   How far, on average, are individual observations $y_i$, from the sample mean, $\bar{y}$?
+
+    -   This is on a squared-scale
+
+        -   Always positive
+
+        -   interpretation can be difficult
+
+$\large s^2 = \frac{\sum_{i=1}^n (y_i - \bar{y})^2}{n-1}$
+
+-   Sample Standard Deviation, SD
+
+    -   How far, on average, are individual observations $y_i$, from the sample mean, $\bar{y}$?
+
+    -   On the same scale as the data
+
+    -   A little easier to interpret
+
+$\large s = \sqrt{s^2}$
+
+-   Range
+
+    -   Min and max values of the data
+
+-   Estimate these statistics with built-in R functions - `mean()`, `median()`, `var()`, `sd()`, `range()`
+
+### Mean and SD of our sample
+
+```{r}
+mean(x_samp)
+sd(x_samp)
+```
+
+-   Recall that we "know" the true mean and SD are 37, and 4, respectively
+
+-   Our estimates are close, but not perfect
+
+### Describing the sample
+
+-   We can describe it by reporting the mean $\pm$ the SD:
+
+    -   The average weight of wolves in Yellowstone is $35.7 \pm 3.5$ (mean $\pm$ SD)
+
+-   Alternative
+
+    -   The average ($\pm$ SD) weight of Yellowstone wolves is $35.7 \pm 3.5$
+
+::: callout-important
+## Describing your sample
+
+-   A mean without an estimate of dispersion is *mean*ingless
+
+    -   Get it??
+
+-   Always report what your dispersion estimate is
+
+    -   SD, variance, confidence interval and level (below), etc.
+:::
+
+-   We now have an estimate of the weight of wolves in Yellowstone, but how confident are we?
+
+-   What if we took another sample?
+
+```{r}
+set.seed(444)
+x_samp2 <- sample(x_pop, size = 25)
+plot(density(x_samp2))
+mean(x_samp2)
+sd(x_samp2)
+```
+
+-   Our second sample is closer to the "true" values
+-   Which one should we trust?
+-   How do we know which one is closer to the "truth"?
+
+### Stochasticity
+
+-   This brings up important points about *stochasticity*
+
+    -   There will be variation in samples, even if they are "perfect"
+
+    -   Likewise, our population here really comes from a sample, so there will be variation in that sampling as well
+
+-   So if we know there is stochasticity - sample fluctuation - how can we make statements about the population we sampled from?
+
+## Inferential stats
+
+-   Estimates are values based on the sample of data that we have
+-   We know that they are not perfect
+-   But we can estimate how close they are to the "true" values using inferential statistics
+
+### Standard error of the mean
+
+> How far, on average, is the sample mean $\bar{y}$ from our true mean $\mu$?
+
+$\Large SEM = \frac{s}{\sqrt{n}}$
+
+-   Divide the SD by the square root of our sample size, $n$
+
+-   Note that this is often just referred to as the SE or standard error
+
+### Dispersion from sample or true mean?
+
+-   SD is dispersion of the data
+
+    -   i.e., D for Data
+
+-   SEM is dispersion of the mean
+
+-   Recall that SEM is usually SE, so not always perfect
+
+### SEM of our wolf data
+
+-   Let's calculate the SEM for both samples of our wolf data
+
+-   There is no built-in SE function, but we can easily do this by "hand
+
+    -   Recall that $n = 25$ in both samples
+
+    -   We can use the `length()` function to calculate how many observations are in each vector
+
+        -   This would work for any sample size
+
+```{r}
+sd(x_samp) / sqrt(length(x_samp))
+sd(x_samp2) / sqrt(length(x_samp2))
+```
+
+### Reporting the SE
+
+-   Just like when we described the data, we want to include the point estimate $\pm$ our SE
+
+-   Sample 1
+
+    -   The average weight of wolves in Yellowstone is $35.7 \pm 0.7$ (mean $\pm$ SE)
+
+    -   Note the similarity in how this is reported compared with describing the data
+
+    -   Emphasize how important what your dispersion is estimating
+
+-   Sample 2
+
+    -   The average weight of wolves in Yellowstone is $37.5 \pm 0.8$ (mean $\pm$ SE)
+
+-   An alternative is to "do the math" and report the interval
+
+    -   Sample 1: The average weight of wolves in Yellowstone is between 35 and 36.4 (mean $\pm$ SE)
+
+    -   Sample 2: The average weight of wolves in Yellowstone is between 37 and 38.3 (mean $\pm$ SE)
+
+## Review the Empirical rule
+
+-   What is the empirical rule?
+
+-   In a normal distribution, what values determine the approximate range where 68% of the data can be found?
+
+-   How much of the data is found between the mean $\pm$ 2 SDs?
+
+## Confidence intervals (CI)
+
+> A confidence interval is a range of values that likely contains the true, unknown value of a population parameter, such as the mean. The specified level of confidence (i.e., 95%, 99%) represents the proportion of CIs that contain the true parameter. It does not mean that there is a 95 or 99% probability of the true value being in the interval.
+
+-   The above interval for SE gives us an idea of where our "true" mean is based on a sample of data
+
+-   Technically this is a 68% Confidence Interval
+
+    -   As above, \~68% of the data falls within 1 SD
+
+    -   So 68% of the time, the interval within 1 SE of the mean will contain the "true" mean
+
+-   We can calculate an approximate 95% CI with:
+
+$\Large 95\%CI =\bar{y} \pm 2*SEM$
+
+-   So for sample 1, we have the following
+
+```{r}
+mean_1 <- mean(x_samp)
+se_1 <- sd(x_samp) / sqrt(length(x_samp))
+
+mean_1
+2 * se_1
+```
+
+-   Which we can use to calculate the interval piece by piece, or combine into one vector using the `c()` function
+
+```{r}
+mean_1 - 2 * se_1
+mean_1 + 2 * se_1
+
+c(mean_1 - 2 * se_1, mean_1 + 2 * se_1)
+```
+
+### Reporting CIs
+
+-   Here is how we would report a confidence interval
+
+-   The data supports the conclusion, at the 95% confidence level, that the true average weight of Yellowstone wolves is between 34.3 and 37.1 kg.
+
+-   Alternate
+
+    -   The average (95% CI) weight of wolves in Yellowstone is 35.7 (34.3, 37.1)
+
+::: callout-note
+## Confidence Intervals
+
+-   The above calculation is an approximate 95% CI
+
+    -   In the future, we will modify the "2" in the above equation based on our sample size
+
+-   In a large sample, the 2 becomes 1.96
+
+-   In small sample sizes, the multiplier is larger
+
+    -   Resulting in a wider interval
+
+    -   Representing our greater uncertainty
+
+-   Change to an approximate 99% CI by multiplying the SE by 3
+
+    -   Again, relate this to the empirical rule
+:::
+
+### Comparing CIs
+
+-   We can use CIs to compare means of two groups
+
+-   Let's calculate the 95% CI for the second group of wolves and plot them on a number line
+
+```{r}
+mean_2 <- mean(x_samp2)
+se_2 <- sd(x_samp2) / sqrt(length(x_samp2))
+
+c(mean_2 - 2 * se_2, mean_2 + 2 * se_2)
+
+c(mean_1 - 2 * se_1, mean_1 + 2 * se_1)
+```
+
+-   Draw a number line from 34 to 39
+
+    -   Add the two intervals
+
+        -   34.3 to 37.1 and 35.5 to 38.8
+
+    -   There is a large degree of overlap, so we would say that, at the 95% confidence level, the true means of these two populations do not differ
+
+    -   Draw another example where the lines:
+
+        -   Do not overlap - the means are different
+
+            -   i.e., a low p-value
+
+        -   Just barely touch - probably different
+
+            -   p-value probably less than 0.05, but maybe just barely
+
+-   Plot this with ggplot
+
+    -   First make a data.frame with the mean and the SE
+
+    -   Mutate to calculate the 95% CI and plot with `geom_pointrange()`
+
+```{r}
+data.frame(mu_hat = c(mean_1, mean_2),
+           se = c(se_1, se_2),
+           grp = c("A", "B")) |>
+  ggplot(aes(y = grp,
+             x = mu_hat, 
+             xmin = mu_hat - 2 * se,
+             xmax = mu_hat + 2 * se)) +
+  geom_pointrange(size = 2) +
+  theme_bw()
+```
+
+## Is my data normal?
+
+-   An important assumption of many frequentist statistics is that the sample data is normally distributed
+
+    -   Later, we will cover methods to analyze data which is not normally distributed
+
+### Plots to assess normality
+
+-   One of the best ways to assess normality is to plot our data using
+
+    -   Histograms
+
+    -   Density plots
+
+    -   Box plots
+
+-   Let's make all those plots for our sample of data
+
+    -   We already made histograms and density plots using the base `plot()` function
+
+-   Now let's do it with `ggplot()`
+
+    -   We first need to convert our vector into a data frame
+
+    -   `ggplot()` only works with data.frames
+
+```{r}
+x_samp_df <- data.frame(x = x_samp)
+
+ggplot(x_samp_df,
+       aes(x = x)) +
+  geom_density()
+
+ggplot(x_samp_df,
+       aes(x = x)) +
+  geom_histogram(
+    bins = 8
+  )
+
+ggplot(x_samp_df,
+       aes(x = x)) +
+  geom_boxplot()
+```
+
+-   Density plots
+
+    -   Looking for a peak
+
+    -   Symmetrical decline on either side
+
+-   Histogram
+
+    -   Looking for highest bars to be approximately in the middle
+
+    -   Decline on either side
+
+    -   "Symmetrical-ness" can be harder to assess with histograms
+
+    -   Change the bin number using the `bins =` argument
+
+-   Box plot
+
+    -   Looking for black line (median) to be in about the middle of the box
+
+    -   Looking for "tails" or "whiskers" to be about the same length
+
+    -   Looking for few "dots" outside the lines
+
+        -   Dots can be indicative of outliers
+
+        -   Recall my warnings about outliers in previous classes
+
+    ### Compare density and box plots
+
+-   Box plots are another way of looking at a density plot
+
+```{r}
+ggplot(x_samp_df, aes(x = x, y = -0.05)) +
+    # horizontal boxplots & density plots
+    geom_boxplot(width = 0.1) +
+    geom_density(aes(x = x), inherit.aes = FALSE) +
+  theme_bw() +
+  labs(title = "Wolf Sample 1")
+
+x_samp_df2 <- data.frame(x = x_samp2)
+
+ggplot(x_samp_df2, aes(x = x, y = -0.05)) +
+    # horizontal boxplots & density plots
+    geom_boxplot(width = 0.1) +
+    geom_density(aes(x = x), inherit.aes = FALSE) +
+  theme_bw() +
+  labs(title = "Wolf Sample 2")
+```
+
+-   Here are some examples with skewed data:
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = -0.5)) +
+    
+    # horizontal boxplots & density plots
+    geom_boxplot(aes(fill = cut)) +
+    geom_density(aes(x = carat), inherit.aes = FALSE) +
+    
+    facet_grid(cut ~ .) +
+    scale_fill_discrete()
+```
+
+-   Note that the median line and peak are far to the left
+
+-   The tail of the density plot is far to the right, as are the numerous dots in the box plots
+
+### Formal tests of distributions
+
+-   We can also formally test if a sample of data is normal or not
+
+```{r}
+shapiro.test(x_samp_df$x)
+```
+
+-   Interpreting the results
+
+    -   The null hypothesis here is that the data *ARE* normally distributed
+
+    -   So a high p-value means we fail to reject the null, or in other words we conclude that the data are normally distibuted
+
+```{=html}
+<!-- -->
+```
+-   This test is a bit conservative
+
+    -   i.e., if it passes there's a very good chance that your data is normal
+
+    -   If it doesn't pass, you could still have normal data
+
+-   Frequentist statistics are generally fairly robust to violation in normal distributions
+
+    -   I rarely conduct formal tests
+
+    -   I think assessing with plots as described above is better
+
+-   This is especially true when we have multiple "groups" and we want to know if there means are different
+
+-   For example, let's simulate some data for three groups
+
+-   Group B and C have similar means (15 and 17)
+
+-   Group A is very different with a mean of 5
+
+-   This could be a common experimental result
+
+    -   For example, let's say the response variable is crop production in a farm
+
+    -   "A" is maybe a control group
+
+    -   Where "B" and "C" are nutrient additions
+
+```{r}
+set.seed(492)
+group_means <- tibble(x = c(rnorm(10, 5, 3), 
+                            rnorm(10, 15, 3),
+                            rnorm(10, 17, 3)),
+                      grp = rep(c("A", "B", "C"), each = 10))
+
+shapiro.test(group_means$x)
+```
+
+-   This has a very small p-value which means the data are *NOT* normally distributed
+
+-   But when we make density or box plots by groups:
+
+```{r}
+ggplot(group_means,
+       aes(x = x,
+           fill = grp)) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_fill_viridis_d()
+
+ggplot(group_means,
+       aes(x = x,
+           fill = grp)) +
+  geom_density(alpha = 0.75, 
+               adjust = 2) +
+  theme_bw() +
+  scale_fill_viridis_d()
+```
+
+-   We can see that each "group" looks to be normally distributed
+
+-   This data would be perfectly appropriate to analyze using frequentist statistics
+
+## Working with the RXP data
+
+-   So far, we've been working with vectors which were sampled from a known distirbution (i.e., `rnorm()`)
+
+-   Let's return to the `rxp_clean` data and see how this works with a data frame with groups
+
+### Assess normality: `SVL.initial`
+
+-   We are going to be working with the `SVL.initial` variable
+
+    -   This variable measures the length of the tail when the froglet first hatched
+
+```{=html}
+<!-- -->
+```
+-   Let's plot the "global" variable
+
+    -   i.e., without any groups
+
+```{r}
+ggplot(rxp_clean,
+       aes(x = SVL.initial)) +
+  geom_density()
+
+ggplot(rxp_clean,
+       aes(x = SVL.initial)) +
+  geom_histogram()
+
+ggplot(rxp_clean,
+       aes(x = SVL.initial)) +
+  geom_boxplot()
+```
+
+-   What do you see?
+
+    -   Looks pretty normal in all plots
+
+-   Let's do the same thing but account for the groups in this data
+
+```{r}
+ggplot(rxp_clean,
+       aes(x = SVL.initial,
+           fill = Res)) +
+  geom_density(alpha = 0.5)
+
+ggplot(rxp_clean,
+       aes(x = SVL.initial,
+           fill = Res)) +
+  geom_histogram() +
+  facet_wrap(Res~.)
+
+ggplot(rxp_clean,
+       aes(x = SVL.initial,
+           fill = Res)) +
+  geom_boxplot()
+
+```
+
+-   Looks pretty good within groups too
+
+    -   Maybe slightly right skewed
+
+    -   Dots to right on box plots
+
+    -   slightly asymmetrical in density and histogram plots
+
+### Summarize `SVL.initial` by groups
+
+-   Let's calculate the mean, SD, and sample size for `SVL.initial` by `Pred` groups
+
+```{r}
+rxp_clean |>
+  group_by(Res) |>
+  summarize(m_svl_i = mean(SVL.initial),
+            sd_svl_i = sd(SVL.initial),
+            n_svl_i = n())
+
+```
+
+### Inferential Stats
+
+-   Now let's calculate approximate 95 and 99% CIs
+
+-   We will start with the same code above
+
+-   This time add a `mutate()` to add another column for the SE
+
+```{r}
+rxp_clean |>
+  group_by(Res) |>
+  summarize(m_svl_i = mean(SVL.initial),
+            sd_svl_i = sd(SVL.initial),
+            n_svl_i = n()) |>
+  mutate(se_svl_i = sd_svl_i / sqrt(n_svl_i))
+```
+
+-   Notice the very small SE values
+
+-   There is an issue of pseudo-replication here which we will deal with in two ways later
+
+    -   Averaging by tank (next week)
+
+    -   Fitting hierarchical models (week 11 or so)
+
+-   Now, in the same `mutate()`, add the interval values
+
+```{r}
+CI_svl_i <- rxp_clean |>
+  group_by(Res) |>
+  summarize(m_svl_i = mean(SVL.initial),
+            sd_svl_i = sd(SVL.initial),
+            n_svl_i = n()) |>
+  mutate(se_svl_i = sd_svl_i / sqrt(n_svl_i),
+         l95 = m_svl_i - 2*se_svl_i, 
+         u95 = m_svl_i + 2*se_svl_i, 
+         l99 = m_svl_i - 3*se_svl_i, 
+         u99 = m_svl_i + 3*se_svl_i)
+CI_svl_i
+```
+
+-   And we can plot them to visualize the differences in group means
+
+```{r}
+ggplot(CI_svl_i,
+       aes(y = Res,
+             x = m_svl_i, 
+             xmin = m_svl_i - 2 * se_svl_i,
+             xmax = m_svl_i + 2 * se_svl_i)) +
+  geom_pointrange(size = 1.5) +
+  theme_bw()+
+  labs(title = "95% CI for Initial SVL")
+
+ggplot(CI_svl_i,
+       aes(y = Res,
+             x = m_svl_i, 
+             xmin = m_svl_i - 3 * se_svl_i,
+             xmax = m_svl_i + 3 * se_svl_i)) +
+  geom_pointrange(size = 1.5) +
+  theme_bw()+
+  labs(title = "99% CI for Initial SVL")
+
+```
+
+-   Neither set of CIs overlap, so we can conclude that the mean values in the two groups are different
+
+-   Interpretation sentence example
+
+    -   The data supports the conclusion, with 95% confidence, that the true means of the two groups are different (Low resource 95% CI 18.2, 18.4; High resource 95% CI 18.8, 19).
+
+    -   Same format for the 99% intervals, but we can say 99% confident and update the values for the lower and upper interval points
+
+# Summary
+
+-   Population Parameters vs. Sample Statistics
+
+    -   Populations exist and have parameters which describe them
+
+    -   Samples are a subset of a population
+
+    -   Summary statistics are calculated from samples
+
+-   Inferential statistics
+
+    -   Summary statistics allow us to make inferences about the populations
+
+    -   How far, on average, is our sample mean from the true mean?
+
+-   Confidence intervals
+
+    -   Range of values which likely contains the true parameter
+
+        -   for a 95% CI: If we repeated the sample process 100 times, 95% of the CIs would contain the true value
+
+        -   It does not imply a 95% probability that the true parameter is within a given CI
+
+    -   We can vary our level of confidence
+
+        -   Width increases with level of confidence
+
+        -   99% CIs are wide, 95% are less wide, 68%, 50%, 10%, etc. are narrower
+
+-   Hypothesis testing
+
+    -   We can make general statements about the likelihood of two population parameters (i.e., $\mu$) being the same or different based on CIs
+
+        -   If the CIs overlap: Population parameters are *NOT* different
+
+        -   If the CIs do not overlap: Population parameters *ARE* different
+
+        -   If the CIs just barely touch: Population parameters are *PROBABLY* different at the $\alpha = 0.05$ level
+
+-   Assessing normality
+
+    -   It is important to assess normality
+
+    -   Formal tests exist
+
+    -   Recommend doing it with plots and by groups

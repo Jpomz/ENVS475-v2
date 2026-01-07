@@ -1,0 +1,316 @@
+---
+title: "KEY 05 basic stats"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 3
+embed-resources: true
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+::: callout-warning
+## Note on KEY
+
+1.  Note that this KEY will have interpretation answers in comments in code blocks
+    1.  It is expected that the student submit a rendered html document with correctly formatted interpretation
+:::
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Learning Objectives
+
+After completing this assignment, the student will be able to:
+
+1.  Assess normality of response variables
+
+2.  Calculate basic summary and inferential statistics
+
+3.  Calculate, report, and interpret 95% and 99% confidence intervals
+
+4.  Compare confidence intervals from two samples of data
+
+5.  Points 1 to 3 will be completed from data in a vector and a data frame with a grouping variable.
+
+# Setup
+
+## Libraries
+
+-   Be sure to include the following in the "setup" code block at the top of your document:
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "galapago-finches.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the data into your Quarto document by placing the following in the "setup" code block at the top of your document with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+
+```
+
+# Problems
+
+## Problem 1 - Terms and basic concepts
+
+1.1 What is a population?
+
+```{r}
+# Population is all the subjects of interest
+```
+
+1.2 What is a sample?
+
+```{r}
+# A sample is some subset of the population
+```
+
+### 1.3-1.5 GRADED
+
+1.3 What is the name for values which describe populations?
+
+```{r}
+# Parameters
+```
+
+1.4 What is the name for values which describe samples?
+
+```{r}
+# Summary statistics
+# Parameter estimates
+# sample estimates
+```
+
+1.5 Describe what makes an appropriate or good sample?
+
+```{r}
+# Samples should be collected randomly
+# Samples should be representative of the whole population
+# Samples should be sufficiently large
+```
+
+## Problem 2 - summarizing a vector of samples
+
+### Setup for problem 2
+
+-   Run the following code to load a sample of data as a vector
+
+```{r}
+#| echo: true
+
+y <- c(9.0, 12.1, 9.1, 14.8, 14.2, 15.4, 13.8,
+       11.7, 11.4, 13.7, 10.0,  9.6, 15.1, 13.1,
+       9.0, 9.2, 12.5, 12.7, 16.9, 16.7,  8.6,
+       9.7, 18.4, 12.0, 12.6, 13.0, 11.6,  9.9,
+       11.3, 13.6, 12.7, 14.6, 13.5, 10.4,  8.6,
+       9.5, 17.7, 16.2, 14.8, 16.8, 13.3, 14.3,
+       14.9,  9.0, 10.2, 10.5, 11.5,  8.9, 12.3,
+       6.4, 12.2, 11.8, 12.6, 16.1, 11.5)
+```
+
+2.1 Using the base R `plot()` and `density()` functions, display a density distribution of this data.
+
+```{r}
+plot(density(y))
+```
+
+2.2 Describe this distribution. Tell me if it looks normal or not, and give me specific examples of what attributes you are looking at to make this determination.
+
+```{r}
+# Looks approximately normal
+# There is a peak in the middle, and the density declines fairly rapidly to each side
+# The left side looks a little lumpy
+# There may be a slight skew to the right side; The tail on the right looks like it could be a little longer than expected
+```
+
+2.3 Calculate and display the mean, sd, and se of `y`.
+
+```{r}
+mean(y)
+sd(y)
+sd(y) / sqrt(length(y))
+```
+
+2.4 Write a sentence reporting your mean and se that you calculated above.
+
+-   Be sure to use the $\pm$ sign, which can be inserted with this plain text: \\\$\\pm\\\$
+
+```{r}
+# The mean (\pm SE) for this data is 12.38 \pm 0.36
+```
+
+### GRADED
+
+2.5 Calculate, report, and interpret an approximate 95% CI for `y`.
+
+```{r}
+### GRADED
+# flexible with rounding
+m_y <- mean(y)
+sd_y <- sd(y)
+se_y <- sd_y / sqrt(length(y))
+# 95%
+c(m_y - 2*se_y, m_y + 2*se_y)
+# the data supports the conclusion, at the 95% level, that the true mean of the population is between 11.66 and 13.1
+```
+
+2.6 Calculate, report, and interpret an approximate 99% CI for `y`.
+
+```{r}
+# 95%
+c(m_y - 3*se_y, m_y + 3*se_y)
+# the data supports the conclusion, at the 95% level, that the true mean of the population is between 11.29 and 13.47
+```
+
+## Problem 3 - Galapagos Finch data
+
+-   The following problems will all work with the `galapago-finch.csv` data
+
+-   See the Data heading above to ensure that the data is loaded in your quarto document
+
+-   We will only be working with the data from 2012
+
+-   Be sure to run the following code:
+
+```{r}
+finch_2012 <- finch |>
+  filter(year == 2012)
+```
+
+-   Use `finch_2012` to answer the following problems
+
+3.1 Make a "global" density plot of the `bdepth` variable.
+
+```{r}
+ggplot(finch_2012,
+       aes(x = bdepth)) +
+  geom_density()
+```
+
+3.2 Assess the normality of the `bdepth` variable based on the density plot made in 3.1
+
+```{r}
+# the bdepth data appears to be normal
+# There is a peak in the middle, and the density declines fairly symmetrically in both directions
+# Ther is a small "lump" on the left side near the peak, and possibly a very small right skew
+```
+
+3.3 Make a "global" histogram plot of the `bdepth` variable.
+
+-   set `bins = 15` inside your `geom_histogram()` argument
+
+```{r}
+ggplot(finch_2012,
+       aes(x = bdepth)) +
+  geom_histogram(bins = 15)
+```
+
+3.4 Assess the normality of the `bdepth` variable based on the histogram plot made in 3.2
+
+```{r}
+# the bdepth data appears to be normal
+# There is a peak in the middle, and the density declines fairly symmetrically in both directions
+# Ther is a small "lump" on the left side near the peak, and possibly a very small right skew
+```
+
+3.5 Use `shapiro.test()` to formally test whether or not this variable is normally distributed. Display the results of this test.
+
+```{r}
+shapiro.test(finch_2012$bdepth)
+```
+
+### GRADED
+
+3.6 Interpret the results of the Shapiro test performed in 3.6.
+
+```{r}
+### GRADED
+# The result of the test has a p-value of 0.05011 which is greater than the alpha value of 0.05. 
+# This does technically pass the normality test, although just barely. 
+```
+
+3.7 Make a boxplot of the `bdepth` variable, but this time have the data grouped by species. I.e., you should have two box plots and the fill of each should correspond to the species.
+
+```{r}
+ggplot(finch_2012,
+       aes(x = bdepth,
+           fill = species)) +
+  geom_boxplot()
+```
+
+3.8 Interpret the box plots you made in 3.7. Be sure to interpret the box plot for each species separately, and tell me specifically what you are looking at.
+
+```{r}
+# Both box plots for fortis and scandens look normal
+# The black median line is almost perfectly in the middle of each box
+# The length of the tails for scandens looks almost perfectly symmetrical
+# the taile for fortis look close, although the right tail looks a little longer
+# Scandens has two dots to the right side
+# Fortis only has one dot, but it is further away than the two dots in scandens
+```
+
+3.9 Calculate the mean, SD, N, SE, and approximate 95% CIs for both species and display the output as a tibble or data frame in your document.
+
+```{r}
+finch_2012_ci <- finch_2012 |>
+  group_by(species) |>
+  summarize(m_bd = mean(bdepth),
+            sd_bd = sd(bdepth),
+            n_bd = n()) |>
+  mutate(se_bd = sd_bd / sqrt(n_bd),
+         l95 = m_bd - 2 * se_bd, 
+         u95 = m_bd + 2 * se_bd)
+finch_2012_ci
+```
+
+### GRADED
+
+3.10 Make a plot showing the point and range of the 95% CIs for both species
+
+```{r}
+### GRADED
+ggplot(finch_2012_ci,
+       aes(y = species,
+             x = m_bd, 
+             xmin = m_bd - 2 * se_bd,
+             xmax = m_bd + 2 * se_bd)) +
+  geom_pointrange(size = 1.5) +
+  theme_bw()+
+  labs(title = "95% CI for Beak Depth")
+```
+
+3.11 Compare the 95% CIs for beak depth in the two species and interpret the results. Be sure to state if the population means are the same or different.
+
+```{r}
+# The two CIs do not over lap
+# 8.5 to 8.7 vs. 9.1 to 9.3
+# Therefore, we can conclude, at the 95% confidence level, that the mean beak depth for these two species are different. 
+```
