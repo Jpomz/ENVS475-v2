@@ -3181,13 +3181,108 @@ vertical-align: -.125em;
 <li>options</li>
 </ul></li>
 </ul></li>
-<li><p>W4: Number Distributions.</p></li>
-<li><p>W5: Summary Statistics.</p></li>
-<li><p>W6: Comparing two means.</p></li>
-<li><p>W7: Comparing multiple means.</p></li>
+<li><p>W4: Number Distributions.</p>
+<ol type="1">
+<li><p>Normal distribution</p>
+<ol type="1">
+<li><p>Describe it</p></li>
+<li><p>Compare normal distributions</p></li>
+</ol></li>
+<li><p>Empirical rule</p></li>
+<li><p>R functions: <code>_norm()</code></p></li>
+<li><p>Standard normal and z-scores</p></li>
+<li><p>Some other distributions and transformations</p></li>
+</ol></li>
+<li><p>W5: Summary Statistics.</p>
+<ol type="1">
+<li><p>Populations vs samples</p>
+<ol type="1">
+<li>Parameters vs. estimates</li>
+</ol></li>
+<li><p>Summarize data</p>
+<ol type="1">
+<li>Location and Spread</li>
+</ol></li>
+<li><p>Inferential stats</p>
+<ol type="1">
+<li>SE</li>
+</ol></li>
+<li><p>Is my data normal?</p>
+<ol type="1">
+<li><p>Compare density and boxplots</p></li>
+<li><p>Formal tests of distributions</p></li>
+</ol></li>
+<li><p>Log-transformation</p></li>
+</ol></li>
+<li><p>W6: Comparing two means.</p>
+<ol type="1">
+<li><p>Hypothesis testing</p></li>
+<li><p>Introduction to the t-test</p>
+<ol type="1">
+<li><p>1- and 2-tailed tests</p>
+<ol type="1">
+<li>Generally 2-tailed in this course</li>
+</ol></li>
+</ol></li>
+<li><p>Different types of t-tests</p>
+<ol type="1">
+<li>one-, two-sample, and paired t-tests</li>
+</ol></li>
+<li><p>functions</p>
+<ol type="1">
+<li><p><code>t.test()</code></p></li>
+<li><p><code>lm()</code></p></li>
+</ol></li>
+<li><p>Data format</p>
+<ol type="1">
+<li><p>One-sample t-test - same for both functions</p>
+<ol type="1">
+<li><p><code>function(y ~ 1, data = data)</code></p></li>
+<li><p>Testing to see if y is different from 0</p></li>
+<li><p>If you want to test another value (i.e., stream pH different from 7?):</p>
+<ol type="1">
+<li><code>function(y - 7 ~ 1, data = data)</code></li>
+</ol></li>
+</ol></li>
+<li><p>two sample - same for both functions</p>
+<ol type="1">
+<li><p>y = response column, x = “group” column</p></li>
+<li><p><code>function(y~x, data = data)</code></p></li>
+</ol></li>
+<li><p>Paired</p>
+<ol type="1">
+<li><p>X and y are two vectors:</p>
+<ol type="1">
+<li><code>t.test(x, y, paired = TRUE)</code></li>
+</ol></li>
+<li><p>y = response and x = group (i.e., before/after)</p>
+<ol type="1">
+<li><code>t.test(y ~ group, paired = TRUE, data = data)</code></li>
+</ol></li>
+<li><p>Calculate the difference in each pair</p>
+<ol type="1">
+<li><p>i.e., <code>diff = before - after</code></p></li>
+<li><p>both: <code>function(diff ~1, data = data)</code></p></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+<li><p>W7: Comparing multiple means.</p>
+<ol type="1">
+<li><p>Basic, one-way ANOVA</p>
+<ol type="1">
+<li>Post-hoc pairwise comparisons</li>
+</ol></li>
+<li><p>ANOVA with multiple Factors</p></li>
+<li><p>Two-way ANOVA with interaction</p></li>
+<li><p>Pairwise comparisons with other ANOVAs</p></li>
+</ol></li>
 <li><p>W8: Tidy Data.</p></li>
 <li><p>W9: Linear Regression.</p></li>
-<li><p>W10: ANCOVA - combining ANOVA and Linear Regression.</p></li>
+<li><p>W10: ANCOVA - combining ANOVA and Linear Regression.</p>
+<ol type="1">
+<li>Type 1, 2, and 3 tests</li>
+</ol></li>
 <li><p>W11: Generalized Linear Models - When your response is non-normal.</p></li>
 <li><p>W12: Hierarchical Models.</p></li>
 <li><p>Project: Find a dataset.</p></li>
