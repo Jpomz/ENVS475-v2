@@ -10,7 +10,9 @@ editor: visual
 toc: true
 toc-depth: 2
 embed-resources: true
-number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ::: callout-warning
@@ -18,13 +20,15 @@ number-sections: true
 
 1.  update libraries and data
     1.  In setup block (hidden) and in **SETUP** sections below
-2.  Once Key is complete
+2.  Add graded comment to code block and as a 2nd-level header above problem
+3.  Once Key is complete
     1.  Delete this instruction callout
     2.  Render
-3.  After key is complete
+4.  After key is complete
     1.  "save as" appropriate HW in `assignment/` folder
     2.  Change `echo:` and `eval:` to `false` in YAML
-    3.  Render assignment
+    3.  Delete GRADED headers
+    4.  Render assignment
         1.  Ensure that code and output are not visible
 :::
 
@@ -57,13 +61,13 @@ library(tidyverse)
 
 -   Place it in your `data/` folder
 
--   Load the data into R with the following:
+-   Load the data into your Quarto document by placing the following in the "setup" code block at the top of your document with the following:
 
 ```{r}
 #| eval: false
 #| echo: true
 
-finch <- read.csv("data/galapago-finches.csv",
+finch <- read.csv(here::here("data/galapago-finches.csv"),
                   stringsAsFactors = TRUE)
 
 ```

@@ -7,6 +7,9 @@ editor: visual
 toc: true
 toc-depth: 2
 number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ```{r}
@@ -26,7 +29,18 @@ rxp <- read.csv(here::here("data/RxP.csv"), stringsAsFactors = TRUE)
 
 ### Libraries
 
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
 ### Data
+
+```{r}
+#| eval: false
+rxp <- read.csv("data/RxP.csv",
+                stringsAsFactors = TRUE)
+```
 
 # Lecture Outline
 
