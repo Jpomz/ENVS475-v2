@@ -10,6 +10,10 @@ editor: visual
 toc: true
 toc-depth: 2
 embed-resources: true
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ```{r}
@@ -246,7 +250,7 @@ finch_year_means <- finch_year |>
 finch_year_means
 ```
 
-## Problem 4 - `ggplot` 
+## Problem 4 - `ggplot`
 
 4.1 Using `ggplot()` , make a histogram of `bdepth` where the fill is mapped to the species column.
 

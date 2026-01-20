@@ -11,6 +11,9 @@ toc: true
 toc-depth: 2
 embed-resources: true
 number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 ---
 
 ::: callout-warning

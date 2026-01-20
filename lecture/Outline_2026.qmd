@@ -1,5 +1,5 @@
 ---
-title: "Spring_2026_outline"
+title: "Spring 2026 outline"
 format: html
 editor: visual
 embed-resources: true

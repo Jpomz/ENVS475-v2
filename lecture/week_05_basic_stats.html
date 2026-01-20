@@ -3082,13 +3082,13 @@ vertical-align: -.125em;
 <h1 data-number="2"><span class="header-section-number">2</span> Setup</h1>
 <section id="libraries" class="level3" data-number="2.0.1">
 <h3 data-number="2.0.1" class="anchored" data-anchor-id="libraries"><span class="header-section-number">2.0.1</span> Libraries</h3>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-2_c4784cd41e648a7f6ddd9716a92c0169">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="data" class="level3" data-number="2.0.2">
 <h3 data-number="2.0.2" class="anchored" data-anchor-id="data"><span class="header-section-number">2.0.2</span> Data</h3>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-3_f94168d135ad40268045da7c7aab0b4f">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rxp <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/RxP.csv&quot;</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -3173,7 +3173,7 @@ vertical-align: -.125em;
 <li>Note that these values are based on wolf weights, but not actually representative of the population in Yellowstone.</li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-4_3b8680d26c748af25601ca7dd2312cb4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">99</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>true_mean <span class="ot">&lt;-</span> <span class="dv">37</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>true_sd <span class="ot">&lt;-</span> <span class="dv">4</span></span>
@@ -3193,7 +3193,7 @@ vertical-align: -.125em;
 <ul>
 <li>Now, let’s “sample” 25 wolves from our population and see what the distribution looks like</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-5_bce1ac25d37355a721f07505b6c378ac">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">295</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>x_samp <span class="ot">&lt;-</span> <span class="fu">sample</span>(x_pop, <span class="at">size =</span> <span class="dv">25</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># round values for display</span></span>
@@ -3276,7 +3276,7 @@ vertical-align: -.125em;
 </ul>
 <section id="mean-and-sd-of-our-sample" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="mean-and-sd-of-our-sample"><span class="header-section-number">3.2.1</span> Mean and SD of our sample</h3>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-6_0ea39319b624b0e9f425602e1f5ed020">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x_samp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 35.71662</code></pre>
@@ -3329,7 +3329,7 @@ Describing your sample
 <li><p>We now have an estimate of the weight of wolves in Yellowstone, but how confident are we?</p></li>
 <li><p>What if we took another sample?</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-7_9355eeaba9c1402f79c665aa9aed4347">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">444</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>x_samp2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(x_pop, <span class="at">size =</span> <span class="dv">25</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(x_samp2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3405,7 +3405,7 @@ Describing your sample
 </ul></li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-8_afd7a35d0cefbcd21cba4664e7810fdf">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(x_samp) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(x_samp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7063784</code></pre>
@@ -3464,7 +3464,7 @@ Describing your sample
 <ul>
 <li>So for sample 1, we have the following</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-9_58414debe9f5e393ecef7a119558c65b">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mean_1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(x_samp)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>se_1 <span class="ot">&lt;-</span> <span class="fu">sd</span>(x_samp) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(x_samp))</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3480,7 +3480,7 @@ Describing your sample
 <ul>
 <li>Which we can use to calculate the interval piece by piece, or combine into one vector using the <code>c()</code> function</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-10_110f9980ab9a3b73324bc9f6ace4d898">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mean_1 <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> se_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 34.30386</code></pre>
@@ -3539,7 +3539,7 @@ Confidence Intervals
 <li><p>We can use CIs to compare means of two groups</p></li>
 <li><p>Let’s calculate the 95% CI for the second group of wolves and plot them on a number line</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-11_25c6e98b1df630cb2f7809e28ff87a56">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mean_2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(x_samp2)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>se_2 <span class="ot">&lt;-</span> <span class="fu">sd</span>(x_samp2) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(x_samp2))</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3578,7 +3578,7 @@ Confidence Intervals
 <li><p>Mutate to calculate the 95% CI and plot with <code>geom_pointrange()</code></p></li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-12_dfc4e280a70152a66c642eb6d7e73197">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">mu_hat =</span> <span class="fu">c</span>(mean_1, mean_2),</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">se =</span> <span class="fu">c</span>(se_1, se_2),</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">grp =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>)) <span class="sc">|&gt;</span></span>
@@ -3621,7 +3621,7 @@ Confidence Intervals
 <li><p><code>ggplot()</code> only works with data.frames</p></li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-13_d94aeff1b541a303653c9071338c76a5">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>x_samp_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x_samp)</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(x_samp_df,</span>
@@ -3671,7 +3671,7 @@ Confidence Intervals
 <h3 id="compare-density-and-box-plots" data-number="3.6.2" class="anchored"><span class="header-section-number">3.6.2</span> Compare density and box plots</h3></li>
 <li><p>Box plots are another way of looking at a density plot</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-14_6540c76223ae1fd3932513fc4ca41437">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(x_samp_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.05</span>)) <span class="sc">+</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># horizontal boxplots &amp; density plots</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -3696,7 +3696,7 @@ Confidence Intervals
 <ul>
 <li>Here are some examples with skewed data:</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-15_72b1a3df5a9f7aaef6d62fe51c1ec957">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.5</span>)) <span class="sc">+</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># horizontal boxplots &amp; density plots</span></span>
@@ -3719,7 +3719,7 @@ Confidence Intervals
 <ul>
 <li>We can also formally test if a sample of data is normal or not</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-16_c2584572f8e1c8edb5aba79e4c8307c8">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(x_samp_df<span class="sc">$</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -3759,7 +3759,7 @@ W = 0.98029, p-value = 0.8907</code></pre>
 <li><p>Where “B” and “C” are nutrient additions</p></li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-17_500a4db34a92c1d8f119fa0c13ae0dfe">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">492</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>group_means <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">3</span>), </span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">3</span>),</span>
@@ -3779,7 +3779,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 <li><p>This has a very small p-value which means the data are <em>NOT</em> normally distributed</p></li>
 <li><p>But when we make density or box plots by groups:</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-18_726fe3c693761825c7e0981b6c996fba">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(group_means,</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> x,</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> grp)) <span class="sc">+</span></span>
@@ -3827,7 +3827,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 <li>i.e., without any groups</li>
 </ul></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-19_21b3cb73260abd6635aa6a7ecd2bae36">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rxp_clean,</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> SVL.initial)) <span class="sc">+</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3857,7 +3857,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 </ul></li>
 <li><p>Let’s do the same thing but account for the groups in this data</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-20_04f13d505d156b0bbc797079098611a4">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rxp_clean,</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> SVL.initial,</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> Res)) <span class="sc">+</span></span>
@@ -3898,7 +3898,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 <ul>
 <li>Let’s calculate the mean, SD, and sample size for <code>SVL.initial</code> by <code>Pred</code> groups</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-21_a72e42c39cd94294ab9d318a1c904867">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>rxp_clean <span class="sc">|&gt;</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Res) <span class="sc">|&gt;</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">m_svl_i =</span> <span class="fu">mean</span>(SVL.initial),</span>
@@ -3920,7 +3920,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 <li><p>We will start with the same code above</p></li>
 <li><p>This time add a <code>mutate()</code> to add another column for the SE</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-22_3657078509dba667e85fcd645add0ce9">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>rxp_clean <span class="sc">|&gt;</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Res) <span class="sc">|&gt;</span></span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">m_svl_i =</span> <span class="fu">mean</span>(SVL.initial),</span>
@@ -3944,7 +3944,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 </ul></li>
 <li><p>Now, in the same <code>mutate()</code>, add the interval values</p></li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-23_42ca59f97122df6cd96a6d0e5ef2f524">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>CI_svl_i <span class="ot">&lt;-</span> rxp_clean <span class="sc">|&gt;</span></span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Res) <span class="sc">|&gt;</span></span>
 <span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">m_svl_i =</span> <span class="fu">mean</span>(SVL.initial),</span>
@@ -3967,7 +3967,7 @@ W = 0.88094, p-value = 0.002962</code></pre>
 <ul>
 <li>And we can plot them to visualize the differences in group means</li>
 </ul>
-<div class="cell">
+<div class="cell" data-hash="week_05_basic_stats_cache/html/unnamed-chunk-24_30c05931d0792b8003762ed3010db366">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(CI_svl_i,</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> Res,</span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">x =</span> m_svl_i, </span>

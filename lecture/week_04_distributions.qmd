@@ -5,8 +5,11 @@ format:
     embed-resources: true
 editor: visual
 toc: true
-toc-depth: 2
+toc-depth: 3
 number-sections: true
+theme:
+  light: flatly
+  dark: darkly
 execute: 
   cache: true
 ---

@@ -10,6 +10,8 @@ number-sections: true
 theme:
   light: flatly
   dark: darkly
+execute: 
+  cache: true
 ---
 
 ```{r}
@@ -588,9 +590,8 @@ shapiro.test(x_samp_df$x)
 
     -   So a high p-value means we fail to reject the null, or in other words we conclude that the data are normally distibuted
 
-```{=html}
 <!-- -->
-```
+
 -   This test is a bit conservative
 
     -   i.e., if it passes there's a very good chance that your data is normal
@@ -666,9 +667,8 @@ ggplot(group_means,
 
     -   This variable measures the length of the tail when the froglet first hatched
 
-```{=html}
 <!-- -->
-```
+
 -   Let's plot the "global" variable
 
     -   i.e., without any groups
