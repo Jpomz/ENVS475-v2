@@ -1,0 +1,212 @@
+---
+title: "Syllabus 2026"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+## Instructor Information
+
+**Instructor Name**: Dr. Justin Pomeranz
+
+**Email**: [jpomeranz\@coloradomesa.edu](mailto:jpomeranz@coloradomesa.edu){.email}
+
+**Office**: Wubben 230E
+
+**Office Hours**:
+
+-   Monday and Friday 1-1:50 pm
+
+-   Wednesday 9-9:50 AM
+
+-   or by appointment (email me to schedule in-person or virtual)
+
+## Course Information
+
+**Course Title**: Experimental Design and Analysis, ENVS 475
+
+**CRN:** 46777
+
+**Course Delivery Method**: Campus
+
+**Class Time**: Monday, Wednesday, and Friday 2-2:50 pm
+
+**Classroom**: Wubben 245
+
+**Prerequisites**: ENVS 204 or ENVS 221, STAT 200
+
+**Drop Date**: April 6th. 2026
+
+**Lecture Hours**: 3
+
+# Course Overview
+
+## COURSE DESCRIPTION
+
+This course will give you practical information on designing experiments and analyzing data in various areas of environmental science. We will cover experimental design, data curation and preparation, and statistical analyses. We also cover many different types of statistical tests using data from various areas of environmental science. When using these tests you need to keep in mind the earlier things you learned. In addition, you'll learn how to use the R statistical programming language.
+
+This course follows the "I do, we do, you do" format. Generally, we will cover one topic in class per week. A typical lecture will consist of me live coding in front of the class with structured activities or problems for you to work on, and open time to work on the weekly homework assignment.
+
+## PROGRAM STUDENT LEARNING OUTCOMES
+
+1)  Demonstrate the ability to design an environmental study. (Quantitative skills, critical thinking skills)
+
+2)  Demonstrate the ability to analyze quantitative environmental data, effectively translate data into graphs or tables, and interpret the results. (Quantitative skills, critical thinking skills)
+
+## COURSE COMMUNICATION
+
+All communication in this course will be made via your CMU email account and through this D2L page. Please check your CMU email and the D2L page regularly.
+
+### Email Etiquette
+
+Please follow proper email etiquette:
+
+-   Include the course name and topic in the subject of the message (example: ENVS475 - Question on Homework 02)\
+-   Begin emails with a salutation such as "Hi Justin,"\
+-   Conclude your email with a closing statement such as "Thank you," or "Sincerely," and include your full or preferred name
+
+I will do my best to respond within 2 working days.
+
+# Course Requirements
+
+## REQUIRED TEXTS AND SUPPLIES (ALL FREE)
+
+### TEXTS:
+
+**Applied Statistics with R: A practical guide for the life sciences** by Justin Touchon. ISBN:9780197797358. Available through the CMU Library
+
+**R for Data Science** by Hadley Wickham and Garrett Grolemund
+
+Available for [free online](https://r4ds.had.co.nz/index.html)
+
+## STATISTICAL SOFTWARE
+
+All the software required for this course is available on the ENVS laptops in the classroom. Likewise, computers in the WS building and library should have software programs installed.
+
+If you own a personal computer (laptop or desktop), you are strongly encouraged to download the programs so you can work on them at home. If you have a laptop, please bring it to class whenever you are able.
+
+### R and RStudio
+
+For instructions, [click here](https://jpomz.github.io/ENVS396-FA-2023/computer-setup/). Please note that this is a 2-step process. You need to install R *before* you install RStudio.
+
+Please install both of these ASAP
+
+Get in touch with me if you have any problems
+
+### Excel
+
+You should have access to Microsoft programs through your CMU account. Additionally, free resources such as Google Sheets should have most or all of the functionality required.
+
+If you use Google sheets, make sure you can export the file as a .csv
+
+## Why R?
+
+R is a free, open source language which is widely used in the fields of Environmental Science, Ecology and beyond. R runs on all platforms (Windows, Mac, Linux) and is one solution to the [replication crisis](https://en.wikipedia.org/wiki/Replication_crisis) currently happening in science. Furthermore, R is an in-demand skill which will make you competitive on the job market.
+
+## LESSON/INSTRUCTIONAL MATERIALS
+
+I have attempted to make this course as hands-on as possible. I have found that the best way to learn coding and statistics is to do coding and statistics. Further, these tasks are easier to do when you have someone around you can ask questions of when you inevitably run into problems or errors. This is true when making calculations by hand, but is even more so when using analysis software. In order to reserve as much class time for working on problems and homework assignments, it is vital that you read the assigned book chapters and get started on the weekly homework assignments before coming to class.
+
+Make sure to reference the class schedule regularly to ensure you know what we will be covering on that day. In general, we will spend 1-3 class periods on a given topic. I will usually begin class with a brief introduction or review of the material we are working on, with the majority of our in-class time being dedicated to working through problems and homework assignments.
+
+-   An outline of the weekly notes will be posted on D2L\
+-   The outline may differ from the in-class lecture
+
+## Course Policies
+
+### METHODS OF EVALUATION/GRADING POLICY
+
+Grade Distribution Percentage
+
+11 Graded Homeworks 70%
+
+-   1 HW will be dropped
+
+-   Each of the 10 graded HWs = \~7% of your total grade
+
+Final Project 30%
+
+-   3 "mini" assignments as part of the Final Project
+
+    -   Find a data set (5% of total grade)\
+
+    -   Summarize data and outline analysis (10% of total grade)\
+
+    -   Full analysis (15% of total grade)
+
+### Grading Scale
+
+A = 90 - 100%
+
+B = 80 - 89.9%
+
+C = 70 - 79.9%
+
+D = 60 - 69.9%
+
+F = \< 60%
+
+*Final Grade Rounding policy*: Final grades within 0.5% will be rounded to the next letter grade. For example, an 89.5% will be entered as an A, but an 89.4% will be entered as a B.
+
+## ASSIGNMENT EXPECTATIONS
+
+### Homework
+
+There will be weekly homework assignments. Homework assignments need to be turned in on an individual basis, but you are allowed (and encouraged!) to work on them in groups. Homework assignments will all be turned in via the appropriate links in D2L.
+
+Homework is assigned weekly on Mondays and due the following Sunday, with a grace period of 2 days (i.e., as long as homework is submitted before class on Wednesday, you do not need to request an extension).
+
+Homework turned in after the grace period will be docked 50%.
+
+Solutions to homework will generally be posted on the Wednesday after they are due (i.e., after the late submission window closes).
+
+### Homework grading rubric
+
+-   Completion (up to 50%)
+
+-   Accuracy (up to 40%)
+
+    -   A subset of the questions will be graded in detail
+
+    -   I will look for correct values, plots, interpretation, etc.
+
+-   Syntax (up to 10%)
+
+    -   Does the code run (regardless of answer/value/output)?
+
+    -   Is all superfluous code removed?
+
+-   Late penalty
+
+    -   50% penalty for submissions made after the grace period.
+
+| Attribute    | Full points                                                                                                       | Most points                                                                                                                                                | Partial points                                                                                                       | No Points                                                                                                                                          |
+|---------------|---------------|---------------|---------------|---------------|
+| Completeness | 5 points. Complete assignment is submitted. An attempt is made to answer all questions.                           | 3 points. At least half the assignment is complete. An attempt is made to answer most questions                                                            | 2 Point. Less than half the assignment is complete.                                                                  | 0 Points. Assignment is not turned in.                                                                                                             |
+| Values       | 4 points. All the graded parts are correct. The values/plots/interpretations match the solution key.              | 3 points. Most of the graded sections are correct and match the solution key.                                                                              | 2 points. Some of the graded sections are correct and match the solution key.                                        | 0 points. None of the graded sections are correct and match the solution key.                                                                      |
+| Syntax       | 1 point. All code runs correctly. There is no superfluous code in the document. Quarto documents render correctly | 0.9 points. Nearly all code runs correctly, with only a minor error and/or very little superfluous code in the document. Quarto documents render correctly | 0.5 points. Not all the code runs correctly. There are a few minor or one major errors and/or some superfluous code. | 0 points. Very little or none of the code runs correctly. There are several minor or more than two major errors and/or excessive superfluous code. |
+
+Solutions to assignments will be posted on D2L and/or will be gone over in class. Solutions will generally be posted on Wednesdays, after the late submission window closes.
+
+## ATTENDANCE POLICY
+
+I expect that you come to class having completed the reading assignments, homework, etc. and ready to participate and engage with the lecture material, as well as work on the problem sets and homework assignments, and to ask me questions. However, I will not be taking attendance in this class. All the learning materials for this course are available on the website and D2L. If you miss a day, it is your responsibility to catch up on what you missed and go over the learning materials.
+
+If you are sick or have excused absences, please get in touch with me ASAP to make arrangements to make up any assignments or due dates that you may miss.
+
+## SUPPLEMENTAL HELP
+
+In coordination with Educational Access Services, reasonable accommodations will be provided for qualified students with disabilities. Students should contact Educational Access Services at 970-248-1856 or Houston Hall, Suite 108 as soon as possible. Please visit <https://www.coloradomesa.edu/educational-access> for additional information. If you wish to discuss academic accommodations, please contact me as soon as possible.
+
+## MINIMUM TECHNOLOGY AND SKILLS REQUIREMENT
+
+You will need basic computer skills and should be comfortable using a word processing program, browsing for files, and copying and pasting between programs. You will need a computer that connects to high-speed internet. Your username and password are required for access. If you do not own a computer or if your computer malfunctions during the term, you will be expected to identify a computer to use. Technology issues are not an excuse for missed or late work.
+
+To have the best learning experience possible, please be sure you have access to Colorado Mesa University's recommended technology.
