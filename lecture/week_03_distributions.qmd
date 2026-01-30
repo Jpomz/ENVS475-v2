@@ -1,0 +1,855 @@
+---
+title: "Lecture Week 03: Distributions"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 3
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+execute: 
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+```
+
+# Overview
+
+This week, we will introduce number distributions with particular focus on the **Normal Distribution**.
+
+-   We will go over how to describe normal distributions
+
+-   The standard normal distribution
+
+-   How to make any normal distribution a standard normal distribution.
+
+-   We will also discuss why many statistics assume a normal distribution, and why this is often appropriate.
+
+-   We will briefly discuss transformations to make a log-normal distribution normal.
+
+-   Other distributions will be briefly introduced if time allows
+
+# Setup
+
+### Libraries
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+### Data
+
+-   No data is needed for this lecture
+
+# Lecture Outline
+
+## Introduce number distributions
+
+-   Why should we care about how numbers are distributed?
+
+    -   So we can know what's an expected or unexpected observation
+
+-   For example, what do you think the average height of a human is?
+
+    -   Write on board
+
+-   I'm sure there will be variation in answers, but I bet no one said 4 or 7 feet
+
+    -   Meeting someone of this height may not be shocking, but it's rare enough that it would probably be memorable
+
+    -   Likewise, I'll bet no one has ever met anyone who was 10 feet tall
+
+## What is the normal distribution?
+
+-   The normal distribution is also called a Gaussian distribution and commonly called the "bell curve"
+-   The density plot for a Normal distribution looks like this:
+
+```{r}
+#| echo: false
+
+
+set.seed(3987)
+x <- seq(-4, 4, length.out = 1000)
+y <- dnorm(x)
+
+as_tibble(x) |>
+  ggplot(aes(x = x,
+             y = y,
+             fill = "fill")) +
+  geom_area() +
+  labs() +
+  theme_bw() +
+  scale_fill_viridis_d() +
+  theme(legend.position = "none")
+```
+
+-   The value, x, has a density, y
+
+    -   Unimodal
+
+        -   One "peak"
+
+    -   Values in the middle (i.e., x = 0) have a high density, meaning they are likely to be observed
+
+    -   Values at the ends, i.e., -4, 4, have a low density, meaning they are unlikely to be observed.
+
+-   Describe it with $\mu$ (location) and $\sigma$ (spread)
+
+    -   Symmetric distribution centered at $\mu$
+
+    -   The width of the curve is described with $\sigma$
+
+-   Mathematically we write:
+
+    -   $\Large X \sim \text{Normal} (\mu,~ \sigma)$
+
+-   And say
+
+    -   "X is a random normal variable with mean mu and standard deviation sigma"
+
+-   Note that "real" data will not be perfectly normal
+
+-   Here is an example of the density of 100 observations from a normal distribution with $\mu = 5.5$ and $\sigma = 1.2$
+
+```{r}
+set.seed(21)
+ex_obs <- rnorm(100, mean = 5.5, sd = 1.2)
+ex_obs |>
+  as_tibble() |>
+  ggplot(aes(x = ex_obs,
+             fill = "fill")) +
+  stat_density(alpha = 0.7) +
+  theme_bw() +
+  scale_fill_viridis_d() +
+  xlim(c(1, 9.5)) +
+  theme(legend.position = "none")
+```
+
+-   Note that it is "lumpy", Not perfectly symmetrical, etc.
+
+-   We're usually looking to ensure that it looks *generally* normal.
+
+## Compare Normal Distributions
+
+-   Different Locations but same spread
+
+```{r}
+#| echo: false
+
+
+set.seed(3987)
+y1 <- rnorm(10000, sd = 2,mean = 0)
+y2 <- rnorm(10000, sd = 2,mean = 10)
+y3 <- rnorm(10000, sd = 2,mean = -5)
+y4 <- rnorm(10000, sd = 2,mean = -20)
+
+ydf <- data.frame(y = c(y1, y2, y3, y4),
+           mean = rep(c("0", "10", "-5", "-20"), each = 10000)) 
+
+ggplot(ydf, aes(x = y,
+                group = mean,
+                fill = mean)) +
+  geom_density(alpha = 0.5, adjust = 2) +
+  theme_bw() +
+  scale_fill_viridis_d() 
+```
+
+-   Same location but different spread
+
+```{r}
+set.seed(3987)
+x1 <- rnorm(10000, 0, 500)
+x2 <- rnorm(10000, mean = 0, sd = 100)
+df <- data.frame(x = c(x1, x2),
+                 group = rep(c("big SD", "small SD"), each = 10000))
+
+ggplot(df, aes(x = x,
+               group = group,
+               fill = group)) +
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  scale_fill_viridis_d() 
+```
+
+## The Empirical Rule
+
+-   By knowing the mean and SD, we have a good idea of where the majority of the data falls
+
+-   $\mu \pm \sigma = 68\%$ of the data
+
+-   $\mu \pm 2\sigma = 95\%$ of the data
+
+-   $\mu \pm 3\sigma = 99.7\%$ of the data
+
+![The Empirical Rule (image credit Open Intro Statistics).](68-95-997.png)
+
+-   When working with normal distribution problems:
+
+    -   Sketch a bell curve
+
+    -   Put the mean value in the middle
+
+    -   Put the mean $\pm$ 1 or 2 SD on the figure
+
+    -   Draw a line or mark where the value you're thinking about is.
+
+-   For example, let's say we have a variable $y$, which has:
+
+    -   $\Large y \sim \text{Normal} (\mu = 10,~ \sigma = 2)$
+
+-   The curve is centered at our mean of 10 (tallest part of the "bell")
+
+-   Add a few marks indicating 1 and 2 standard deviations away from the mean:
+
+    -   $10 \pm 2 = (8, 12)$
+
+    -   $10 \pm 2*2 = (6, 14)$
+
+-   Sketch the overall distribution
+
+![Sketch or a normal distribution.](sketch.png)
+
+-   Then, you can quickly sketch where a give observation would fall on the distribution.
+-   For example, if we had an observation of 9.7 and 13, I would quickly add them to the sketch:
+
+![Figure 5. Sketch with observations.](sketch-obs.png)
+
+-   So, 9.7 is a reasonable observation
+
+-   13 is not common, but maybe not incredibly rare
+
+## Sketch Activity
+
+-   When a gallon of gas is burned, the amount of CO~2~ that is released can be described with a normal distribution with a mean of 8,800 and a SD of 500 grams.
+
+    1.  Describe this distribution with a mathematical equation
+
+    2.  Sketch this distribution and include the mean, and values which are $\pm$ 1 and 2 SDs
+
+    3.  What is the likelihood of observing 9000 g of CO~2~ from one gallon of gas?
+
+    4.  What about observing anything over 10,000 g of CO~2~?
+
+## Working with Normal distributions in R
+
+-   Sketching out a normal distribution is a great "gut check" when answering questions about normal distributions.
+
+-   We can also use R to get exact answers for probability of observing some values.
+
+-   Let's look at an empirical distribution for CO~2~ described above
+
+```{r}
+#| echo: false
+
+set.seed(3987)
+x_co2 <- rnorm(10000, 8880, 500)
+co2_df <- data.frame(x = x_co2)
+
+ggplot(co2_df, 
+       aes(x)) +
+  stat_density(alpha = 0.75,
+               fill = "dodgerblue",
+               color = "black") +
+  labs(x = expression(CO[2])) +
+  theme_bw() 
+```
+
+::: callout-note
+## Note to instructor
+
+#### Draw multiple copies of the density plot on board
+
+-   Annotate one at a time to highlight concepts
+
+-   i.e., exact probabilities
+
+-   "up to" probabilities
+
+-   Quantiles
+
+-   etc.
+:::
+
+### Observing an exact number
+
+-   Now, let's look again at our example above of observing 9000g of CO~2~
+
+```{r}
+ggplot(co2_df, aes(x)) +
+  geom_density() +
+  labs(x = "co2",
+       caption = "Figure 7.") +
+  theme_bw() +
+  annotate("segment",
+           x = 9000,
+           xend = 9000,
+           y = 2e-04,
+           yend = 0,
+           color = "red",
+           arrow = arrow(length = unit(0.05, "npc")))
+```
+
+-   To do this, we can use the `dnorm()` function
+
+    -   "d" is for density
+
+    -   It tells us the probability of observing an number exactly
+
+    -   To use the `_norm()` functions (more functions coming up) we need to specify the mean and sd values
+
+        -   If we don't it will assume `mean=0` and `sd=1`
+
+        -   This is called the "special normal" distribution which we will discuss below.
+
+```{r}
+dnorm(9000, mean = 8800, sd = 500)
+```
+
+-   That's a astonishingly small probability!
+
+-   Any ideas what happened here?
+
+-   This is the probability of observing *EXACTLY* 9000 g
+
+-   The probability of observing any number exactly is small
+
+-   Even for the mean value, which should be the most common and has the highest single probability of being observed:
+
+```{r}
+dnorm(8800, mean = 8800, sd = 500)
+```
+
+### Observing *up to* some value
+
+-   What we usually want to know is the probability of observing *up to* some value.
+
+```{r}
+#| echo: false
+breaks <- c(-Inf, 9000, Inf)
+ggplot(co2_df, aes(x)) +
+  geom_density() +
+  scale_fill_manual(values = c("dodgerblue", "grey")) +
+  stat_density(
+    n = 500,
+    geom = "area",
+    colour = "black",
+    aes(
+      fill = after_stat(x) %>% cut(!!breaks),
+      group = after_scale(fill)
+    )
+  ) +
+  #scale_y_continuous(limits = c(0,0.8e-02)) +
+  theme_bw() +
+  theme(legend.position = "none") 
+```
+
+-   For that, we use `pnorm()`
+
+```{r}
+pnorm(9000, mean = 8800, sd = 500)
+pnorm(8800, mean = 8800, sd = 500)
+```
+
+-   That should make more sense
+
+-   We have a \~65% probability of observing a value up to 9000g
+
+-   We have a 50% probability of observing 8800 g, which is in the middle
+
+-   What about the probability of observing anything greater than 9000g?
+
+-   Density probabilities sum to 1, so we can calculate this in one of two ways
+
+    -   We can subtract the probability we calculated above from 1
+
+    -   Or, we can set an optional argument in the `pnorm()` function
+
+```{r}
+1 - pnorm(9000, mean = 8800, sd = 500)
+pnorm(9000, mean = 8800, sd = 500, lower.tail = FALSE)
+```
+
+-   Both give us the same answer
+
+    -   Either one is fine
+
+    -   I'd recommend memorizing whichever one makes sense and just use that.
+
+    -   I tend to use the `lower.tail` argument so I don't have to remember to do the subtraction, but whatever works for you is fine.
+
+### Observing a number between two values
+
+-   Let's say we want to know the probability of observing a value between 9000 and 10,000g of CO~2~
+
+```{r}
+#| echo: false
+breaks <- c(-Inf, 9000, 10000, Inf)
+ggplot(co2_df, aes(x)) +
+  geom_density() +
+  scale_fill_manual(values = c("grey90", "dodgerblue", "grey50")) +
+  stat_density(
+    n = 500,
+    geom = "area",
+    colour = "black",
+    aes(
+      fill = after_stat(x) %>% cut(!!breaks),
+      group = after_scale(fill)
+    )
+  ) +
+  #scale_y_continuous(limits = c(0,0.8e-02)) +
+  theme_bw() +
+  theme(legend.position = "none") 
+```
+
+-   For this, we first calculate the probability of the larger number, then subtract the probability of the smaller number:
+
+```{r}
+pnorm(10000, mean = 8800, sd = 500) - pnorm(9000, mean = 8800, sd = 500)
+```
+
+### What value is at a given percentile?
+
+-   It can also be useful to know what value separates given percentiles (AKA quantiles) of our data.
+
+-   For example, what value of CO~2~ marks the 10% percentile? What about the 95%?
+
+-   For this, we use `qnorm()`
+
+```{r}
+qnorm(0.1, 8800, 500)
+qnorm(0.95, 8800, 500)
+```
+
+-   so a value of \~8160g marks the 10% percentile, while a value of \~9622 is at the 95% percentile
+
+### Draw a random observation from a sample
+
+-   Finally, we can use `rnorm()` to draw random number(s) from a given normal distribution
+
+    -   The first argument, `n` , tells R how many observations to draw
+
+    -   I will also set the seed so that it is reproducible and we all get the same values
+
+```{r}
+set.seed(943)
+# one observation
+rnorm(1, mean = 10, sd = 2)
+# 5 observations
+rnorm(5, mean = 10, sd = 2)
+```
+
+## Standard-Normal Distribution
+
+-   The standard normal distribution is a special case where $\mu = 0$ and $\sigma = 1$
+-   Sometimes called the Z distribution
+
+| Empirical rule percentage | Min value | Max value |
+|:-------------------------:|:---------:|:---------:|
+|            68%            |    -1     |     1     |
+|            95%            |    -2     |     2     |
+|           99.7%           |    -3     |     3     |
+
+-   This makes assessing the probability of observing a given value pretty fast and straightforward
+
+-   For example, if you have a standard normal distribution and you observe a 0.1, you should not be surprised at all.
+
+    -   This is close to the mean, and it is within 1 SD of it
+
+-   Likewise, if you observed a value of -1.2, you should not be surprised
+
+    -   you known that 1.2 is in between 1 and 2 SDs of the mean, and somewhere between 68-95% of the data falls in this region
+
+-   Finally, if you have an observation of 3.7, you know this is rare because it is more than 3 SDs away. In other words, you have less that a 1 - 99.7 = 0.03% chance of observing such an extreme value
+
+## Z-scores
+
+-   One cool thing about normal distributions is that we can turn any of them into a standard normal dsitribution
+
+-   We do this by giving every observation a Z-score with the following formula
+
+$\Large Z = \frac{x_{i} - \hat\mu} {\hat\sigma}$
+
+-   Where $Z$ is the standardized score
+
+-   $x_i$ is the individual observation
+
+-   $\hat\mu$ is mean estimated from the sample
+
+-   $\hat\sigma$ is SD estimated from the sample
+
+-   Calculate z-scores from a random sample
+
+```{r}
+# draw 5 random observations
+set.seed(2112)
+x_samp <- rnorm(5, mean = 10, sd = 2)
+# look at them
+x_samp
+
+# calculate z-score
+(x_samp - mean(x_samp)) / sd(x_samp)
+```
+
+-   in this case, all observations are within 2 SDs, and most (4/5) are within 1 SD.
+
+### Comparing Z-scores
+
+-   Z-scores are particularly useful when we want to compare values collected on different scales.
+
+-   For example, let's compare student scores from two different common standardized tests: the ACT and the SAT.
+
+-   The distribution of test scores on the SAT and the ACT are both nearly normal, but are on different scales.
+
+-   The SAT ranges from 400-1600, while the ACT ranges from 1-36.
+
+-   Suppose that one student scores an 1800 on the SAT (Student A) and another student scores a 24 on the ACT (Student B). Which student performed better?
+
+-   $\text{SAT} \sim {Normal}( \mu = 1500, \sigma = 300)$
+
+-   $\text{ACT} \sim {Normal}(\mu = 21, \sigma = 5)$
+
+-   $x_A$ represents the score of Student A
+
+-   $x_B$ represents the score of Student B.
+
+$Z_{A} = \frac{x_{A} - \mu_{SAT}}{\sigma_{SAT}} = \frac{1800-1500}{300} = 1$
+
+$Z_{B} = \frac{x_{B} - \mu_{ACT}}{\sigma_{ACT}} = \frac{24 - 21}{5} = 0.6$
+
+-   Student A has a z-score of 1, which is higher than the z-score for student B of 0.6.
+
+-   So student A was further away from the mean then student B and because the value was positive it's closer to the right side of the distribution.
+
+-   In other words, student A performed better than student B.
+
+![SAT and ACT Scores for student A and B. (image credit Open Intro Statistics)](sat-act.png)
+
+## Why are normal distributions normal?
+
+-   Gaussian distributions are called "normal" because they are frequently observed in many natural phenomena
+
+    -   Height, weight, measurement errors, blood pressure, shoe size, retirement age of professional football players...
+
+-   When we go out and measure things, a common, typical, usual, etc. pattern is that the measurements take on a Gaussian distribution with:
+
+    -   Many measurements are close to one value (the mean)
+
+-   Many processes can lead to normal distributions
+
+### Binary addition processes leading to normal distributions
+
+-   A binary process is something which has one of two outcomes
+
+    -   i.e., a coin toss results in heads or tails
+
+    -   An individual either survives or dies, reproduces or doesn't reproduce, etc.
+
+-   When we add up these binary processes, they often lead to Gaussian distributions
+
+-   Let's sample in R to demonstrate this
+
+```{r}
+set.seed(579)
+sample(x = c(-1, 1), size = 1)
+```
+
+-   The `sample` function chooses from the values in x (i.e., either a 1 or a -1)
+
+-   The size is the number of samples to take
+
+-   If we run it multiple times we can see that we get about half 1's and half -1's
+
+-   We can increase this by changing the size argument
+
+    -   Add the `replace = TRUE` argument so that it doesn't run out of options
+
+```{r}
+sample(x = c(-1, 1), size = 10, replace = TRUE)
+```
+
+-   We can take it one step further by adding these together by wrapping the whole thing in a `sum()` argument
+
+```{r}
+# set some seed here
+sum(sample(x = c(-1, 1), size = 10, replace = TRUE))
+```
+
+-   Everyone set a unique seed and run the above code and tell me your result
+
+::: callout-note
+## Write results on board
+
+-   Make a number line and add the results
+
+-   What does it look like?
+
+-   Normal?
+:::
+
+-   Let's increase our simulation one more way to show how this would look if we continued to sample
+
+```{r}
+set.seed(33)
+bin_add <- replicate(1000, 
+                     sum(
+                       sample(x = c(-1, 1), size = 10, replace = TRUE)))
+hist(bin_add)
+```
+
+-   Looks pretty normal to me
+
+-   This happens because of all the possiblities, there are very few ways to get -10 or 10
+
+    -   i.e., every result in our 10 "coin flips" would have to be either Heads or Tails
+
+-   There are a lot of ways to get a 0
+
+    -   One average, half our flips will be -1 and half will be 1, so the sum = 0
+
+-   But how realistic is this?
+
+-   An often cited example is human height
+
+-   Human height is determined by a number of factors
+
+    -   Numerous genes, many with only 2 alleles
+
+    -   Mother's health before, during, and after pregnancy
+
+    -   Nutrition throughout growth
+
+    -   Environmental factors
+
+-   Many of these events are independent (though not all) and may of them can be simplified as having one of two possible outcomes
+
+-   Of all the possibilities, it is rare to have all these independent events result in "short" or "tall" outcomes
+
+-   At the population level, the few extreme examples (i.e., very tall or very short) tend to "cancel each other out"
+
+-   Resulting in most people being close to the average
+
+### Multiplicative processes leading to normal distributions
+
+-   Quickly, we can show a similar process when many processes which have a small effect are multiplied together
+
+-   In this case, think of all those genetic markers which are related to height.
+
+    -   They are not truly "tall" and "short" alleles
+
+    -   In reality, they probably all interact with one another, such that each contributes a percentage to making a person shorter or taller
+
+-   We can simulate this by sampling from a uniform distribution and adding it to 1
+
+```{r}
+set.seed(444)
+growth <- replicate(1000, 
+                    prod(1 + runif(10, min = 0, max = 0.1)))
+hist(growth)
+```
+
+## Log-normal Distribution
+
+-   Another common distribution in nature is the log-normal distribution
+
+-   This is a distribution which has an extremely long right tail when looking at the raw values
+
+-   But it looks normal after performing a log transformation
+
+```{r}
+set.seed(987) # for reproducibility
+x_ln <- rlnorm(1000) # sample 1000 observations from a log-normal distribution 
+
+# plot the values
+plot(density(x_ln))
+```
+
+-   We can see that this is a highly skewed data set
+
+    -   lots of observations on the left side (peak)
+
+    -   very few observations of really large numbers (right side).
+
+### Log transformation
+
+```{r}
+x_tranformed <- log(x_ln)
+
+plot(density(x_tranformed))
+```
+
+-   We can see now that the distribution is approximately normal.
+
+-   Note that this has been a standard method in statistical analyses for many years
+
+-   There are now modern approaches which are more appropriate
+
+-   We will use log-transformations in the next few weeks and learn the other techniques later
+
+-   We will discuss other transformations as they come up in class later.
+
+## Other Distributions
+
+-   There are many other distributions
+
+-   Some that we will look at in detail later include:
+
+-   Poisson
+
+    -   Discrete positive values
+
+    -   This is a "bound" distribution
+
+        -   Cannot be negative
+
+    -   usually a count
+
+    -   The mean and the variance are the same
+
+```{r}
+set.seed(777)
+x_pois1 <- rpois(1000, 1)
+x_pois2 <- rpois(1000, 8)
+
+tibble(x = c(x_pois1, x_pois2),
+       lambda = factor(rep(c(1, 8), each = 1000))) |>
+  ggplot(aes(x = x,
+             group = lambda,
+             fill = lambda)) +
+  stat_density(alpha = 0.75,
+               position = "identity",
+               adjust = 3)+ # adjust to "blend out" discrete peaks
+  scale_fill_viridis_d() +
+  theme_bw()
+```
+
+-   Negative Binomial
+
+    -   Similar to Poisson
+
+    -   Except the mean and variance are *not* the same
+
+    -   Usually has more 0's than "would be expected"
+
+```{r}
+set.seed(777)
+x_nb1 <- rnbinom(n = 1000, 1, mu = 1)
+x_nb2 <- rnbinom(n = 1000, 1, mu = 10)
+
+tibble(x = c(x_nb1, x_nb2),
+       mu = factor(rep(c(1, 10), each = 1000))) |>
+  ggplot(aes(x = x,
+             group = mu,
+             fill = mu)) +
+  stat_density(alpha = 0.75,
+               position = "identity",
+               adjust = 3)+ # adjust to "blend out" discrete peaks
+  scale_fill_viridis_d() +
+  theme_bw()
+```
+
+-   Binomial
+
+    -   Response is one of two possibilities
+
+    -   This is different than binary processes above
+
+        -   Above, many binary events occur leading to some result
+
+        -   Here, the response is binary
+
+    -   Generally, looking at the *proportion* of results which are a 0 or 1
+
+        -   This is a bound distribution where $0 \le x \le 1$
+
+```{r}
+set.seed(777)
+x_nb1 <- rbinom(n = 1000, 1, 0.1)
+x_nb2 <- rbinom(n = 1000, 1, 0.8)
+
+tibble(x = c(x_nb1, x_nb2),
+       prob = factor(rep(c(0.1, 0.8), each = 1000))) |>
+  ggplot(aes(x = x,
+             group = prob,
+             fill = prob)) +
+  stat_density(alpha = 0.75,
+               position = "identity",
+               adjust = 3)+ # adjust to "blend out" discrete peaks
+  scale_fill_viridis_d() +
+  theme_bw()
+```
+
+## Other transformations
+
+-   Proportion data - arcsin-square root
+
+    -   example `x_transformed <- asin(sqrt(x))`
+
+    -   Takes proportion data (from 0-1) and "normalizes" it
+
+    -   Can be hard to interpret transformed values
+
+-   Right skewed data - Log, log~10~, amd square root transformation
+
+    -   Reduce right skewness
+
+        -   Makes big values smaller
+
+    -   Stabilize variance
+
+-   [Other examples of non-normal data and transformations](https://www.datanovia.com/en/lessons/transform-data-to-normal-distribution-in-r/)
+
+    -   positive and negative skew
+
+## Alternative statistical methods when working with non-normal data
+
+-   As mentioned above, transformations have been common in statistical analyses
+
+-   We will go over them as needed in class
+
+-   Generally, better options now exist and we will go over a few of them later in the semester
+
+# Summary
+
+-   The normal distribution is ubiquitous in the natural world
+
+-   It can be formed from many different processes
+
+    -   i.e., binary, multiplicative
+
+-   Central limit theorem
+
+-   It can be described with $\mu$ (the location of the "peak") and $\sigma$ (a measure of how "wide" it is).
+
+-   There are many `_norm()` functions in R which can tell us the:
+
+    -   Probability of observing an exact number `dnorm()`
+
+    -   Probability of observing up to a given number `pnorm()`
+
+    -   What quantile a given number is in a distribution `qnorm()`
+
+    -   We can also generate random observations from a normal distribution `rnorm()`
+
+-   The default arguments for these functions has `mean = 0` and `sd = 1`, i.e., standard normal
+
+-   The Standard normal distribution is a special case where $\mu = 0$ and $\sigma = 1$
+
+-   Any normal distribution can be created with the Z-transformation:
+
+    -   $\Large z = \frac{x_{i} - \mu} {\sigma}$
+
+-   Z-scores can be compared even when the original data were on different scales
+
+-   A log-normal distribution is a non-normal distribution which takes on attributes of a normal distribution after it has been log-transformed
+
+-   Other transformations exist for different underlying distributions
