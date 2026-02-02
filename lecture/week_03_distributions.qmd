@@ -5,7 +5,7 @@ format:
     embed-resources: true
 editor: visual
 toc: true
-toc-depth: 3
+toc-depth: 2
 number-sections: true
 theme:
   light: flatly
@@ -242,6 +242,24 @@ ggplot(df, aes(x = x,
 
 ## Working with Normal distributions in R
 
+### Draw a random observation from a sample
+
+-   Finally, we can use `rnorm()` to draw random number(s) from a given normal distribution
+
+    -   The first argument, `n` , tells R how many observations to draw
+
+    -   I will also set the seed so that it is reproducible and we all get the same values
+
+```{r}
+set.seed(943) 
+# one observation 
+rnorm(1, mean = 10, sd = 2) 
+# 5 observations 
+rnorm(5, mean = 10, sd = 2)
+```
+
+## Example of normal distirbution
+
 -   Sketching out a normal distribution is a great "gut check" when answering questions about normal distributions.
 
 -   We can also use R to get exact answers for probability of observing some values.
@@ -432,21 +450,116 @@ qnorm(0.95, 8800, 500)
 
 -   so a value of \~8160g marks the 10% percentile, while a value of \~9622 is at the 95% percentile
 
-### Draw a random observation from a sample
+## Why are normal distributions "normal"?
 
--   Finally, we can use `rnorm()` to draw random number(s) from a given normal distribution
+-   Gaussian distributions are called "normal" because they are frequently observed in many natural phenomena
 
-    -   The first argument, `n` , tells R how many observations to draw
+    -   Height, weight, measurement errors, blood pressure, shoe size, retirement age of professional football players...
 
-    -   I will also set the seed so that it is reproducible and we all get the same values
+-   When we go out and measure things, a common, typical, usual, etc. pattern is that the measurements take on a Gaussian distribution with:
 
-```{r}
-set.seed(943)
-# one observation
-rnorm(1, mean = 10, sd = 2)
-# 5 observations
-rnorm(5, mean = 10, sd = 2)
+    -   Many measurements are close to one value (the mean)
+
+-   Many processes can lead to normal distributions
+
+### Binary addition processes leading to normal distributions
+
+-   A binary process is something which has one of two outcomes
+
+    -   i.e., a coin toss results in heads or tails
+
+    -   An individual either survives or dies, reproduces or doesn't reproduce, etc.
+
+-   When we add up these binary processes, they often lead to Gaussian distributions
+
+-   Let's sample in R to demonstrate this
+
+```{r} set.seed(579) sample(x = c(-1, 1), size = 1)}
 ```
+
+-   The `sample` function chooses from the values in x (i.e., either a 1 or a -1)
+
+-   The size is the number of samples to take
+
+-   If we run it multiple times we can see that we get about half 1's and half -1's
+
+-   We can increase this by changing the size argument
+
+    -   Add the `replace = TRUE` argument so that it doesn't run out of options
+
+```{r} sample(x = c(-1, 1), size = 10, replace = TRUE)}
+```
+
+-   We can take it one step further by adding these together by wrapping the whole thing in a `sum()` argument
+
+```{r} # set some seed here sum(sample(x = c(-1, 1), size = 10, replace = TRUE))}
+```
+
+-   Everyone set a unique seed and run the above code and tell me your result
+
+## Write results on board
+
+-   Make a number line and add the results
+
+-   What does it look like?
+
+-   Normal?
+
+<!-- -->
+
+-   Let's increase our simulation one more way to show how this would look if we continued to sample
+
+```{r} set.seed(33) bin_add <- replicate(1000,                       sum(                        sample(x = c(-1, 1), size = 10, replace = TRUE))) hist(bin_add)}
+```
+
+-   Looks pretty normal to me
+
+-   This happens because of all the possiblities, there are very few ways to get -10 or 10
+
+    -   i.e., every result in our 10 "coin flips" would have to be either Heads or Tails
+
+-   There are a lot of ways to get a 0
+
+    -   One average, half our flips will be -1 and half will be 1, so the sum = 0
+
+-   But how realistic is this?
+
+-   An often cited example is human height
+
+-   Human height is determined by a number of factors
+
+    -   Numerous genes, many with only 2 alleles
+
+    -   Mother's health before, during, and after pregnancy
+
+    -   Nutrition throughout growth
+
+    -   Environmental factors
+
+-   Many of these events are independent (though not all) and may of them can be simplified as having one of two possible outcomes
+
+-   Of all the possibilities, it is rare to have all these independent events result in "short" or "tall" outcomes
+
+-   At the population level, the few extreme examples (i.e., very tall or very short) tend to "cancel each other out"
+
+-   Resulting in most people being close to the average
+
+### Multiplicative processes leading to normal distributions
+
+-   Quickly, we can show a similar process when many processes which have a small effect are multiplied together
+
+-   In this case, think of all those genetic markers which are related to height.
+
+    -   They are not truly "tall" and "short" alleles
+
+    -   In reality, they probably all interact with one another, such that each contributes a percentage to making a person shorter or taller
+
+-   We can simulate this by sampling from a uniform distribution and adding it to 1
+
+```{r} set.seed(444) growth <- replicate(1000,                      prod(1 + runif(10, min = 0, max = 0.1))) hist(growth)}
+```
+
+## 
 
 ## Standard-Normal Distribution
 
@@ -533,129 +646,6 @@ $Z_{B} = \frac{x_{B} - \mu_{ACT}}{\sigma_{ACT}} = \frac{24 - 21}{5} = 0.6$
 -   In other words, student A performed better than student B.
 
 ![SAT and ACT Scores for student A and B. (image credit Open Intro Statistics)](sat-act.png)
-
-## Why are normal distributions normal?
-
--   Gaussian distributions are called "normal" because they are frequently observed in many natural phenomena
-
-    -   Height, weight, measurement errors, blood pressure, shoe size, retirement age of professional football players...
-
--   When we go out and measure things, a common, typical, usual, etc. pattern is that the measurements take on a Gaussian distribution with:
-
-    -   Many measurements are close to one value (the mean)
-
--   Many processes can lead to normal distributions
-
-### Binary addition processes leading to normal distributions
-
--   A binary process is something which has one of two outcomes
-
-    -   i.e., a coin toss results in heads or tails
-
-    -   An individual either survives or dies, reproduces or doesn't reproduce, etc.
-
--   When we add up these binary processes, they often lead to Gaussian distributions
-
--   Let's sample in R to demonstrate this
-
-```{r}
-set.seed(579)
-sample(x = c(-1, 1), size = 1)
-```
-
--   The `sample` function chooses from the values in x (i.e., either a 1 or a -1)
-
--   The size is the number of samples to take
-
--   If we run it multiple times we can see that we get about half 1's and half -1's
-
--   We can increase this by changing the size argument
-
-    -   Add the `replace = TRUE` argument so that it doesn't run out of options
-
-```{r}
-sample(x = c(-1, 1), size = 10, replace = TRUE)
-```
-
--   We can take it one step further by adding these together by wrapping the whole thing in a `sum()` argument
-
-```{r}
-# set some seed here
-sum(sample(x = c(-1, 1), size = 10, replace = TRUE))
-```
-
--   Everyone set a unique seed and run the above code and tell me your result
-
-::: callout-note
-## Write results on board
-
--   Make a number line and add the results
-
--   What does it look like?
-
--   Normal?
-:::
-
--   Let's increase our simulation one more way to show how this would look if we continued to sample
-
-```{r}
-set.seed(33)
-bin_add <- replicate(1000, 
-                     sum(
-                       sample(x = c(-1, 1), size = 10, replace = TRUE)))
-hist(bin_add)
-```
-
--   Looks pretty normal to me
-
--   This happens because of all the possiblities, there are very few ways to get -10 or 10
-
-    -   i.e., every result in our 10 "coin flips" would have to be either Heads or Tails
-
--   There are a lot of ways to get a 0
-
-    -   One average, half our flips will be -1 and half will be 1, so the sum = 0
-
--   But how realistic is this?
-
--   An often cited example is human height
-
--   Human height is determined by a number of factors
-
-    -   Numerous genes, many with only 2 alleles
-
-    -   Mother's health before, during, and after pregnancy
-
-    -   Nutrition throughout growth
-
-    -   Environmental factors
-
--   Many of these events are independent (though not all) and may of them can be simplified as having one of two possible outcomes
-
--   Of all the possibilities, it is rare to have all these independent events result in "short" or "tall" outcomes
-
--   At the population level, the few extreme examples (i.e., very tall or very short) tend to "cancel each other out"
-
--   Resulting in most people being close to the average
-
-### Multiplicative processes leading to normal distributions
-
--   Quickly, we can show a similar process when many processes which have a small effect are multiplied together
-
--   In this case, think of all those genetic markers which are related to height.
-
-    -   They are not truly "tall" and "short" alleles
-
-    -   In reality, they probably all interact with one another, such that each contributes a percentage to making a person shorter or taller
-
--   We can simulate this by sampling from a uniform distribution and adding it to 1
-
-```{r}
-set.seed(444)
-growth <- replicate(1000, 
-                    prod(1 + runif(10, min = 0, max = 0.1)))
-hist(growth)
-```
 
 ## Log-normal Distribution
 
