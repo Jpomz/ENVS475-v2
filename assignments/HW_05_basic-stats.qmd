@@ -1,5 +1,5 @@
 ---
-title: "HW 05 basic stats"
+title: "HW 04 basic stats"
 execute: 
   echo: false
   eval: false
@@ -189,6 +189,7 @@ c(m_y - 3*se_y, m_y + 3*se_y)
 -   Be sure to run the following code:
 
 ```{r}
+#| echo: true
 finch_2012 <- finch |>
   filter(year == 2012)
 ```

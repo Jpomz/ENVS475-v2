@@ -1,5 +1,5 @@
 ---
-title: "Lecture Week 05: Basic Statistics"
+title: "Lecture Week 04: Basic Statistics"
 format: 
   html:
     embed-resources: true
@@ -22,7 +22,7 @@ execute:
 library(tidyverse)
 
 # data objects
-rxp_clean <- read.csv(here::here("data/rxp_clean.csv"), stringsAsFactors = TRUE)
+rxp <- read.csv(here::here("data/RxP.csv"), stringsAsFactors = TRUE)
 ```
 
 # Overview
@@ -661,7 +661,7 @@ ggplot(group_means,
 
 -   So far, we've been working with vectors which were sampled from a known distribution (i.e., `rnorm()`)
 
--   Let's return to the `rxp_clean` data and see how this works with a data frame with groups
+-   Let's return to the `rxp` data and see how this works with a data frame with groups
 
 ### Assess normality: `SVL.initial`
 
@@ -676,15 +676,15 @@ ggplot(group_means,
     -   i.e., without any groups
 
 ```{r}
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial)) +
   geom_density()
 
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial)) +
   geom_histogram()
 
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial)) +
   geom_boxplot()
 ```
@@ -696,18 +696,18 @@ ggplot(rxp_clean,
 -   Let's do the same thing but account for the groups in this data
 
 ```{r}
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial,
            fill = Res)) +
   geom_density(alpha = 0.5)
 
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial,
            fill = Res)) +
   geom_histogram() +
   facet_wrap(Res~.)
 
-ggplot(rxp_clean,
+ggplot(rxp,
        aes(x = SVL.initial,
            fill = Res)) +
   geom_boxplot()
@@ -727,7 +727,7 @@ ggplot(rxp_clean,
 -   Let's calculate the mean, SD, and sample size for `SVL.initial` by `Pred` groups
 
 ```{r}
-rxp_clean |>
+rxp |>
   group_by(Res) |>
   summarize(m_svl_i = mean(SVL.initial),
             sd_svl_i = sd(SVL.initial),
@@ -744,7 +744,7 @@ rxp_clean |>
 -   This time add a `mutate()` to add another column for the SE
 
 ```{r}
-rxp_clean |>
+rxp |>
   group_by(Res) |>
   summarize(m_svl_i = mean(SVL.initial),
             sd_svl_i = sd(SVL.initial),
@@ -763,7 +763,7 @@ rxp_clean |>
 -   Now, in the same `mutate()`, add the interval values
 
 ```{r}
-CI_svl_i <- rxp_clean |>
+CI_svl_i <- rxp |>
   group_by(Res) |>
   summarize(m_svl_i = mean(SVL.initial),
             sd_svl_i = sd(SVL.initial),
