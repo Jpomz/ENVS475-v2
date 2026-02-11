@@ -1,0 +1,336 @@
+---
+title: "Key 05 Linear Models"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+::: callout-warning
+## Instructions for writing KEY and HW
+
+1.  update libraries and data
+    1.  In setup block (hidden) and in **SETUP** sections below
+2.  Add graded comment to code block and as a 2nd-level header above problem
+3.  Once Key is complete
+    1.  Delete this instruction callout
+    2.  Render
+4.  After key is complete
+    1.  "save as" appropriate HW in `assignment/` folder
+    2.  Change `echo:` and `eval:` to `false` in YAML
+    3.  Delete GRADED headers
+    4.  Render assignment
+        1.  Ensure that code and output are not visible
+:::
+
+```{r}
+#| label: setup
+#| include: false
+
+library(arm)
+library(tidyverse)
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Learning Objectives
+
+# Setup
+
+## Libraries
+
+-   You may need to run `install.packages("arm")` before loading the libraries with the following code.
+
+-   Make sure to load `arm` **before** loading the `tidyverse`.
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(arm)
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "galapago-finches.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the data into your Quarto document by placing the following in the "setup" code block at the top of your document with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+finch <- read.csv("data/galapago-finches.csv",
+                  stringsAsFactors = TRUE)
+
+```
+
+# Problems
+
+## Problem 1: Intercept only
+
+1.1
+
+Split the data based on species, and make two new data frames, one called `fortis` and one called `scandens`.\
+\* hint: use the `filter()` function from dplyr.\
+\* Remember to use `==` in the filter function
+
+You will also need to overwrite your `year` column to be a character or factor, *NOT* a numeric column
+
+Print the `scandens` object to your console Also, add the following code to your answer and ensure the output is either `character` or `factor`
+
+```{r}
+scandens <- finch %>%
+  filter(species == "scandens") %>%
+  as_tibble()
+
+fortis <- finch %>%
+  filter(species == "fortis") %>%
+  as_tibble()
+
+# change the year column to a character data type
+scandens$year <- as.character(scandens$year)
+
+head(scandens)
+
+mode(scandens$year)
+
+```
+
+1.2 plot the `scandens` data
+
+Use ggplot() to make a scatter plot of the `blength` variable in the `scandens` data set, ignoring any grouping variables (i.e., set `x = 0`)
+
+```{r}
+ggplot(scandens, 
+       aes(y = blength,
+           x = 0)) +
+  geom_point()
+```
+
+1.3\
+Fit an intercept-only model using the `lm()` function, and save it in an object called `flm0` (short for "finch linear model 0").
+
+```{r}
+flm0 <- lm(blength ~ 1, data = scandens)
+```
+
+### Graded
+
+1.4\
+Use the `display()` function to show the results of `flm0`.\
++ hint: if `display(flm0)` doesn't work, either the `arm` package was not successfully installed or loaded, OR you did not save the output from the `lm()` function properly.
+
+```{r}
+display(flm0)
+```
+
+1.5 Write a comment in your script with the value for each of the following: a. the global mean\
+b. the SE for the global mean\
+c. the sample size\
+d. the number of parameters estimated in the model\
+e. the residual standard deviation\
+f. the value of R\^2
+
+```{r}
+### 1.5a coef.est / global mean = 13.71
+### 1.5b SEM = 0.06
+### 1.5c n = 214 
+### 1.5d k = 1
+### 1.5e residual SD = 0.81
+### 1.5f r-squared = 0
+```
+
+### 1.6-1.7 GRADED
+
+1.6\
+Calculate and print the global mean of `blength` from the `scandens` object.
+
+Also, add a comment comparing this value with your results from 1.6a above.
+
+```{r}
+mean(scandens$blength)
+# output in 1.6 should match 1.5a  
+
+```
+
+1.7\
+Calculate and print the sd for `blength`. from the `scandens` object.
+
+Also, add a comment comparing this value with your results from 1.5e above.
+
+```{r}
+sd(scandens$blength)
+# output in 1.7 should match 1.5B  
+```
+
+## problem 2: categorical data
+
+2.1
+
+Use ggplot to make a scatter plot of the `blength` observations separated by year.
+
+```{r}
+ggplot(scandens,
+       aes(x = year, 
+           y = blength, 
+           color = year)) +
+  geom_point() +
+  theme_bw()
+```
+
+2.2 Make the same plot as in 2.1 above but "jitter" the points. Make sure to set `width = 0.1` and `height = 0`
+
+```{r}
+ggplot(scandens,
+       aes(x = year, 
+           y = blength, 
+           color = year)) +
+  geom_point(position = position_jitter(width = 0.1, height = 0)) +
+  theme_bw()
+```
+
+2.3\
+Use `lm()` to fit a model which includes `year` as a predictor variable. Save this model output in an object called `flm1`, and use `display()` to print out the results in your console.
+
+```{r}
+flm1 <- lm(blength ~ year, data = scandens)
+display(flm1)
+```
+
+### GRADED
+
+2.4\
+Based on the information from 2.3 above, enter a simple aritmetic equation which estimates the the mean beak length for the *scandens* species in *1975*?
+
+```{r}
+# mean 2012
+14.12 - 0.70
+```
+
+### GRADED
+
+2.5 Make a scatter plot of the `scandes` data which separates the observations by year, and includes a point for the estimated group means.\
++ In the `stat_summary()` function, set `shape = 18` and `size = 6`.
+
+```{r}
+ggplot(scandens,
+       aes(x = year, 
+           y = blength, 
+           color = year)) +
+  geom_point(position = position_jitter(
+    width = 0.1, 
+    height = 0)) +
+  stat_summary(fun = mean, 
+               geom = "point",
+               color = "black",
+               shape = 18, 
+               size = 6) +
+  theme_bw()
+```
+
+## problem 3: confidence interval and coefplot
+
+3.1 Using `confint()` and the `flm1` object, calculate and display a 95% confidence interval for the estimated difference in beak length between 1975 and 2012.
+
+```{r}
+confint(flm1)
+```
+
+3.2\
+Use `coefplot()`and the `flm1` object to display a graphical representation of the approximate 95% CI for the estimated difference in beak length between 1975 and 2012.
+
+```{r}
+coefplot(flm1, xlim = c(-1, 0))
+```
+
+3.3 Add a comment in your script to interpret the results of problem 3.1 and 3.2. Are these interpretations in agreement with each other?
+
+```{r}
+# there is a difference in beak length between 1975 and 2012
+# the 95% CI does not include 0, either in the nnumber line or on the plot
+```
+
+3.4 Use `confint()` and `flm1` to calculate and display a 99% CI for the estimated difference in beak length between 1975 and 2012.
+
+```{r}
+confint(flm1, level = 0.99)
+```
+
+3.5 Use `coefplot()` to display a graphical representation of the approximate 99% CI for the estimated difference in beak length between 1975 and 2012.
+
+```{r}
+coefplot(flm1, xlim = c(-1, 0), sd = 3)
+```
+
+3.6 Use a comment to interpret the results of problem 4.4 and 4.5 above. Are these results in agreement? Why do you think this is?
+
+```{r}
+# Extrapolation of uncertainty, unequal sample size. 
+```
+
+# problem 4: Assumptions
+
+### GRADED
+
+4.1 Make a Q-Q plot to test the assumption of normally distributed residuals for the `blength` variable in the `scandens` data set.\
++ **Hint** make sure to use `aes(sample = blength)` inside the `ggplot()` function.
+
+```{r}
+ggplot(scandens, aes(sample = blength)) +
+  stat_qq() + # plot qq points
+  stat_qq_line() # reference line
+```
+
+4.2 Use a comment to interpret the graph you made in problem 4.1 above.
+
+```{r}
+#This indicates that the residuals are normally distributed
+```
+
+### GRADED
+
+4.3 Test the assumption of equal variance in the `flm1` model output.\
++ **Hint** make sure to use the model output and not the raw data.\
++ Be sure to include `aes(x = .fitted, y = .resid)` inside the `ggplot()` function.
+
+```{r}
+ggplot(flm1,
+       aes(x = .fitted, y = .resid)) +
+  geom_point(
+    position = position_jitter(width = 0.1,
+                               height = 0)) +
+  geom_hline(yintercept = 0)
+```
+
+4.4 Use a comment to interpret the graph you made in problem 4.3 above.
+
+```{r}
+# equal distribution above and below the reference line (0)
+# no obvious pattern in points moving across the x-axis
+```
+
+# problem 5 relevel the year factor
+
+5.1 Copy the `scandens` data set into a new object called `scandens_factor`. Make the `year` column a factor and order the levels so that 2012 is first. Fit the same linear model as in problem 2.3 but use the new `scandens_factor` data object as the input, and display the results of this new model.
+
+```{r}
+scandens_factor <- scandens
+
+scandens_factor$year <- factor(scandens_factor$year, levels = c("2012", "1975"))
+
+display(lm(blength~year, data = scandens_factor))
+```

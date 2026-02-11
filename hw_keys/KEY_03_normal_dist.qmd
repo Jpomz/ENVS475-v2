@@ -114,56 +114,68 @@ You do not need to turn in your sketches of the distributions for credit, but yo
 
 2.1 What is the probability of getting an observation of exactly 1.25?
 
-```{r} dnorm(1.25)}
+```{r} 
+dnorm(1.25)
 ```
 
 2.2 What is the probability of getting an observation of exactly -0.33?
 
-```{r} dnorm(-0.33)}
+```{r} 
+dnorm(-0.33)
 ```
 
 2.3 What is the probability of getting an observation of exactly 2.9?
 
-```{r} dnorm(2.9)}
+```{r} 
+dnorm(2.9)
 ```
 
 2.4 What is the probability of getting an observation of less than 2.5?
 
-```{r} pnorm(2.5)}
+```{r} 
+pnorm(2.5)
 ```
 
 2.5 What is the probability of getting an observation of less than -0.9?
 
-```{r} pnorm(-0.9)}
+```{r} 
+pnorm(-0.9)
 ```
 
 2.6 What is the probability of getting an observation of greater than -1?
 
-```{r} 1 - pnorm(-1)}
+```{r} 
+1 - pnorm(-1)
 ```
 
 ## GRADED
 
 2.7 What is the probability of getting an observation between 1.4 and 3.5?
 
-```{r} ## Graded pnorm(3.5) - pnorm(1.4)}
+```{r} 
+## Graded 
+pnorm(3.5) - pnorm(1.4)
 ```
 
 2.8 What value represents the 10th percentile of this distribution?
 
-```{r} qnorm(0.1)}
+```{r} 
+qnorm(0.1)
 ```
 
 ## GRADED
 
 2.9 What value represents the 95th percentile of this distribution?
 
-```{r} ## Graded qnorm(0.95)}
+```{r} 
+## Graded 
+qnorm(0.95)
 ```
 
 2.10 What value represents the 5th percentile?
 
-```{r} qnorm(0.05)}
+```{r} 
+qnorm(0.05)
 ```
 
 ## Problem 3. Triathlon times.

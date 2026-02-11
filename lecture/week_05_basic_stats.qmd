@@ -556,7 +556,8 @@ ggplot(x_samp_df2, aes(x = x, y = -0.05)) +
     geom_boxplot(width = 0.1) +
     geom_density(aes(x = x), inherit.aes = FALSE) +
   theme_bw() +
-  labs(title = "Wolf Sample 2")
+  labs(title = "Wolf Sample 2") +
+  scale_x_continuous(limits = c(28, 47))
 ```
 
 -   Here are some examples with skewed data:
@@ -640,7 +641,7 @@ ggplot(group_means,
            fill = grp)) +
   geom_boxplot() +
   theme_bw() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() 
 
 ggplot(group_means,
        aes(x = x,
@@ -648,7 +649,8 @@ ggplot(group_means,
   geom_density(alpha = 0.75, 
                adjust = 2) +
   theme_bw() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d()+
+  scale_x_continuous(limits = c(-2, 30))
 ```
 
 -   We can see that each "group" looks to be normally distributed
@@ -657,7 +659,7 @@ ggplot(group_means,
 
 ## Working with the RXP data
 
--   So far, we've been working with vectors which were sampled from a known distirbution (i.e., `rnorm()`)
+-   So far, we've been working with vectors which were sampled from a known distribution (i.e., `rnorm()`)
 
 -   Let's return to the `rxp_clean` data and see how this works with a data frame with groups
 

@@ -474,7 +474,9 @@ qnorm(0.95, 8800, 500)
 
 -   Let's sample in R to demonstrate this
 
-```{r} set.seed(579) sample(x = c(-1, 1), size = 1)}
+```{r}
+set.seed(579) 
+sample(x = c(-1, 1), size = 1)
 ```
 
 -   The `sample` function chooses from the values in x (i.e., either a 1 or a -1)
@@ -487,12 +489,15 @@ qnorm(0.95, 8800, 500)
 
     -   Add the `replace = TRUE` argument so that it doesn't run out of options
 
-```{r} sample(x = c(-1, 1), size = 10, replace = TRUE)}
+```{r}
+sample(x = c(-1, 1), size = 10, replace = TRUE)
 ```
 
 -   We can take it one step further by adding these together by wrapping the whole thing in a `sum()` argument
 
-```{r} # set some seed here sum(sample(x = c(-1, 1), size = 10, replace = TRUE))}
+```{r}
+# set some seed here 
+sum(sample(x = c(-1, 1), size = 10, replace = TRUE))
 ```
 
 -   Everyone set a unique seed and run the above code and tell me your result
@@ -509,7 +514,14 @@ qnorm(0.95, 8800, 500)
 
 -   Let's increase our simulation one more way to show how this would look if we continued to sample
 
-```{r} set.seed(33) bin_add <- replicate(1000,                       sum(                        sample(x = c(-1, 1), size = 10, replace = TRUE))) hist(bin_add)}
+```{r}
+set.seed(33) 
+bin_add <- replicate(1000,                       
+                     sum(
+                       sample(x = c(-1, 1),
+                              size = 10,
+                              replace = TRUE)))
+hist(bin_add)
 ```
 
 -   Looks pretty normal to me
@@ -556,7 +568,12 @@ qnorm(0.95, 8800, 500)
 
 -   We can simulate this by sampling from a uniform distribution and adding it to 1
 
-```{r} set.seed(444) growth <- replicate(1000,                      prod(1 + runif(10, min = 0, max = 0.1))) hist(growth)}
+```{r}
+set.seed(444) 
+growth <- replicate(1000, 
+                    prod(1 + runif(10, min = 0, max = 0.1)))
+
+hist(growth)
 ```
 
 ## 
