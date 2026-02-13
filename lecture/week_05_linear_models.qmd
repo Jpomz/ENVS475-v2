@@ -3,6 +3,7 @@ title: "Lecture Week 05: linear models"
 format: 
   html:
     embed-resources: true
+    link-external-newwindow: true
 editor: visual
 toc: true
 toc-depth: 2
@@ -45,7 +46,21 @@ library(tidyverse)
 
 ### Data
 
-Download the `darwin_maize.csv` file from D2L and put it into your `data/` folder
+For this lab, we will be using data from an experiment that Charles Darwin performed on the effects of self-pollination on *Zea maize* plants.
+
+-   Darwin was interested in determining if high genetic diversity also led to more healthy plants, and it is assumed that self-pollinated plants will have lower genetic diversity
+
+-   Briefly, Darwin was interested in whether or not there was a difference in fitness of seeds which were produced from self- or cross-pollinated plants.
+
+-   Here, the height of the plants was used as a surrogate for fitness.
+
+-   We will be using the `darwin_maize.csv` data, which you can download from D2L.
+
+-   Be sure to put it into your `data/` folder.
+
+-   When we read in the data, we will assign it to the object called `darwin_maize`.
+
+-   
 
 ```{r}
 #| eval: false
@@ -109,11 +124,11 @@ ggplot(line_df, aes(x = x, y = y)) +
 ```
 
 -   In reality, not every point is exactly on the line, right?
--   Add stochatsicity:
+-   Add stochasticity:
 
 $$\Huge y_i = a + bx + \epsilon_i$$
 
--    $\epsilon$ is "epsilon", and often represents "error" or "noise"
+-   $\epsilon$ is "epsilon", and often represents "error" or "noise"
 
 ```{r}
 set.seed(23)
@@ -151,7 +166,7 @@ $$\Large response = deterministic\; part+stochastic\; part$$
 
 -   Write the model showing how our expected value $E[y_i]$ is a function of:
 
-$$\underbrace{\LARGE E[y_i] = \beta_0 + \beta_1 \times x_i}_{Deterministic}$$
+$$\underbrace{\LARGE E[y] = \beta_0 + \beta_1 \times x_1}_{Deterministic}$$
 
 -   With the addition of a stochastic error:
 
@@ -159,17 +174,25 @@ $$\underbrace{\LARGE y_i \sim normal(E[y_i], \sigma)}_{Stochastic}$$
 
 -   Add all together:
 
-$$\LARGE y = \beta_0 + \beta_1 \times x + \epsilon$$
+$$\LARGE y_i = \beta_0 + \beta_1 \times x_1 + \epsilon_i$$
+
+-   note that in these examples, the $i$ subscript corresponds to individual observations
+
+-   The $1$ subscript refers to the predictor
+
+    -   This could be different group identities within a category
+
+    -   Or we could have multiple $x$'s (we will come back to this later)
 
 #### Global Intercept model
 
 -   If there are no groups and no continuous predictors, we can fit a model which is calculating the global intercept
 
--   Here, $x = 0$ so $\beta_1 \times 0 = 0$ so we can simplify it
+-   Here, $x_1 = 0$ so $\beta_1 \times 0 = 0$ so we can simplify it
 
 -   In other words, this is calculating the average value of our response
 
-$$\LARGE E[y_i] = \beta_0$$
+$$\LARGE E[y] = \beta_0$$
 
 -   Let's look at the `darwin_maize` data
 
@@ -201,7 +224,7 @@ ggplot(darwin_maize,
   stat_summary(fun = mean, 
                geom = "point",
                color = "black",
-               shape = 8, 
+               shape = 15, 
                size = 6) +
   theme_bw()
 ```
@@ -219,8 +242,542 @@ dlm0 <- lm(formula = height ~ 1,
            data = darwin_maize)
 ```
 
+-   `dlm0` is a new object type
+
+    -   This is a list
+
+    -   Each element in the list contains different information about the linear model
+
+```{r}
+mode(dlm0)
+names(dlm0)
+str(dlm0)
+```
+
+-   We can use functions to help us display the important parts of the model
+
+-   Today we will use `display()` from the `arm` package.
+
+-   Later, we will use `summary()`
+
+    -   NOT to be confused with `summarize()`
+
+```{r}
+display(dlm0)
+```
+
+-   This output is called a *table of coefficients*.
+
+-   There is a row for each coefficient
+
+    -   in this case, just the intercept
+
+-   the columns show the estimate as well as the standard error of the estimate.
+
+-   Coefficient tables in R always list the first coefficient as the **intercept**
+
+-   it can be sometimes tricky to figure out what it’s actually referring to.
+
+-   In this case, we can confirm it’s the global average by using the [`mean()`](https://rdrr.io/r/base/mean.html) function, either on it’s own or with `dplyr`:
+
+```{r}
+mean(darwin_maize$height)
+darwin_maize %>%
+  summarize(global_avg = mean(height))
+```
+
+-   The number of observations is displayed in the table of coefficients as `n`,
+
+-   The number of parameters estimated is shown with `k`.
+
+-   It also shows us the $R^2$ value,
+
+    -   tells us how much variation is explained based on the predictor variables used in our model.
+
+    -   $R^2$ values range from 1 (perfect explanation) to 0 (no explanation).
+
+    -   In this case we don’t have any predictor variables, so the intercept-only model explains 0% of the variation in the response variable.
+
+The table also shows us the residual standard deviation, which in this case is the same as using `sd()` since we are ignoring group-levels.
+
+```{r}
+sd(darwin_maize$height)
+```
+
+### Returning back to the model
+
+-   This model:
+
+$$\LARGE E[y] = \beta_0$$
+
+-   Only shows us the expected value of $y$
+
+    -   In other words, just the average
+
+-   But our data has lots of observations
+
+-   In order to account for that variability, we modify our model to be this:
+
+$$\LARGE E[y_i] = \beta_0 + \epsilon_i$$
+
+-   Now, our individual observations ( $y_i$ ) can be explained by our intercept $\beta_0$ plus some individual variation, $\epsilon_i$
+
+-   So, we can now write out our distribution for $\epsilon$
+
+$$\LARGE \epsilon \sim N(0, \sigma)$$
+
+-   So, if we wanted to simulate new data observations with `rnorm()`, what values would we put in?
+
+    -   i.e., `mean = ?, sd = ?`
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+```{r}
+    rnorm(10, mean = 18.88, sd = 3.18)
+
+```
+:::
+
+-   Finally, we can plot our full data with our estimated mean to illustrate this
+
+```{r}
+ggplot(darwin_maize,
+       aes(y = height,
+           x = 0)) +
+  geom_point(color = "dodgerblue") +
+  stat_summary(fun = mean, 
+               geom = "point",
+               color = "black",
+               shape = 15, 
+               size = 6) +
+  theme_bw()
+```
+
+#### Linear Model with Categorical Predictor
+
+-   Now let's add a categorical predictor
+
+    -   This is a predictor which classifies our observations into 2 or more groups
+
+    -   For the `darwin_maize`, this is indicated in the `type` column and has groups of `self` and `cross`
+
+-   Let's go back to our original model
+
+$$\LARGE E[y_j] = \beta_0 + \beta_1 \times x_1$$
+
+-   Here, $y_j$ is the expected value of each group, where $y$ is our response, and $j$ changes with each group
+
+-   To calculate the expected value of each group, we need to introduce "*dummy variables*"
+
+    -   for our reference group, $x_1 = 0$
+
+    -   For our second group, $x_1 = 1$
+
+    -   If we had more groups, we would have more $x_j$'s and they would either be a 0 or 1.
+
+        -   We will come back to this when we discuss ANOVA
+
+-   Since $x_1 = 0$ for our reference group, the expected value is:
+
+$$\LARGE E[y_{reference}] = \beta_0 + \beta_1 \times 0 = \beta_0$$
+
+::: callout-important
+-   In nearly ALL our models, the intercept ( $\beta_0$ ) is going to represent the average value of our *reference* group
+
+-   Figuring out what our reference group is can be tricky
+:::
+
+-   Since $x_1 = 1$ for our *other* group, the expected value is:
+
+$$\LARGE E[y_{other}] = \beta_0 + \beta_1 \times 1 = \beta_0 + \beta_1$$
+
+::: callout-important
+-   So to figure out the average value of our *other* group, we need to add $\beta_0$ and $\beta_1$
+
+<!-- -->
+
+-   When there are multiple groups, you always start with $\beta_0$ and add $\beta_j$
+:::
+
+-   You won't need to know if the $\beta_j$'s for your model are 0 or 1, but it's important to know what's going on behind the scenes.
+
+#### **You should now be able to complete problem 1 in the homework assignment.**
+
+#### Darwin maize with category
+
+-   Let's look at our `darwin_maize` data again
+
+-   We will do the following:
+
+1.  calucate group means
+
+2.  Display the data separated by group and show group-level means
+
+```{r}
+ggplot(darwin_maize,
+       aes(x = type, 
+           y = height, 
+           color = type)) +
+  geom_point(position = position_jitter(
+               width = 0.1, 
+               height = 0),
+             size = 2) +
+  stat_summary(fun = mean, 
+               geom = "point",
+               color = "black",
+               shape = 8, 
+               size = 6) +
+  theme_bw() +
+  scale_color_viridis_d(option = "inferno",
+                        begin = 0.3,
+                        end = 0.7)
+
+type_means <- darwin_maize |>
+  group_by(type) |>
+  summarise(m_height = mean(height),
+            sd_height = sd(height))
+type_means
+```
+
+-   Now let's fit a model using the categorical predictor
+
+```{r}
+dlm1 <- lm(height ~ 1 + type,
+           data = darwin_maize)
+display(dlm1)
+```
+
+::: callout-note
+**Note** that when you have predictor variables in the formula the `1` is no longer needed, so running `lm(height ~ type, data = darwin_maize)` will give you the same result.
+:::
+
+-   The layout of this table is similar as before, but now we have two rows, one called “(Intercept)” and one called “typeSelf”.
+
+-   Recall that there are only 2 categories in the `type` variable.
+
+-   Because `typeSelf` is listed in the table, you would be correct in assuming that (Intercept) is the average height of the plants in the Cross group.
+
+$$\LARGE E[y_{cross}] = \beta_0 = 20.19$$
+
+-   You might also assume that the `typeSelf` coefficient estimate is the avergae of the other group of plants.
+
+-   However, this coefficient is showing the estimated *difference* in means.
+
+-   So in order to get the mean for the Self group, we need to subtract the estimated difference from the estimate for the Cross group.
+
+$$\LARGE E[y_{self}] = \beta_0 + \beta_1 \times 1 = 20.19 -2.62 = 17.57$$
+
+-   These are the same values (with rounding) that we calculated manually above
+
+-   Calculating estimated means in R
+
+    -   Can manually type the values
+
+    -   Or use the coefficient estimates directly
+
+```{r}
+# estimated means
+20.19
+20.19 - 2.62
+
+# using the coefficients
+coef(dlm1)
+# type = self
+coef(dlm1)[1]
+# type = cross
+coef(dlm1)[1] + coef(dlm1)[2]
+```
+
+::: callout-note
+The "(Intercept)" here is the name of the vector position.
+
+You can remove it with this:
+
+```{r}
+cross_est <- coef(dlm1)[1] + coef(dlm1)[2]
+names(cross_est) <- NULL
+cross_est
+```
+:::
+
+![box 6.1 from New Statistics 2nd ed. by Andy Hector.](box_6-1.jpg)
+
+-   SE mean for the intercept is the same formula we used in previous classes.
+
+-   The SE difference is calculated with a different formula:
+
+$$\large SED = \sqrt{\frac{s^2_{1}}{n_1} + \frac{s^2_{2}}{n_2}}$$
+
+-   This is a "pooled" estimate of variation
+
+-   I won't ask you to do this manually, but just be aware that using `var()` on each group will not get you the correct values.
+
+#### **You should now be able to complete problem 2 in the homework assignment.**
+
 ### Confidence intervals for model coefficients (problem 4)
+
+-   Recall that a 95% CI is approximated by:
+
+$$\large 95\% CI = \bar{y} \pm 2*SEM$$
+
+-   Similar to the SED calculation above, there is uncertainty in our estimates, our SEM and SED's so we cannot simply multiply these together to estimate a 95% CI.
+
+-   Luckily, there is an R function, `confint()` which specifically calculates confidence intervals for coefficients from linear models.
+
+-   **This function does not work on vectors. It only works on fitted model objects**
+
+```{r}
+confint(dlm1)
+```
+
+-   The output of `confint()` is the lower bound (2.5%) and the upper bound (97.5%) of the confidence interval.
+
+-   So the 95% confidence interval for the average height of the Cross plants is: `r round(c(confint(dlm1)[1], confint(dlm1)[3]), 2)`, and the 95% CI for the average difference between the two groups is: `r round(c(confint(dlm1)[2], confint(dlm1)[4]), 2)`.
+
+### Interpretation
+
+-   Recall that the hypothesis was that self-pollinating plants were less fit due to lower genetic diversity.
+
+-   What does our data indicate?
+
+-   If there was **NO EFFECT** of self-pollination, we would expect the heights of each group to be the same.
+
+-   Or in other words, the difference ( $\beta_1$ ) between the groups would be 0.
+
+    -   $\beta_1 = 0$ means NO difference in group-level means
+
+    -   $\beta_1 \ne 0$ means there IS A DIFFERENCE between the group-level means
+
+-   The 95% CI for $\beta_1$ is completely negative (does not include 0).
+
+-   We are fairly confident that there is a difference in plant height.
+
+-   Because the mean height of the Self-group of plants is lower, we can conclude the difference in height is consistent with the original hypothesis (self-pollinated plants are shorter and therefore less-fit).
+
+-   The `arm` package has a nice function for displaying coefficient estimates: `coefplot()`. This function also requires the object to be a model fit (will not work on a vector).
+
+```{r}
+coefplot(dlm1, xlim = c(-5, 0))
+```
+
+-   I added the `xlim = c(-5, 0)` argument to ensure that the plot displayed 0, which is our value of interest.
+
+-   When you're doing this on the homework, you may need to play around with different limits on the x-axis.
+
+-   So, at the 95% confidence level, we can say that the there is a decrease in mean plant height in self-pollinated plants.
+
+-   We can test this same hypothesis at a higher level of confidence, i.e., 99% CI
+
+### 99% CI and `coefplot()`
+
+-   We can change the level of certainty in both the `confint()` and `coefplot()` functions
+
+-   We can calculate a 99% CI directly by adding `level = 0.99` to the `confint()` function.
+
+-   Unfortunately, the `coefplot()` function only allows us to change the level of standard deviation. We can set `sd = 3` to get *approximately* the same values.
+
+```{r}
+confint(dlm1, level = 0.99)
+coefplot(dlm1, sd = 3)
+```
+
+-   Notice that at the 99% confidence level (or at 3 \* the standard deviation), the interval now crosses 0.
+
+-   In other words, at this more strict level of confidence, we cannot say that there is a difference in height between the two plant groups.
+
+### **You should now be able to complete problem 3 in the homework assignment.**
 
 ### Linear Model Assumptions
 
+-   It's always important to remember that all models have assumptions, and you should check that those assumptions are reasonably met.
+
+-   The 4 assumptions of a linear model are:
+
+1.  Linearity\
+2.  Normality of residuals\
+3.  Equal variance (homoscedasticity) of residuals\
+    -   For categorical data, need to ensure equal variance across groups\
+4.  Independence
+
+-   Assumption 1 is usually assessed graphically and will be more important when we get to regression analysis (continuous x-variables).
+
+    -   For categorical data it is less often tested directly.
+
+-   Testing assumption 4 directly is tough, so usually we assess this assumption based on our understanding of how the data were generated and observed.
+
+-   For assumptions 2 and 3, even with categorical data, we can assess with graphs.
+
+#### Assumption 2: normal distribution of residuals
+
+-   Use a Q-Q plot
+
+-   shows our standardized residuals compared with our theoretical quantiles.
+
+-   We can do this using `ggplot()`.
+
+::: callout-note
+-   We are using `aes(sample = )` function has an argument called `sample`.
+
+-   We do not use an `x` or `y` argument.
+:::
+
+```{r}
+ggplot(darwin_maize, aes(sample = height)) +
+    stat_qq() + # plot qq points
+    stat_qq_line() # reference line
+```
+
+-   If the residuals were **perfectly normal**, all the points would be exactly on the line.
+
+-   Here, the data in the middle fit pretty well, but the observations at the extreme ends are rather far off the line.
+
+-   Luckily, linear models are fairly robust to this assumption.
+
+-   In this case, it doesn't look perfect, but it's not terrible.
+
+-   We will discuss how to deal with non-normal residuals in the future.
+
+#### Assumption 3: equal variance of residuals
+
+-   We will compare the *fitted* model values with the *residuals*.
+
+    -   Residuals are a measure of how far away the observation is from the prediction
+
+        -   Draw an estimated value on the board
+
+        -   Draw an empirical observation
+
+        -   Show the distance
+
+-   For this we can again use `ggplot()`,
+
+    -   however, this time we are plotting the *model object*, not the raw data directly.
+
+    -   Note that I once again added a "jitter" argument to the width (x-axis) to help visualize the individual points but did not modify the position on the height (y-axis)
+
+```{r}
+ggplot(dlm1,
+       aes(x = .fitted, y = .resid)) +
+    geom_point(
+      position = position_jitter(
+        width = 0.1,
+        height = 0)) +
+    geom_hline(yintercept = 0)
+
+```
+
+-   What we are looking for here is that the minimum and maximum y-values are the same across the x-values, and that they are approximately equally distributed above and below the reference line (y = 0).
+
+    -   Basically, no pattern moving left to right
+
+    -   Same heights (max and min values)
+
+-   Here, we have a few points that are well below the rest (difference in range)
+
+    -   negative values below -3
+
+-   It appears to be unequal (most points above the 0 reference line).
+
+-   Similar to the results above, this is not perfect, but also not terrible.
+
+#### Categorical data: Check variance within groups
+
+-   When we have categorical predictors, we also want to ensure that the variance between groups is approximately the same.
+
+-   We can do this with a boxplot of the groups.
+
+```{r}
+ggplot(darwin_maize,
+       aes(x = height,
+           y = type)) +
+  geom_boxplot()+
+  labs(title = "Example of approx. equal variances across groups")
+```
+
+-   Here, the widths of the boxplots are approximately equal
+
+-   Means that each group has approximately the same observed variation.
+
+-   The dots on the left side for each group are not ideal, but this doesn't look too concerning.
+
+-   What would be concerning is if the widths of the boxes were different sizes. For example:
+
+```{r}
+set.seed(2112)
+df <- data.frame(x = c(rnorm(10, 10, 1), 
+                       rnorm(10, 20, 10)), 
+                 group = rep(c("A", "B"), each = 10))
+ggplot(df, 
+       aes(y = group, 
+           x = x)) +
+  geom_boxplot() +
+  labs(title = "Example of unequal variances across groups")
+```
+
+### **You should now be able to complete problem 4 in the homework assignment.**
+
+### Re-level your data to change the "reference" level
+
+-   We can modify the data to estimate the mean and SE for the other plant group (`Self`).
+
+-   Right now, the `type` column is a factor.
+
+```{r}
+class(darwin_maize$type)
+levels(darwin_maize$type)
+```
+
+-   The default behavior for R is to treat characters alphabetically.
+
+-   We can change this by setting the levels of `type` manually
+
+-   I will first make a new object called `darwin_factor`, which will be an exact copy of `darwin_maize`.
+
+-   I will then change the levels of the `type` variable directly.
+
+```{r}
+# copy the data object
+darwin_factor <- darwin_maize
+
+# change the class of the type column
+# and set the levels
+darwin_factor$type <- factor(
+  darwin_factor$type,
+  levels = c("Self", "Cross"))
+
+# what is the class of the new type column?
+class(darwin_factor$type)
+# what are the order of the levels?
+levels(darwin_factor$type)
+```
+
+-   Now, we can perform the same linear model analysis as above with the `Self` group as our reference level.
+
+```{r}
+display(lm(height~type, data = darwin_factor))
+```
+
+-   Now we can see that the estimate and SE for the Intercept coefficient are different.
+
+-   Likewise the second row of the table now says `typeCross` instead of `typeSelf`.
+
+### **You should now be able to complete the homework assignment.**
+
 # Summary
+
+-   Models are ways of estimating group-level statistics from empirical data
+
+-   Important to think about the mathematical formula
+
+    -   What group-level mean is represented by $\beta_0$?
+
+    -   How do you calculate the mean of the *other* group(s)?
+
+        -   $\beta_0 + \beta_j$
+
+-   You can re-level your data to set your "reference" level
+
+-   All models have assumptions
+
+-   Be sure to check your data to see if assumptions are reasonable
