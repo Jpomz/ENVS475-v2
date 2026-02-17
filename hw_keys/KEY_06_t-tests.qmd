@@ -1,0 +1,455 @@
+---
+title: "Key 06 t-tests"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+::: callout-warning
+## Instructions for writing KEY and HW
+
+1.  update libraries and data
+    1.  In setup block (hidden) and in **SETUP** sections below
+2.  Add graded comment to code block and as a 2nd-level header above problem
+3.  Once Key is complete
+    1.  Delete this instruction callout
+    2.  Render
+4.  After key is complete
+    1.  "save as" appropriate HW in `assignment/` folder
+    2.  Change `echo:` and `eval:` to `false` in YAML
+    3.  Delete GRADED headers
+    4.  Render assignment
+        1.  Ensure that code and output are not visible
+:::
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+bt_samp <- read_csv(here::here("data/body_temp_hr.csv"))
+
+finch <- read_csv(here::here("data/galapago-finches.csv"))
+
+scandens <- finch |>
+  filter(species == "scandens") |>
+  as_tibble()
+scandens$year <- as.character(scandens$year)
+
+darwin_maize <- read_csv(here::here("data/darwin_maize.csv"))
+```
+
+# Learning Objectives
+
+Following this assignment students should be able to:
+
+-   Define the null and alternative hypotheses for three kinds of t-tests
+
+-   Interpret results in writing, including relevant statistical information
+
+-   Perform a one-sample t-test manually
+
+-   Perform a one-sample t-test using the `lm()` function
+
+-   Perform a two-sample t-test using the `lm()` function
+
+-   Perform a paired t-test using the `lm()` function
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "body_temp_hr.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the following data into your script
+
+-   Be sure to run the two lines of code to modify the `finch` data to `scandens` :
+
+```{r}
+#| eval: false
+#| echo: true
+
+# data for problem 1 and 3
+bt_samp <- read_csv("data/body_temp_hr.csv")
+
+# data for problem 2
+finch <- read_csv("data/galapago-finches.csv")
+# modify data for problem 2
+scandens <- finch |>
+  filter(species == "scandens") |>
+  as_tibble()
+scandens$year <- as.character(scandens$year)
+
+# data for problem 4
+darwin_maize <- read_csv("data/darwin_maize.csv")
+```
+
+# Problems
+
+### Data: `bt_samp`
+
+## Problem 1: One-sample t-test
+
+We will be formally testing whether the true population mean of human body temperatures is equal to 98.6 degrees Fahrenheit.
+
+1.1 Add a comment to your homework script stating the null and alternative hypotheses. Make sure to put each hypothesis on its own line. Make sure that your alternative hypothesis is 2-tailed.
+
+```{r}
+# Null: Mu = 98.6 OR Mu - 98.6 = 0
+# Alternative: Mu != 98.6 OR Mu - 98.6 != 0
+```
+
+1.2 Make a box plot of body temperature. Be sure to include a dashed line at our $\mu_0$ value
+
+```{r}
+ggplot(data = bt_samp, 
+       aes(y = body_temp)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 98.6,
+             linewidth = 1.5,
+             linetype = "dashed",
+             color = "dodgerblue") +
+  theme_bw()
+```
+
+1.3 Add a comment to your script making a prediction: Do you think the average body temperature is going to be different from 98.6 degrees? Why or why not?
+
+```{r}
+# Not graded, just looking for interpretation and that you are thinking about the data and hypotheses. 
+```
+
+1.4 Extract the `body_temp` column/variable from `bt_samp` and store it as a vector called `b`.
+
+```{r}
+b <- bt_samp$body_temp
+b
+```
+
+1.5 Create new variables for the mean, SD and SEM of the vector `b`. Be sure that the values print out when you source your script so that I can check your work.
+
+```{r}
+(mean_b <- mean(b))
+(b_sd <- sd(b))
+(sem_b <- b_sd / sqrt(length(b)))
+```
+
+1.6 Calculate a t-statistic and print it out to your console.
+
+-   **HINT** Name it something different from the class example so that you don't get confused which variable is which.
+
+```{r}
+(t_statistic <- (mean_b - 98.6) / sem_b)
+```
+
+## 1.7 GRADED -1.978
+
+1.7 calculate the critical value of t for this analysis and store it as a variable.
+
+-   **HINT** use the `qt()` function, and make sure you calculate the correct degrees of freedom for this data set.
+
+-   Give it a different name than what was used in class example.
+
+```{r}
+(t_critical <- qt(0.025, df = length(b) - 1))
+```
+
+1.8 Add a comment interpreting how the t-stat compares to our t-critical value. Do we reject or fail to reject our null hypothesis?
+
+```{r}
+t_statistic
+t_critical
+# t_stat > t_critical. Reject the Null. 
+# 
+```
+
+## 1.9 GRADED 2.41e-07
+
+1.9 Calculate the p-value for your t-statistic in this analysis.
+
+```{r}
+pt(t_statistic, df = length(b)-1) *2
+```
+
+1.10 Write out an interpretation sentence for the results of your manually calculated one-sample t-test. Be sure to include the estimated mean body temperature ($\pm \text{SE}$) as well as the t-statistic, the p-value, and the degrees of freedom. - Also include a sentence saying whether or not your prediction above was correct or not.
+
+```{r}
+# reject the null hypothesis, t = -5.455, p < 0.001, df = 129
+
+# based on our data, we estimate that mean body temperature (+/- SE) is 98.25 (+/- 0.06) and that this is significantly different from 98.6 (t_stat = -5.455, p < 0.001, df = 129)
+
+# Compare with prediction
+```
+
+1.11 Analyze your `b` vector using the `lm()` function. Make sure to correctly account for your null value of 98.6 degrees.
+
+-   Store your fitted model as an object, and then use the `summary()` function to print out the results
+
+```{r}
+one_fit <- lm(b - 98.6 ~ 1)
+summary(one_fit)
+```
+
+1.12 Add a comment to your script interpreting the results of your `lm()` analysis. Be sure to refer back to the null and alternative hypotheses for the intercept ($\beta_0$) in a linear model. Include the t-statistic, the degrees of freedom, and the p-value in your answer.
+
+```{r}
+# reject the null hypothesis, t = -5.455, p < 0.001, df = 129
+
+# based on our data, we can conclude that the average body temperature - 98.6 degrees is not equal to 0. In other words, mean body temperature is not equal to 98.6 degrees(t_stat = -5.455, p < 0.001, df = 129)
+```
+
+## Problem 2: two-sample t-test
+
+### Data: `scandens`
+
+We want to know if the average beak length (`blength`) has changed in the population of *Geospiza scandens* living on Daphne Major in the Galapagos islands between 1975 and 2012.
+
+We will once again be using the *Geospiza scandens* data from the `darwin-finches.csv`.
+
+The following code is repeated from above. You only need to run it once.
+
+```{r}
+#| eval: false
+#| echo: true
+
+# read in full data set
+finch <- read_csv("data/galapago-finches.csv")
+# filter out scandens data and make a tibble
+scandens <- finch |>
+  filter(species == "scandens") 
+
+# change the year column to a character data type
+# this is necessary to run a 2-sample t-test
+# If we leave year as an integer, the lm() function 
+# will treat it as continuous and will calculate statistics for a linear regression. 
+scandens$year <- as.character(scandens$year)
+```
+
+All of the following questions refer to the `scandens` object.
+
+2.1 Add a comment to your homework script stating the null and alternative hypotheses. Make sure to put each hypothesis on its own line. Make sure that your alternative hypothesis is 2-tailed.
+
+## 2.1 GRADED hypo's
+
+```{r}
+# one of the two sets of hypotheses need to be included
+
+# NULL: Average Beak length in 2012 = Average Beak length in1975
+# ALT: Average Beak length in 2012 != Average Beak length in1975
+
+# NULL: Mu_2012 = Mu1975
+# ALT: Beak length Mu_2012 \ne Mu_1975
+```
+
+## 2.2 GRADED boxplot
+
+2.2 Make a box plot of `bdepth` separated by year.
+
+```{r}
+ggplot(data = scandens, 
+       aes(y = bdepth,
+           fill = year)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+2.3 Add a comment to your script making a prediction: Do you think the averages will be different? Why or why not?
+
+```{r}
+# Not graded, just looking for interpretation and that you are thinking about the data and hypotheses. 
+```
+
+2.4 Use the `lm()` function to perform a 2-sample t-test on whether or not the average `blength` (in mm) is equal between the two years of data.
+
+-   Make sure to save your model-fit as an object, and then use the `summary()` function to print out the results.
+
+```{r}
+fit_2 <- lm(blength ~ year, data = scandens)
+summary(fit_2)  
+```
+
+2.5 What is the estimate and standard error for `blength` in the "1975" sample? What is the estimate and standard error for the *difference* in `blength` between "1975" and the "2012" samples?
+
+```{r}
+# 1975: Mean \pm SE 14.12 \pm 0.079
+# difference: -0.7 \pm 0.102
+```
+
+2.6 Add a comment to your script interpreting the results of your analysis. Be sure to refer back to the null and alternative hypotheses (reject or fail to reject?) include the t-statistic and the p-value in your answer. Write a separate sentence interpreting the adjusted R^2^ value
+
+```{r}
+# Based on our data, we reject the null hypothesis and conclude that the mean beak length in the two years was different (t-stat = -6.85, p < 0.001) 
+# The adjusted R2 value of 0.1772 means that this model explains 17.72% of the variation in our response variable, beak depth. 
+```
+
+## Problem 3: two-sample t-test
+
+### Data: `bt_samp`
+
+We want to know if the average `heart_rate` differs between males and females.
+
+If you haven't already, read the `bt_samp.csv` file into R.
+
+```{r}
+#| eval: false
+#| echo: true
+
+bt_samp <- read_csv("data/body_temp_hr.csv")
+```
+
+3.1 Add a comment to your homework script stating the null and alternative hypotheses. Make sure to put each hypothesis on its own line. Make sure that your alternative hypothesis is 2-tailed.
+
+```{r}
+# one of the two sets of hypotheses need to be included
+
+# NULL: Average HR in females = Average HR in males
+# ALT: Average HR in females != Average HR in males
+
+# NULL: Mu_females = Mu_males
+# ALT: Mu_females \ne Mu_males
+```
+
+3.2 Make a box plot of `heart_rate` separated by `sex`.
+
+```{r}
+ggplot(data = bt_samp, 
+       aes(y = heart_rate,
+           fill = sex)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+3.3 Add a comment to your script making a prediction: Do you think the averages will be different? Why or why not?
+
+```{r}
+# Not graded, just looking for interpretation and that you are thinking about the data and hypotheses. 
+```
+
+## 3.4 GRADED lm summary
+
+3.4 Use the `lm()` function to perform a 2-sample t-test on whether or not the average `heart_rate` is equal between females and males.
+
+-   Make sure to save your model-fit as an object, and then use the `summary()` function to print out the results.
+
+```{r}
+fit_3 <- lm(heart_rate ~ sex, data = bt_samp)
+summary(fit_3)  
+```
+
+3.5 What is the estimate and standard error for `heart_rate` for females? What is the estimate and standard error for the *difference* in `heart_rate` between females and males?
+
+```{r}
+# 1975: Mean \pm SE 74.15 \pm 0.878
+# difference: -0.78 \pm 1.24
+```
+
+## 3.6 GRADED interp
+
+3.6 Add a comment to your script interpreting the results of your analysis. Be sure to refer back to the null and alternative hypotheses (reject or fail to reject?) include the t-statistic and the p-value in your answer. Write a separate sentence interpreting the adjusted R^2^ value
+
+```{r}
+# Based on our data, we fail to reject the null hypothesis and conclude that average hear rate does not differ between males and females (t-stat = -0.632, p = 0.529) 
+
+# The adjusted R2 value of -0.005 means that this model explains "negative" % of the variation in our response variable, heart rate. 
+# in other words, the model explains 0% of the data, and the variation in heart rate is not explained by biological sex at all
+```
+
+## Problem 4: paired t-test
+
+### Data: `darwin_maize`
+
+As mentioned in class, Darwin's maize experiment was looking at the difference in height for self- and cross-pollinated plants. - The study design that Darwin employed was actually a paired design, in which he raised paired individuals (one self- and one cross-pollinated) in the same pot. - This is a method for controlling for unintended variation in conditions. - For example, maybe pair 1 had less water or nutrients, so both individuals came out shorter that would be expected. - Instead of averaging across all self- and cross-pollinated individuals, we can analyze this data as a paired design and only look at the *difference* in heights among the pairs.
+
+If you haven't already, read the `darwin_maize.csv` file into R.
+
+```{r}
+#| eval: false
+#| echo: true
+
+
+darwin_maize <- read_csv("data/darwin_maize.csv")
+```
+
+4.1 Add a comment to your homework script stating the null and alternative hypotheses for a paired t-test analysis. Make sure to put each hypothesis on its own line. Make sure that your alternative hypothesis is 2-tailed.
+
+```{r}
+# there is no average difference between the two groups (Self V Cross): \mu_d = 0
+# There is a difference between the two groups: \mu_d \ne 0
+```
+
+4.2. Make a new data object called `darwin_diff` which includes the `difference` in `heights` for each `pair` in the data set. + As in the lab, the way the data is structured does not make this task simple, but we can use `group_by()` function before using the `-diff()` function inside of `mutate()` to accomplish this.\
++ See the `caterpillar` example from the lab.\
++ **Hint** your new object should contain the following columns: `pair` and `difference`.\
++ Make sure to print out your new `darwin_diff` object at the end of this problem.
+
+```{r}
+darwin_diff <- darwin_maize |>
+  group_by(pair) |>
+  summarize(difference = -diff(height)) 
+
+darwin_diff
+```
+
+## 4.3 GRADED boxplot
+
+4.3 Make a box plot of the difference in plant heights and include a reference line at 0. Be sure to use the `darwin_diff` object you created above.
+
+```{r}
+ggplot(data = darwin_diff, 
+       aes(y = difference)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0,
+             linewidth = 1.5,
+             linetype = "dashed",
+             color = "dodgerblue") +
+  theme_bw()
+```
+
+4.4 Add a comment to your script making a prediction: Do you think the average differences are going to be different from 0? Why or why not?
+
+```{r}
+# Not graded, just looking for interpretation and that you are thinking about the data and hypotheses. 
+```
+
+4.5 Use `lm()` function to formally test your hypothesis.\
++ Store the output of `lm()` in a new data object, and then use the `summary()` function to print out the results.
+
+```{r}
+paired_fit <- lm(difference ~ 1, data = darwin_diff)
+summary(paired_fit)
+```
+
+## 4.6 GRADED 2.617 $\pm$ 1.218
+
+4.6 Add a comment to your script describing the estimated average and standard error for the difference between the two groups.
+
+```{r}
+# estimated average difference  between cross and self groups = 2.617 \pm 1.218 
+```
+
+4.7 Add a comment to your script interpreting the results of your analysis. Be sure to refer back to the null and alternative hypotheses (reject or fail to reject?) include the t-statistic, the degrees of freedom, and the p-value in your answer.
+
+```{r}
+# Based on the data, we reject the null hypothesis and conclude that there is a difference in height between the sel- and cross-pollinated groups (t-stat = 2.15, p = 0.0497, df = 14)
+
+```
