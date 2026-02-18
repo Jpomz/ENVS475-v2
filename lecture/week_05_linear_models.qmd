@@ -112,7 +112,7 @@ darwin_maize <- read.csv("data/darwin_maize.csv",
 
 Answer is probably something similar to:
 
-$$\Huge y = a + bx$$
+$$\Huge \hat{y} = a + bx$$
 
 ```{r}
 x <- seq(from = -10, to = 10, by = 0.1)
@@ -334,7 +334,9 @@ $$\LARGE \epsilon \sim N(0, \sigma)$$
 ## Answer
 
 ```{r}
-    rnorm(10, mean = 18.88, sd = 3.18)
+#| echo: true
+set.seed(1)
+rnorm(10, mean = 18.88, sd = 3.18)
 
 ```
 :::
@@ -353,6 +355,8 @@ ggplot(darwin_maize,
                size = 6) +
   theme_bw()
 ```
+
+### **You should now be able to complete problem 1 in the homework assignment.**
 
 #### Linear Model with Categorical Predictor
 
@@ -394,9 +398,6 @@ $$\LARGE E[y_{other}] = \beta_0 + \beta_1 \times 1 = \beta_0 + \beta_1$$
 
 ::: callout-important
 -   So to figure out the average value of our *other* group, we need to add $\beta_0$ and $\beta_1$
-
-<!-- -->
-
 -   When there are multiple groups, you always start with $\beta_0$ and add $\beta_j$
 :::
 
@@ -460,7 +461,7 @@ display(dlm1)
 
 $$\LARGE E[y_{cross}] = \beta_0 = 20.19$$
 
--   You might also assume that the `typeSelf` coefficient estimate is the avergae of the other group of plants.
+-   You might also assume that the `typeSelf` coefficient estimate is the average of the other group of plants.
 
 -   However, this coefficient is showing the estimated *difference* in means.
 
