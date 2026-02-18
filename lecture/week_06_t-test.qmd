@@ -1,0 +1,147 @@
+---
+title: "Lecture Week Number: Topic"
+html:
+    embed-resources: true
+    link-external-newwindow: true
+editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+
+# data objects
+library(tidyverse)
+bt_samp <- read_csv(here::here("data/body_temp_hr.csv"))
+caterpillar <- read_csv(here::here("data/caterpillar.csv"))
+```
+
+# Overview
+
+Introduce T-tests including their history and application. We will discuss the concept of Null hypothesis testing. Finally, we will practice applying three main types of T-tests. 
+
+
+# Setup
+
+### Libraries
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+### Data
+
+```{r}
+#| eval: false
+bt_samp <- read_csv("data/body_temp_hr.csv")
+caterpillar <- read_csv("data/caterpillar.csv")
+```
+
+# Lecture Outline
+
+## T-tests
+### T-test overview
+
+- Is my sample different from...:  
+
+  + A Value of interest?  
+  
+  + Another sample of data?   
+  
+- General formula of t-test:
+
+$$t_{statistic} = \frac{difference}{variation}$$
+
+  + No difference: $t_{statistic} = 0$  
+  
+  + There is a difference: $t_{statistic} \ne 0$  
+
+
+### History
+- t-test developed by William Sealy Gossett  
+
+- Worked at Guinness, wanted to test quality of stout  
+
+- Very small sample sizes ( $n \le 4$ )  
+
+- Uses the t-distribution, which can be thought of as a small-sample-size version of a standard normal distribution  
+
+- Published under pseudonym *Student* because company policy prevented employees from publishing scientific papers  
+
+
+### T-distribution
+- t-distribution is a small-sample-size version of standard normal distribution  
+
+- with fewer samples, there is more uncertainty  
+
+- this uncertainty is represented in "fat tails"  
+```{r t, fig.width=8, fig.height=5.5}
+curve(dt(x, 1), -5, 5, ylim=c(0, 0.5),
+      xlab="t value", ylab="Probability density",
+      cex.lab=1.5, lwd=1.5)
+curve(dt(x, 5), -5, 5, add=TRUE, col="blue", lwd=1.5)
+curve(dnorm(x, 0, 1), -5, 5, add=TRUE,  lty=3, lwd=1.5)
+legend(-5, 0.5, c("Standard normal distribution", "t distribution (df=5)", "t distribution (df=1)"),
+       lty=c(3, 1, 1), col=c("black", "blue", "black"), lwd=1.5)
+```
+
+
+### Types of T-tests
+- One-sample
+  - Is my sample different from a value of interest?
+  - i.e., stream pH, human body temperature
+- Two-sample
+  - Are my two samples of data different?
+  - i.e., pH in mined vs. un-mined streams? IS body temperature different between males and females, or sick and healthy groups?
+- Paired
+  - Are two measurements on the same subject different?
+  - i.e., before/after drug treatment, or two streams (mined/un-mined) in one valley
+
+##  Null Hypothesis Testing (NHT)
+> Formal approach to assessing if sample data represents a statistically significant difference, or is due to sampling error.  
+
+- requires two hypotheses: 
+
+  - The null, $H_0$, which is no difference/relationship/effect  
+  
+  - Alternative, $H_A$, which is that there is some difference/relationship/effect  
+  
+  - Hypotheses refer to the **populations**  
+
+
+##  One-sample T-Test  
+
+### Hypotheses
+### General Procedure
+### Manual Procedure
+### `lm()` Procedure
+### Notes on P-values
+### Interpretation
+
+##  Two-sample T-Test
+### `lm()` Procedure
+-   Predictor needs to be a char. | fact.
+    -   HW
+### NHT for $\beta_0$ and $\beta_1$ 
+### interpretation
+
+
+##  Paired T-Test
+### Hypotheses
+### Data setup
+-   Subtract columns
+-   Lag calculation using `diff()`
+### `lm()` Procedure
+### Interpretation
+
+# Summary
