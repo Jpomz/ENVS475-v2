@@ -65,7 +65,7 @@ finch <- read.csv("data/galapago-finches.csv",
 
 ## Problem 1: Intercept only
 
-1.1 Split the data based on species, and make two new data frames, one called `fortis` and one called `scandens`.
+1.1 Split the data based on species: make one new data frame called `scandens` which only has observations of that species.
 
 -   hint: use the `filter()` function from dplyr.
 
@@ -73,7 +73,9 @@ finch <- read.csv("data/galapago-finches.csv",
 
 You will also need to overwrite your `year` column to be a character or factor, *NOT* a numeric column
 
-Print the `scandens` object to your console Also, add the following code to your answer and ensure the output is either `character` or `factor`
+Use `as_tibble()` to print the `scandens` object to your console and ensure the `year` column is either a `character` or a `factor`
+
+### The rest of this homework assignment will only use the `scandens` object. 
 
 ```{r}
 scandens <- finch %>%
@@ -183,14 +185,21 @@ flm1 <- lm(blength ~ year, data = scandens)
 display(flm1)
 ```
 
-2.4 Based on the information from 2.3 above, enter a simple aritmetic equation which estimates the the mean beak length for the *scandens* species in *1975*?
+2.4 Based on the information from 2.3 above, enter a comment in your data which shows the estimated mean beak length for the *scandens* species in *1975*.
+
+```{r}
+# mean 1975 = Intercept = 14.12
+```
+
+2.5 Based on the information from 2.3 above, enter a simple arithmetic equation which estimates the the mean beak length for the *scandens* species in 2012?
 
 ```{r}
 # mean 2012
 14.12 - 0.70
 ```
 
-2.5 Make a scatter plot of the `scandes` data which separates the observations by year, and includes a point for the estimated group means.\
+
+2.6 Make a scatter plot of the `scandens` data which separates the observations by year, and includes a point for the estimated group means.\
 + In the `stat_summary()` function, set `shape = 18` and `size = 6`.
 
 ```{r}

@@ -3160,13 +3160,15 @@ vertical-align: -.125em;
 <h1>Problems</h1>
 <section id="problem-1-intercept-only" class="level2">
 <h2 class="anchored" data-anchor-id="problem-1-intercept-only">Problem 1: Intercept only</h2>
-<p>1.1 Split the data based on species, and make two new data frames, one called <code>fortis</code> and one called <code>scandens</code>.</p>
+<p>1.1 Split the data based on species: make one new data frame called <code>scandens</code> which only has observations of that species.</p>
 <ul>
 <li><p>hint: use the <code>filter()</code> function from dplyr.</p></li>
 <li><p>Remember to use <code>==</code> in the filter function</p></li>
 </ul>
 <p>You will also need to overwrite your <code>year</code> column to be a character or factor, <em>NOT</em> a numeric column</p>
-<p>Print the <code>scandens</code> object to your console Also, add the following code to your answer and ensure the output is either <code>character</code> or <code>factor</code></p>
+<p>Use <code>as_tibble()</code> to print the <code>scandens</code> object to your console and ensure the <code>year</code> column is either a <code>character</code> or a <code>factor</code></p>
+<section id="the-rest-of-this-homework-assignment-will-only-use-the-scandens-object." class="level3">
+<h3 class="anchored" data-anchor-id="the-rest-of-this-homework-assignment-will-only-use-the-scandens-object.">The rest of this homework assignment will only use the <code>scandens</code> object.</h3>
 <p>1.2 plot the <code>scandens</code> data</p>
 <p>Use ggplot() to make a scatter plot of the <code>blength</code> variable in the <code>scandens</code> data set, ignoring any grouping variables (i.e., set <code>x = 0</code>)</p>
 <p>1.3 Fit an intercept-only model using the <code>lm()</code> function, and save it in an object called <code>flm0</code> (short for “finch linear model 0”).</p>
@@ -3183,13 +3185,15 @@ f. the value of R^2</p>
 <p>1.7 Calculate and print the sd for <code>blength</code>. from the <code>scandens</code> object.</p>
 <p>Also, add a comment comparing this value with your results from 1.5e above.</p>
 </section>
+</section>
 <section id="problem-2-categorical-data" class="level2">
 <h2 class="anchored" data-anchor-id="problem-2-categorical-data">problem 2: categorical data</h2>
 <p>2.1 Use ggplot to make a scatter plot of the <code>blength</code> observations separated by year.</p>
 <p>2.2 Make the same plot as in 2.1 above but “jitter” the points. Make sure to set <code>width = 0.1</code> and <code>height = 0</code></p>
 <p>2.3 Use <code>lm()</code> to fit a model which includes <code>year</code> as a predictor variable. Save this model output in an object called <code>flm1</code>, and use <code>display()</code> to print out the results in your console.</p>
-<p>2.4 Based on the information from 2.3 above, enter a simple aritmetic equation which estimates the the mean beak length for the <em>scandens</em> species in <em>1975</em>?</p>
-<p>2.5 Make a scatter plot of the <code>scandes</code> data which separates the observations by year, and includes a point for the estimated group means.<br>
+<p>2.4 Based on the information from 2.3 above, enter a comment in your data which shows the estimated mean beak length for the <em>scandens</em> species in <em>1975</em>.</p>
+<p>2.5 Based on the information from 2.3 above, enter a simple arithmetic equation which estimates the the mean beak length for the <em>scandens</em> species in 2012?</p>
+<p>2.6 Make a scatter plot of the <code>scandens</code> data which separates the observations by year, and includes a point for the estimated group means.<br>
 + In the <code>stat_summary()</code> function, set <code>shape = 18</code> and <code>size = 6</code>.</p>
 </section>
 <section id="problem-3-confidence-interval-and-coefplot" class="level2">
