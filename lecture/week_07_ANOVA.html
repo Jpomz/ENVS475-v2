@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lecture 07 ANOVA</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="week_07_ANOVA_files/libs/clipboard/clipboard.min.js"></script>
+<script src="week_07_ANOVA_files/libs/quarto-html/quarto.js"></script>
+<script src="week_07_ANOVA_files/libs/quarto-html/popper.min.js"></script>
+<script src="week_07_ANOVA_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="week_07_ANOVA_files/libs/quarto-html/anchor.min.js"></script>
+<link href="week_07_ANOVA_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="week_07_ANOVA_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="week_07_ANOVA_files/libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="week_07_ANOVA_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="week_07_ANOVA_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="week_07_ANOVA_files/libs/bootstrap/bootstrap-0b3b9638000aa634054a1a0e4b24ad6b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="week_07_ANOVA_files/libs/bootstrap/bootstrap-dark-884304b898dedb0844cb31da4b7b6464.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">2</span> Setup</a></li>
+  <li><a href="#lecture-outline" id="toc-lecture-outline" class="nav-link" data-scroll-target="#lecture-outline"><span class="header-section-number">3</span> Lecture Outline</a>
+  <ul class="collapse">
+  <li><a href="#one-way-anova" id="toc-one-way-anova" class="nav-link" data-scroll-target="#one-way-anova"><span class="header-section-number">3.1</span> One-way ANOVA</a></li>
+  <li><a href="#hypotheses-with-one-way-anova" id="toc-hypotheses-with-one-way-anova" class="nav-link" data-scroll-target="#hypotheses-with-one-way-anova"><span class="header-section-number">3.2</span> Hypotheses with One-way ANOVA</a></li>
+  <li><a href="#lm-coefficient-hypotheses" id="toc-lm-coefficient-hypotheses" class="nav-link" data-scroll-target="#lm-coefficient-hypotheses"><span class="header-section-number">3.3</span> <code>lm()</code> Coefficient hypotheses</a></li>
+  <li><a href="#multiple-comparisons" id="toc-multiple-comparisons" class="nav-link" data-scroll-target="#multiple-comparisons"><span class="header-section-number">3.4</span> Multiple Comparisons</a></li>
+  <li><a href="#tukeys-hsd" id="toc-tukeys-hsd" class="nav-link" data-scroll-target="#tukeys-hsd"><span class="header-section-number">3.5</span> Tukey’s HSD</a></li>
+  <li><a href="#factorial-anova" id="toc-factorial-anova" class="nav-link" data-scroll-target="#factorial-anova"><span class="header-section-number">3.6</span> Factorial ANOVA</a></li>
+  <li><a href="#tukeys-hsd-1" id="toc-tukeys-hsd-1" class="nav-link" data-scroll-target="#tukeys-hsd-1"><span class="header-section-number">3.7</span> Tukey’s HSD</a></li>
+  <li><a href="#blocking-factor-in-lm" id="toc-blocking-factor-in-lm" class="nav-link" data-scroll-target="#blocking-factor-in-lm"><span class="header-section-number">3.8</span> Blocking factor in <code>lm()</code></a></li>
+  <li><a href="#two-way-anova" id="toc-two-way-anova" class="nav-link" data-scroll-target="#two-way-anova"><span class="header-section-number">3.9</span> Two-way ANOVA</a></li>
+  <li><a href="#two-way-anova-with-lm" id="toc-two-way-anova-with-lm" class="nav-link" data-scroll-target="#two-way-anova-with-lm"><span class="header-section-number">3.10</span> Two-way ANOVA with <code>lm()</code></a></li>
+  <li><a href="#lm-summary" id="toc-lm-summary" class="nav-link" data-scroll-target="#lm-summary"><span class="header-section-number">3.11</span> <code>lm()</code> summary</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lecture 07 ANOVA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
+<p>Analysis of variance (ANOVA) is a technique for assessing differences across 3+ groups. There are three types that we will go over:</p>
+<ul>
+<li><p>One-way ANOVA</p>
+<ul>
+<li>Think of this as a t-test with 3 or more groups</li>
+</ul></li>
+<li><p>Factorial ANOVA</p>
+<ul>
+<li>This is a way of testing the signifigance of multiple factors or categorical predictors</li>
+</ul></li>
+<li><p>Two-way ANOVA with interaction</p>
+<ul>
+<li>This is a modification of the factorial ANOVA which tests to see if the predictor values interact with one another.</li>
+</ul></li>
+</ul>
+</section>
+<section id="setup" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Setup</h1>
+<section id="libraries" class="level3" data-number="2.0.1">
+<h3 data-number="2.0.1" class="anchored" data-anchor-id="libraries"><span class="header-section-number">2.0.1</span> Libraries</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data" class="level3" data-number="2.0.2">
+<h3 data-number="2.0.2" class="anchored" data-anchor-id="data"><span class="header-section-number">2.0.2</span> Data</h3>
+<ul>
+<li><p>Load multiple data objects for this lecture</p></li>
+<li><p><code>PlantGrowth</code> is already in R</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"PlantGrowth"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>crop <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/crop_anova.csv"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"ToothGrowth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="lecture-outline" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Lecture Outline</h1>
+<section id="one-way-anova" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="one-way-anova"><span class="header-section-number">3.1</span> One-way ANOVA</h2>
+<ul>
+<li>First we will take a look at the <code>PlantGrowth</code> data</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(PlantGrowth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "weight" "group" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(PlantGrowth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 2
+   weight group
+    &lt;dbl&gt; &lt;fct&gt;
+ 1   4.17 ctrl 
+ 2   5.58 ctrl 
+ 3   5.18 ctrl 
+ 4   6.11 ctrl 
+ 5   4.5  ctrl 
+ 6   4.61 ctrl 
+ 7   5.17 ctrl 
+ 8   4.53 ctrl 
+ 9   5.33 ctrl 
+10   5.14 ctrl 
+# ℹ 20 more rows</code></pre>
+</div>
+</div>
+<ul>
+<li>Data has 30 observations (rows)</li>
+<li>two variables (columns).</li>
+<li><code>weight</code> is the dry weight of plants</li>
+<li><code>group</code> indicates which of three experimental treatments the individual plants were assigned.</li>
+<li>The three treatments are:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(PlantGrowth, group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group
+1  ctrl
+2  trt1
+3  trt2</code></pre>
+</div>
+</div>
+<section id="plot-plantgrowth-data" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="plot-plantgrowth-data"><span class="header-section-number">3.1.1</span> Plot <code>PlantGrowth</code> data</h3>
+<ul>
+<li>Plot all of the data, without considering the groups.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(PlantGrowth,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">0</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> weight)) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Add the grouping variable to see how data is distributed within and across treatments.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(PlantGrowth,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> group,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> weight,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> group)) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="check-pre-analysis-assumptions" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="check-pre-analysis-assumptions"><span class="header-section-number">3.1.2</span> Check pre-analysis assumptions</h3>
+<section id="assumption-equal-variance" class="level4" data-number="3.1.2.1">
+<h4 data-number="3.1.2.1" class="anchored" data-anchor-id="assumption-equal-variance"><span class="header-section-number">3.1.2.1</span> Assumption: equal variance</h4>
+<p>Boxplot: - Approximately equal variation across the treatment groups. - There are a couple of “high” data points in <code>trt1</code>, but ANOVA is fairly robust to these assumptions, and this looks ok for further analysis.</p>
+</section>
+<section id="assumptions-normality-of-residuals" class="level4" data-number="3.1.2.2">
+<h4 data-number="3.1.2.2" class="anchored" data-anchor-id="assumptions-normality-of-residuals"><span class="header-section-number">3.1.2.2</span> Assumptions: Normality of residuals</h4>
+<p>Q-Q plot</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(PlantGrowth,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">sample =</span> weight)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>()<span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>The observations (points) fall nearly directly on the reference line</p></li>
+<li><p>We pass this assumption and can continue with an Analysis of Variance (ANOVA).</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="hypotheses-with-one-way-anova" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="hypotheses-with-one-way-anova"><span class="header-section-number">3.2</span> Hypotheses with One-way ANOVA</h2>
+<ul>
+<li>An ANOVA analysis tests whether or not there is a difference in at least two of the group means in our data.</li>
+<li>It is easy to write out the Null hypothesis as:</li>
+</ul>
+<p><span class="math display">\[H0: \mu_1 = \mu_2 = \mu_3  ... = \mu_i\]</span></p>
+<ul>
+<li><p>Or, by saying that “all means are equal”.</p></li>
+<li><p>Our alternative hypothesis is that “at least one mean is different”.</p></li>
+<li><p>Because this inequality could happen between any pairwise combinations, it is no simple task to write these out mathematically, so instead we generally say:</p></li>
+</ul>
+<p><span class="math display">\[HA: \text{"At least one mean is different"}\]</span></p>
+<section id="anova-with-lm" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="anova-with-lm"><span class="header-section-number">3.2.1</span> ANOVA with <code>lm()</code></h3>
+<section id="assumption-equal-variance-of-residuals" class="level4" data-number="3.2.1.1">
+<h4 data-number="3.2.1.1" class="anchored" data-anchor-id="assumption-equal-variance-of-residuals"><span class="header-section-number">3.2.1.1</span> Assumption: Equal variance of residuals</h4>
+<ul>
+<li>Let’s first fit a linear model to the data, and check our post-model fit assumption with a fitted vs.&nbsp;residuals plot.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plant_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(weight <span class="sc">~</span> group, <span class="at">data =</span> PlantGrowth)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plant_lm,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="fu">position_jitter</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.1</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">height =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `fortify(&lt;lm&gt;)` was deprecated in ggplot2 3.6.0.
+ℹ Please use `broom::augment(&lt;lm&gt;)` instead.
+ℹ The deprecated feature was likely used in the ggplot2 package.
+  Please report the issue at &lt;https://github.com/tidyverse/ggplot2/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>In this plot, the absolute magnitude of the maximum and minimum y-values are approximately the same (-1, 1), and there is no clear pattern</li>
+</ul>
+</section>
+</section>
+<section id="anova-table" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="anova-table"><span class="header-section-number">3.2.2</span> ANOVA table</h3>
+<ul>
+<li>use the <code>anova()</code> function on the model fit object to print the ANOVA table</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(plant_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: weight
+          Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+group      2  3.7663  1.8832  4.8461 0.01591 *
+Residuals 27 10.4921  0.3886                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>This table gives us the:</p>
+<ul>
+<li>two degrees of freedom for the model (2, and 27),</li>
+<li>the sum of squares,</li>
+<li>the mean of squares,</li>
+<li>the F-value and the p-value for the <code>group</code> factor</li>
+</ul></li>
+<li><p>The degrees of freedom for the group factor is equal to the number of groups - 1.</p>
+<ul>
+<li>Here we have 3 groups - 1 = 2 degrees of freedom.</li>
+</ul></li>
+<li><p>The degrees of freedom for the residuals is the total number of observations (30) minus 1 for each group (30 - 3 = 27).</p></li>
+<li><p>The F-value is similar to the t-value from the t-test analyses we ran,</p></li>
+<li><p>It is a measure of the ratio of the signal (differences in group means) to the noise (variation in groups).<br>
+</p></li>
+<li><p>If there was no treatment effect (i.e., no “signal”) the ratio would be ~1.</p></li>
+<li><p>Larger F-value indicate more signal to noise, and are interpreted as there being a treatment effect.</p></li>
+<li><p>The p-value is an indication of the likelihood of observing the data (i.e., F-value, signal / noise ratio) we have <em>if</em> the null hypothesis was true.</p></li>
+<li><p>In this case, a p-value of 0.016 is less than <span class="math inline">\(\alpha = 0.05\)</span>, and we can conclude that there is a significant difference between at least two of the means.</p></li>
+</ul>
+</section>
+<section id="anova-interpretation" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="anova-interpretation"><span class="header-section-number">3.2.3</span> ANOVA Interpretation</h3>
+<ul>
+<li><p>Remember that the hypotheses for ANOVA are either that all means are the same, or that at least one was different.</p></li>
+<li><p>ANOVA can only tell us that there is a difference.</p></li>
+<li><p>Therefore, our interpretation would look something like this:</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>Based on the data, we can conlude that at least one of the means in the fertilizer groups are significantly different (one-way ANOVA: <span class="math inline">\(F_{2, 27}= 4.85\)</span>, <span class="math inline">\(p = 0.016\)</span>)</p>
+</blockquote>
+<ul>
+<li>In order to see <em>which</em> means are different, we can view the summary output from the <code>lm()</code> model.</li>
+</ul>
+</section>
+<section id="linear-model-summary" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="linear-model-summary"><span class="header-section-number">3.2.4</span> Linear Model Summary</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(plant_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = weight ~ group, data = PlantGrowth)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0710 -0.4180 -0.0060  0.2627  1.3690 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   5.0320     0.1971  25.527   &lt;2e-16 ***
+grouptrt1    -0.3710     0.2788  -1.331   0.1944    
+grouptrt2     0.4940     0.2788   1.772   0.0877 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.6234 on 27 degrees of freedom
+Multiple R-squared:  0.2641,    Adjusted R-squared:  0.2096 
+F-statistic: 4.846 on 2 and 27 DF,  p-value: 0.01591</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Here, we can see that we have three coefficients: <code>(Intercept)</code>, <code>grouptrt1</code>, and <code>grouptrt2</code>.</p></li>
+<li><p>Each of these coefficient estimates has an associated Null and Alternative hypothesis.</p></li>
+</ul>
+</section>
+</section>
+<section id="lm-coefficient-hypotheses" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="lm-coefficient-hypotheses"><span class="header-section-number">3.3</span> <code>lm()</code> Coefficient hypotheses</h2>
+<section id="intercept-beta_0" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="intercept-beta_0"><span class="header-section-number">3.3.1</span> Intercept, <span class="math inline">\(\beta_0\)</span></h3>
+<p><span class="math display">\[ H0: \beta_0 = 0 \]</span> <span class="math display">\[ HA: \beta_0 \ne 0 \]</span></p>
+<ul>
+<li><p>As mentioned previously, we are rarely interested in this hypothesis.</p></li>
+<li><p>The <code>(Intercept)</code> coefficient is the mean weight estimate for the <code>ctrl</code> group, and is equal to 5.032.</p></li>
+<li><p>The p-value associated with this simply means that the data support the conclusion that the mean weight of the control plants are not 0.</p></li>
+</ul>
+</section>
+<section id="other-coefficients-beta_trt1-and-beta_trt2" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="other-coefficients-beta_trt1-and-beta_trt2"><span class="header-section-number">3.3.2</span> Other coefficients, <span class="math inline">\(\beta_{trt1}\)</span>, and <span class="math inline">\(\beta_{trt2}\)</span></h3>
+<ul>
+<li>The other two coefficients represent the estimated difference between the <code>ctrl</code> group and the respective <code>trt</code> groups.</li>
+</ul>
+<p>The null hypothesis for each of these coefficients is:</p>
+<p><span class="math display">\[H0: \beta_i = 0\]</span></p>
+<p>and the Alternative is:</p>
+<p><span class="math display">\[HA: \beta_i \ne 0\]</span></p>
+<ul>
+<li>The p-values for both of the other coefficients is <span class="math inline">\(&gt; \alpha = 0.05\)</span>, so we fail to reject these hypotheses.</li>
+<li>In other words, the data do not support a significant difference in plant weights for either treatment when compared with the control group.</li>
+</ul>
+</section>
+<section id="mean-estimates-for-treatment-groups" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="mean-estimates-for-treatment-groups"><span class="header-section-number">3.3.3</span> Mean estimates for treatment groups</h3>
+<ul>
+<li>We can combine the coefficient estimates to calculate the mean plant weight for the two treatment groups:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print out all the coefficient estimates</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(plant_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)   grouptrt1   grouptrt2 
+      5.032      -0.371       0.494 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean estimate for trt1, manual</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fl">5.032</span> <span class="sc">-</span> <span class="fl">0.371</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.661</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># or by using the coefficient estimates:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(<span class="fu">coef</span>(plant_lm)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(plant_lm)[<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.661</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean estimate for trt2, manual</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fl">5.032</span> <span class="sc">+</span> <span class="fl">0.494</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.526</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># or by using the coefficient estimates:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(<span class="fu">coef</span>(plant_lm)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(plant_lm)[<span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.526</code></pre>
+</div>
+</div>
+<ul>
+<li>We can also look at the confidence intervals for the three coefficients using the <code>confint()</code> function:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(plant_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  2.5 %    97.5 %
+(Intercept)  4.62752600 5.4364740
+grouptrt1   -0.94301261 0.2010126
+grouptrt2   -0.07801261 1.0660126</code></pre>
+</div>
+</div>
+<ul>
+<li>Notice that both confidence intervals for the difference cross zero (lower bound is negative, upper bound is positive).</li>
+<li>This is a good indication that there is not a significant difference between the control group and either treatment.</li>
+</ul>
+</section>
+<section id="lm-interpretation" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="lm-interpretation"><span class="header-section-number">3.3.4</span> <code>lm()</code> Interpretation</h3>
+<blockquote class="blockquote">
+<p>The plants from the control group had an average dry weight of 5.032 (95% CI: 4.63, 5.44) grams, and the difference in dry weights for treatment 1 was -0.37 (-0.94, 0.20) while the difference in dry weights for treatment 2 was 0.49 (-0.08, 1.07)</p>
+</blockquote>
+<ul>
+<li><p>You may have noticed that results from the ANOVA table above indicated that there was at least one significant difference between means,</p></li>
+<li><p>but the p-values of 95% CIs from the linear model indicate no significant difference, so what happened?</p></li>
+<li><p>The linear model is only testing whether the two treatment groups are different from the control group.</p></li>
+<li><p>One combination that we are missing is whether or not the two treatments are different from each other.</p></li>
+<li><p>We could go through the process of re-levelling the data so that we set one of the treatment groups is our reference condition.</p></li>
+<li><p>However, it’s most likely that the original experiment was interested in differences from the control condition, and this is how our analysis was originally set up.</p></li>
+<li><p>We could just run a few extra t-tests to analyze all possible combinations.</p></li>
+<li><p>However, when running multiple t-tests, we increase our chances of a Type I error (i.e., false positive).</p></li>
+<li><p>To account for that, we will continue this analysis by running a multiple comparison test.</p></li>
+</ul>
+</section>
+</section>
+<section id="multiple-comparisons" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="multiple-comparisons"><span class="header-section-number">3.4</span> Multiple Comparisons</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A caveat</p>
+<p>First, a brief note. For many years, it was considered standard to run an ANOVA, and then if those results came back significant to run some form of multiple comparison analysis to see which combinations were significant (what we will do below). As a part of the general reforms currently happening in statistical analyses, this is beginning to go out of fashion. There are a few different opinions on this.</p>
+<p>One, is to set up the linear model analysis to maximize your degrees of freedom and answer the original research question. For example, above, we had the control group as the default reference condition, and if we were only interested in differences between control and treatment groups, we would stop at the interpretation of the <code>lm()</code> summary above.</p>
+<p>Secondly, some researchers concede that all statistical analyses have a chance of false positives (indeed, the definition of a 95% CI explicitly states that under repeated sampling conditions, the “true mean” will only be in the interval ~95% of the time), and therefore it’s fine to run extra t-tests and discuss potential false positive rates in the discussion section. (The <code>PlantGrowth</code> example is in a bit of a grey area. Since it’s only a total of 3-pairwise comparisons, running an additional t-test is really not that big of a deal. Where it really becomes important is when you’re running lots and lots of comparisons. For example, the <code>OrchardSpray</code> problem in homework 10.)</p>
+<p>Finally, multiple comparisons are still being done and generally still accepted. Furthermore, you will see these often in the literature, and I think it’s important for you to know how to run and interpret them. So for this lab, we will continue with Tukey’s Honestly Significant Difference Test. However, be aware that there are other corrections for multiple comparisons, and you will see things like “Bonferroni corrections”, “F-protected t-tests”, “Fisher’s Least Significant Difference”, etc.</p>
+</div>
+</div>
+</section>
+<section id="tukeys-hsd" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="tukeys-hsd"><span class="header-section-number">3.5</span> Tukey’s HSD</h2>
+<ul>
+<li><p>The results of the ANOVA test indicated significant differences, but the linear model analysis did not find differences between the control and either treatment group. - However, one final comparison is missing: the <code>trt1</code> and the <code>trt2</code> group.</p></li>
+<li><p>For this, we will run Tukey’s HSD (Honestly Significant Different) test.</p></li>
+<li><p>This test is essentially the same as the t-test we ran before, except that the critical value of t is larger than for a normal t-test.</p></li>
+<li><p>Basically, we need <em>stronger evidence</em> in order to reject the Null hypothesis.</p></li>
+<li><p>Before we run the Tukey HSD test, we need to run an ANOVA on our linear model fit using the <code>aov()</code> function.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA of our lm model</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>plant_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(plant_lm)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Tukey's test on the plant_aov object</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>plant_tukey <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(plant_aov)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print out results</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>plant_tukey</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = plant_lm)
+
+$group
+            diff        lwr       upr     p adj
+trt1-ctrl -0.371 -1.0622161 0.3202161 0.3908711
+trt2-ctrl  0.494 -0.1972161 1.1852161 0.1979960
+trt2-trt1  0.865  0.1737839 1.5562161 0.0120064</code></pre>
+</div>
+</div>
+<ul>
+<li><p>We have a row for every pairwise combination.</p></li>
+<li><p>The table gives us an estimated and 95% CI for the <strong>differences</strong>, as well as an adjusted p-value.</p></li>
+<li><p>The p-value is already adjusted for the number of comparisons, so we can compare it to our <span class="math inline">\(\alpha\)</span> value of 0.05.</p></li>
+<li><p>Neither of the treatment means is different from the control group (p-value <span class="math inline">\(&gt; 0.05\)</span>),</p></li>
+<li><p>trt1 and trt2 are different with a p-value of <span class="math inline">\(0.012\)</span>.</p></li>
+</ul>
+<section id="plot-tukey-hsd" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="plot-tukey-hsd"><span class="header-section-number">3.5.1</span> Plot Tukey HSD</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(plant_tukey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Any coefficient estimates which cross zero are not considered to be significantly different.</li>
+</ul>
+</section>
+<section id="multiple-comparisons-interpretation" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="multiple-comparisons-interpretation"><span class="header-section-number">3.5.2</span> Multiple Comparisons Interpretation</h3>
+<blockquote class="blockquote">
+<p>The data supports the conclusion that there was no statistically significant difference in plant dry weight between the control and either treatment group (Tukey HSD adjusted p-values &gt; 0.05). However, the difference in plant dry weights between trt1 and trt was estimated to be 0.865 (95% CI: 0.174, 1.56), and this was significant (Tukey HSD adjusted p = 0.012)</p>
+</blockquote>
+</section>
+</section>
+<section id="factorial-anova" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="factorial-anova"><span class="header-section-number">3.6</span> Factorial ANOVA</h2>
+<ul>
+<li><p>Test to see if there are effects of multiple factors</p></li>
+<li><p><strong>Factor</strong>: An explanatory variable of interest</p>
+<ul>
+<li><strong>Fertilizer</strong>; <strong>Planting Density</strong></li>
+</ul></li>
+<li><p><strong>Levels</strong>: what values are present within a factor</p>
+<ul>
+<li>For example, <strong>fertilizer</strong> can have the levels of: Control, Nitrogen addition, Phosphorous addition, etc.</li>
+</ul></li>
+<li><p><strong>Main effects</strong>: Does the factor of interest change our response variable?</p></li>
+<li><p><strong>Interactive effects</strong>: Does the effect of one factor <em>depend</em> on the presence/absence of another factor</p>
+<ul>
+<li>We will go over this with our two-way ANOVA later</li>
+</ul></li>
+</ul>
+<section id="study-design" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="study-design"><span class="header-section-number">3.6.1</span> Study Design</h3>
+<ul>
+<li><p>Replicated experimental units (plots, cups, plants in a greenhouse, etc.)</p></li>
+<li><p>Minimize variation between units</p>
+<ul>
+<li>Same watering schedule, temperature control, etc.</li>
+</ul></li>
+<li><p>Only change the factor of interest</p>
+<ul>
+<li>i.e., <strong>EVERYTHING</strong> is the same <em>except</em> the fertilizer addition</li>
+</ul></li>
+</ul>
+</section>
+<section id="analysis" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="analysis"><span class="header-section-number">3.6.2</span> Analysis</h3>
+<ul>
+<li><p>We will be testing if <strong>Fertilizer</strong> additions and planting <strong>density</strong> has an effect on the yeld of crops.</p></li>
+<li><p>Let’s look at the <code>crop</code> data, and see what the treatment levels are.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(crop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "density"    "block"      "fertilizer" "yield"     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(crop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 96 × 4
+   density block fertilizer yield
+   &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt;      &lt;dbl&gt;
+ 1 low     I     control     177.
+ 2 low     I     control     177.
+ 3 low     I     control     176.
+ 4 low     I     control     177.
+ 5 low     I     control     176.
+ 6 low     I     control     176.
+ 7 low     I     control     176.
+ 8 low     I     control     175.
+ 9 high    II    control     178.
+10 high    II    control     177.
+# ℹ 86 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(crop, density)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  density
+1     low
+2    high</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(crop, fertilizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  fertilizer
+1    control
+2          N
+3          P</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(crop, fertilizer, density)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  fertilizer density
+1    control     low
+2    control    high
+3          N     low
+4          N    high
+5          P     low
+6          P    high</code></pre>
+</div>
+</div>
+<ul>
+<li><p>We have two <em>factors</em> (density and fertilizer).</p></li>
+<li><p>The <strong>Density</strong> factor has two levels: High, and Low</p></li>
+<li><p>the <strong>Fertilizer</strong> factor has three levels: control, N (Nitrogen fertilizer), and P (Phosphorous fertilizer).</p></li>
+<li><p>We can also use the <code>tab()</code> function to see how many observations are in each group:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>crop <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(density, fertilizer) <span class="sc">|&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   density, fertilizer [6]
+  density fertilizer     n
+  &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;
+1 high    control       16
+2 high    N             16
+3 high    P             16
+4 low     control       16
+5 low     N             16
+6 low     P             16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>crop <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(density, fertilizer) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   density [2]
+  density fertilizer     n
+  &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;
+1 high    control       16
+2 high    N             16
+3 high    P             16
+4 low     control       16
+5 low     N             16
+6 low     P             16</code></pre>
+</div>
+</div>
+<ul>
+<li><p>There are 16 observations in each combination of all levels for both factors.</p></li>
+<li><p>We call this a completely balanced ANOVA design.</p></li>
+</ul>
+</section>
+<section id="plot-crop-data" class="level3" data-number="3.6.3">
+<h3 data-number="3.6.3" class="anchored" data-anchor-id="plot-crop-data"><span class="header-section-number">3.6.3</span> Plot <code>crop</code> data</h3>
+<ul>
+<li>Let’s plotting the data with all grouping variables.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop,</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> fertilizer,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> yield,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> density)) <span class="sc">+</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>If you wanted to get a visual indication of the main effects, you could plot the grouping variables one at a time.</p>
+<ul>
+<li><ul>
+<li>i.e., set both the <code>x</code> and <code>color</code> variable above to <code>fertilizer</code> for one plot, and then change them both to <code>density</code> for the second plot.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="check-pre-analysis-assumptions-1" class="level3" data-number="3.6.4">
+<h3 data-number="3.6.4" class="anchored" data-anchor-id="check-pre-analysis-assumptions-1"><span class="header-section-number">3.6.4</span> Check pre-analysis assumptions</h3>
+<section id="assumption-equal-variance-1" class="level4" data-number="3.6.4.1">
+<h4 data-number="3.6.4.1" class="anchored" data-anchor-id="assumption-equal-variance-1"><span class="header-section-number">3.6.4.1</span> Assumption: equal variance</h4>
+<ul>
+<li>Assess based on the boxplots<br>
+</li>
+<li>These data look to have approximately equal variation across the treatment groups.</li>
+<li>The <em>“low-N”</em>, and <em>“high-P”</em> groups look a little more narrow, but this shouldn’t be an issue.</li>
+</ul>
+</section>
+<section id="assumptions-normality-of-residuals-1" class="level4" data-number="3.6.4.2">
+<h4 data-number="3.6.4.2" class="anchored" data-anchor-id="assumptions-normality-of-residuals-1"><span class="header-section-number">3.6.4.2</span> Assumptions: Normality of residuals</h4>
+<p>QQ-plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop,</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">sample =</span> yield)) <span class="sc">+</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>()<span class="sc">+</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Most of the observations (points) fall close to the reference line.</li>
+<li>There’s a few that are off near the low end of the data, but this should be ok.</li>
+</ul>
+</section>
+</section>
+<section id="hypotheses-for-main-effects" class="level3" data-number="3.6.5">
+<h3 data-number="3.6.5" class="anchored" data-anchor-id="hypotheses-for-main-effects"><span class="header-section-number">3.6.5</span> Hypotheses for main effects</h3>
+<ul>
+<li><p>In a factorial ANOVA analysis there is one hypothesis per factor</p></li>
+<li><p>In this case, we have the <strong>density</strong> and the <strong>fertilizer</strong> factor, so our hypotheses are:</p></li>
+</ul>
+<section id="density-main-effect-hypotheses" class="level4" data-number="3.6.5.1">
+<h4 data-number="3.6.5.1" class="anchored" data-anchor-id="density-main-effect-hypotheses"><span class="header-section-number">3.6.5.1</span> Density main effect hypotheses</h4>
+<p><span class="math display">\[ \text{Density } H0: \mu_{low} = \mu_{high} \]</span></p>
+<p><span class="math display">\[\text{Density }HA: \text{At least one mean is different}\]</span></p>
+</section>
+</section>
+<section id="fertilizer-main-effect-hypotheses" class="level3" data-number="3.6.6">
+<h3 data-number="3.6.6" class="anchored" data-anchor-id="fertilizer-main-effect-hypotheses"><span class="header-section-number">3.6.6</span> Fertilizer main effect hypotheses</h3>
+<p><span class="math display">\[\text{Ferilizer }H0: \mu_{control} = \mu_{N} = \mu_{P}\]</span></p>
+<p><span class="math display">\[\text{Ferilizer }HA: \text{At least one mean is different}\]</span></p>
+</section>
+<section id="anova-with-lm-1" class="level3" data-number="3.6.7">
+<h3 data-number="3.6.7" class="anchored" data-anchor-id="anova-with-lm-1"><span class="header-section-number">3.6.7</span> ANOVA with <code>lm()</code></h3>
+</section>
+<section id="assumption-equal-variance-of-residuals-1" class="level3" data-number="3.6.8">
+<h3 data-number="3.6.8" class="anchored" data-anchor-id="assumption-equal-variance-of-residuals-1"><span class="header-section-number">3.6.8</span> Assumption: Equal variance of residuals</h3>
+<ul>
+<li>First fit a linear model to the data, and check our post-model fit assumption with a fitted vs.&nbsp;residuals plot.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>crop_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(yield <span class="sc">~</span> density <span class="sc">+</span> fertilizer, <span class="at">data =</span> crop)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop_lm,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="fu">position_jitter</span>(</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.05</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">height =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>The absolute magnitude of the maximum and minimum y-values are approximately the same (<span class="math inline">\(\sim |1|\)</span>)</li>
+<li>There are a couple of points above the 1.25 region.</li>
+<li>However, there is no clear pattern in the spread (L to R) of the points, so this looks OK.</li>
+</ul>
+</section>
+<section id="factorial-anova-table" class="level3" data-number="3.6.9">
+<h3 data-number="3.6.9" class="anchored" data-anchor-id="factorial-anova-table"><span class="header-section-number">3.6.9</span> Factorial ANOVA table</h3>
+<ul>
+<li>The <code>anova()</code> function will give us the results of our hypotheses.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(crop_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: yield
+           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+density     1  5.1217  5.1217 15.3162 0.0001741 ***
+fertilizer  2  6.0680  3.0340  9.0731 0.0002533 ***
+Residuals  92 30.7645  0.3344                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>We have a row for each of the main factors (density, fertilizer) as well as a third row for the residuals (unexplained variation).</p></li>
+<li><p>We interpret the F-value for each factor as before, but in this case, we can say that these are the <em>main effects</em> of that factor, while accounting for the variation in the other factor.</p></li>
+<li><p>The p-value is an indication of the likelihood of observing the data (i.e., F-value, signal / noise ratio) we have <em>if</em> the null hypothesis was true.</p></li>
+<li><p>In this case, both p-values are <span class="math inline">\(&lt; 0.05\)</span> and we can conclude that there is a significant main effect for each factor.</p></li>
+</ul>
+</section>
+<section id="plotting-main-effects-separately" class="level3" data-number="3.6.10">
+<h3 data-number="3.6.10" class="anchored" data-anchor-id="plotting-main-effects-separately"><span class="header-section-number">3.6.10</span> Plotting main effects separately</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop,</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> fertilizer,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> yield,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> fertilizer)) <span class="sc">+</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>This plot shows the average yield based on fertilizer type, <strong>ignoring the effect</strong> of the density factor.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop,</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> density,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> yield,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> density)) <span class="sc">+</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>This plot shows the average yield based on density type, <strong>ignoring the effect</strong> of the fertilizer factor.</li>
+</ul>
+</section>
+<section id="anova-interpretation-1" class="level3" data-number="3.6.11">
+<h3 data-number="3.6.11" class="anchored" data-anchor-id="anova-interpretation-1"><span class="header-section-number">3.6.11</span> ANOVA Interpretation</h3>
+<ul>
+<li>Remember that the hypotheses for ANOVA are either that all means are the same, or that at least one was different. ANOVA can only tell us that there is a difference. Therefore, out interpretation would look something like this:</li>
+</ul>
+<blockquote class="blockquote">
+<p>Based on a Factorial ANOVA (no interaction), there were significant main effects of planting density (<span class="math inline">\(F_{1, 92}= 15.31, p &lt; 0.001\)</span>) and fertilizer addition (<span class="math inline">\(F_{2, 92}= 9.07, p &lt; 0.001\)</span>).</p>
+</blockquote>
+<ul>
+<li>In order to see <em>which</em> means are different, we can view the summary output from the <code>lm()</code> model as we did before.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(crop_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = yield ~ density + fertilizer, data = crop)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.16523 -0.30208 -0.05802  0.42576  1.47375 
+
+Coefficients:
+            Estimate Std. Error  t value Pr(&gt;|t|)    
+(Intercept) 176.9880     0.1180 1499.403  &lt; 2e-16 ***
+densitylow   -0.4620     0.1180   -3.914 0.000174 ***
+fertilizerN   0.5991     0.1446    4.144 7.57e-05 ***
+fertilizerP   0.1762     0.1446    1.219 0.226115    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.5783 on 92 degrees of freedom
+Multiple R-squared:  0.2667,    Adjusted R-squared:  0.2428 
+F-statistic: 11.15 on 3 and 92 DF,  p-value: 2.601e-06</code></pre>
+</div>
+</div>
+<ul>
+<li>What does the intercept show us here? Or which group is it an estimated average for?</li>
+</ul>
+</section>
+<section id="multiple-comparisons-factorial" class="level3" data-number="3.6.12">
+<h3 data-number="3.6.12" class="anchored" data-anchor-id="multiple-comparisons-factorial"><span class="header-section-number">3.6.12</span> Multiple Comparisons: Factorial</h3>
+</section>
+</section>
+<section id="tukeys-hsd-1" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="tukeys-hsd-1"><span class="header-section-number">3.7</span> Tukey’s HSD</h2>
+<p>As mentioned above, the results of the ANOVA test indicated significant differences. As researchers, we most likely want to know <em>which</em> groups are different. For example, telling farmers that density and fertilizer are important isn’t overly helpful. Telling them which fertilizer to use and which density to maximize their yield would be helpful.</p>
+<ul>
+<li>Before we run the Tukey HSD test, we need to run an ANOVA on our linear model fit using the <code>aov()</code> function.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA of our lm model</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>crop_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(crop_lm)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Tukey's test on the plant_aov object</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>crop_tukey <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(crop_aov)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print out results</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>crop_tukey</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = crop_lm)
+
+$density
+              diff        lwr        upr     p adj
+low-high -0.461956 -0.6963916 -0.2275205 0.0001741
+
+$fertilizer
+                diff        lwr         upr     p adj
+N-control  0.5991256  0.2547318  0.94351936 0.0002219
+P-control  0.1761687 -0.1682251  0.52056252 0.4452958
+P-N       -0.4229568 -0.7673506 -0.07856306 0.0119381</code></pre>
+</div>
+</div>
+<ul>
+<li>Here, we can see that we have a section for each factor, and a row for every pairwise combination. The table gives us an estimated and 95% CI for the differences, as well as an adjusted p value.</li>
+</ul>
+<section id="tukey-hsd-interpretation" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="tukey-hsd-interpretation"><span class="header-section-number">3.7.1</span> Tukey HSD Interpretation</h3>
+</section>
+<section id="density" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="density"><span class="header-section-number">3.7.2</span> Density</h3>
+<p>The estimated difference in yields between low and high density is -0.49(95%CI -0.70, -0.23), and this is a significant change (adjusted p-value &lt; 0.001).</p>
+</section>
+<section id="fertilizer" class="level3" data-number="3.7.3">
+<h3 data-number="3.7.3" class="anchored" data-anchor-id="fertilizer"><span class="header-section-number">3.7.3</span> Fertilizer</h3>
+<p>The interpretation for fertilizer is a bit more complex.</p>
+<p>There was no significant change in yield with the addition of Phosphorous fertilizer (95% CI of estimates change: -0.17, 0.52). However, the addition of Nitrogen increased yield compared with no fertilizer by 0.60 (95%CI 0.25, 0.94) kg, and the yield for N was 0.422 (95%: 0.77, 0.08) kg greater than with Phosphorous fertilizer, and both of these differences were significant (adjusted p-values = &lt;0.001 and 0.012, respectively).</p>
+<p><strong>NOTE</strong> that I switched the sign on the P-N comparison to fit the narrative. This makes the comparison N-P.</p>
+<p>We can also plot these differences. Any coefficient estimates which cross zero are not considered to be significantly different.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(crop_tukey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="blocking" class="level3" data-number="3.7.4">
+<h3 data-number="3.7.4" class="anchored" data-anchor-id="blocking"><span class="header-section-number">3.7.4</span> Blocking</h3>
+<ul>
+<li><p>Blocking is a way of controlling for confounding variables</p></li>
+<li><p>Remember when I said you want to keep everything as similar as possible?</p></li>
+<li><p>This isn’t always possible</p>
+<ul>
+<li>i.e., fields on north/south aspect, temperature gradient within a greenhouse, different water chemistry, etc.</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="confounding.png" class="img-fluid figure-img"></p>
+<figcaption>Confounding variables.</figcaption>
+</figure>
+</div>
+<ul>
+<li><p>One way to control for this is to “block” your experiment</p></li>
+<li><p>this ensures that there are treatment replicates in all “areas”</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="blocking.png" class="img-fluid figure-img"></p>
+<figcaption>Blocking experiments.</figcaption>
+</figure>
+</div>
+<ul>
+<li><p>The <code>crop_anova</code> data also includes a blocking variable.</p></li>
+<li><p>We can include this in our analysis by adding it as a factor to our <code>lm()</code> formula.</p></li>
+<li><p>I will not go through the full process of plotting the data and checking the assumptions here, but for a formal analysis you should do it again including all of the grouping variables.</p></li>
+<li><p>I’m not familiar with the original design of this experiment, but presumably the different blocks were fields when the different treatments were randomly assigned.</p></li>
+</ul>
+</section>
+</section>
+<section id="blocking-factor-in-lm" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="blocking-factor-in-lm"><span class="header-section-number">3.8</span> Blocking factor in <code>lm()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>crop_block_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(yield <span class="sc">~</span> density <span class="sc">+</span> fertilizer <span class="sc">+</span> block, <span class="at">data =</span> crop)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(crop_block_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: yield
+           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+density     1  5.1217  5.1217 15.2238 0.0001840 ***
+fertilizer  2  6.0680  3.0340  9.0184 0.0002693 ***
+block       2  0.4861  0.2431  0.7225 0.4883291    
+Residuals  90 30.2784  0.3364                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The blocking factor was not significant. In other words, there was not a high degree of variation associated with the individual block.</p></li>
+<li><p>You can then continue the analysis by looking at the coefficient estimates from the <code>lm()</code> model, as well as perform post-hoc multiple comparisons, but I will skip that here.</p></li>
+<li><p>Note that the residual_{df}, F-values, and p-values all changed slightly with the addition of a blocking factor.</p></li>
+<li><p>Opinions differ on how to proceed with a non-significant blocking variable.</p></li>
+<li><p>Some say that since it’s not significant you can drop it and re-run the analysis without it (i.e., the analysis at the beginning of this lab).</p></li>
+<li><p>Dropping the block will increase your degrees of freedom and can give you slightly more statistical power.</p></li>
+<li><p>Other people say that you had the block in the original design and it’s disingenuous throw it out now, and you should keep it in the analysis and report the lack of significance.</p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This discussion foreshadows a more complex philosophical as well as technical concept of model selection. We most likely won’t have time to dive into that topic in this class, but just know that there are entire books written on when, how, and where to perform model selection. Luckily, much of this information is also online, so if and when you find yourself in that situation there are plenty of resources available for you to dive in. (Or, more realistically, your boss / adviser / etc. will probably have an opinion or a preferred method, so you will do that for a while until you get more experience and then one day you’ll get interested in it and go down a Wikipedia rabbit hole and come out the other side having ordered multiple books online which you will probably never fully read, but will still come to your own preferred method through a combination of trial-and-error, discussions with colleagues, and divination. Not that I’m speaking from personal experience or anything…)</p>
+</div>
+</div>
+</section>
+<section id="two-way-anova" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="two-way-anova"><span class="header-section-number">3.9</span> Two-way ANOVA</h2>
+<section id="data-1" class="level3" data-number="3.9.1">
+<h3 data-number="3.9.1" class="anchored" data-anchor-id="data-1"><span class="header-section-number">3.9.1</span> Data</h3>
+<ul>
+<li>We will use the <code>ToothGrowth</code> data which comes with R. Load the data by running the following command:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"ToothGrowth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>ToothGrowth</code> contains data examining the effect of varying the dose (<code>dose</code>) of two supplements (<code>supp</code>) on the length (<code>len</code>) of teeth in Guinea Pigs.</li>
+<li>Run <code>?ToothGrowth</code> to learn more about the data.</li>
+</ul>
+<section id="analysis-1" class="level4" data-number="3.9.1.1">
+<h4 data-number="3.9.1.1" class="anchored" data-anchor-id="analysis-1"><span class="header-section-number">3.9.1.1</span> Analysis</h4>
+<p>Let’s look at the full data, and see what the treatment levels are.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ToothGrowth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "len"  "supp" "dose"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(ToothGrowth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 3
+     len supp   dose
+   &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;
+ 1   4.2 VC      0.5
+ 2  11.5 VC      0.5
+ 3   7.3 VC      0.5
+ 4   5.8 VC      0.5
+ 5   6.4 VC      0.5
+ 6  10   VC      0.5
+ 7  11.2 VC      0.5
+ 8  11.2 VC      0.5
+ 9   5.2 VC      0.5
+10   7   VC      0.5
+# ℹ 50 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(ToothGrowth, supp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  supp
+1   VC
+2   OJ</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(ToothGrowth, dose)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  dose
+1  0.5
+2  1.0
+3  2.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(ToothGrowth, supp, dose)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  supp dose
+1   VC  0.5
+2   VC  1.0
+3   VC  2.0
+4   OJ  0.5
+5   OJ  1.0
+6   OJ  2.0</code></pre>
+</div>
+</div>
+<ul>
+<li>For this analysis, we have two <em>factors</em> (supp and dose).</li>
+<li>The <strong>supp</strong> factor has two levels: VC, and OJ</li>
+<li>The <strong>dose</strong> factor has three levels: 0.5, 1.0, and 2.0.</li>
+</ul>
+</section>
+</section>
+<section id="wrangle-variables-to-be-a-factor" class="level3" data-number="3.9.2">
+<h3 data-number="3.9.2" class="anchored" data-anchor-id="wrangle-variables-to-be-a-factor"><span class="header-section-number">3.9.2</span> Wrangle variables to be a <strong>Factor</strong></h3>
+<ul>
+<li>The <code>dose</code> variable is a class <code>dbl</code>.</li>
+<li>If we plug this into the <code>lm()</code> function, R will treat this as continuous and will give us a different result (linear regression).</li>
+<li>In ANOVA, we want to analyze the data based on categories.</li>
+<li>We need to change the <code>dose</code> variable to an ordered factor with the following code.</li>
+<li>We will also be changing the name of the data object to <code>dat</code> to have less typing to do.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> ToothGrowth <span class="sc">%&gt;%</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dose =</span> <span class="fu">factor</span>(dose,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">levels =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"D0.5"</span>, <span class="st">"D1"</span>, <span class="st">"D2"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>See how many observations are in each group:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(supp, dose) <span class="sc">|&gt;</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   supp, dose [6]
+  supp  dose      n
+  &lt;fct&gt; &lt;fct&gt; &lt;int&gt;
+1 OJ    D0.5     10
+2 OJ    D1       10
+3 OJ    D2       10
+4 VC    D0.5     10
+5 VC    D1       10
+6 VC    D2       10</code></pre>
+</div>
+</div>
+<ul>
+<li>There are 10 observations in each combination of all levels for both factors.</li>
+<li>This is a completely balanced ANOVA design.</li>
+</ul>
+</section>
+<section id="plot-data" class="level3" data-number="3.9.3">
+<h3 data-number="3.9.3" class="anchored" data-anchor-id="plot-data"><span class="header-section-number">3.9.3</span> Plot data</h3>
+<ul>
+<li>Let’s start by plotting all of the data. We will save time and consider all the grouping variables.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dose,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> len,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> supp)) <span class="sc">+</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interaction-plots" class="level3" data-number="3.9.4">
+<h3 data-number="3.9.4" class="anchored" data-anchor-id="interaction-plots"><span class="header-section-number">3.9.4</span> Interaction plots</h3>
+<p>We can estimate the effects based on the boxplot above, but an interaction plot is usually more illustrative.</p>
+</section>
+<section id="ggplot" class="level3" data-number="3.9.5">
+<h3 data-number="3.9.5" class="anchored" data-anchor-id="ggplot"><span class="header-section-number">3.9.5</span> <code>ggplot</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat, </span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dose,</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> len,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> supp,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">group =</span> supp)) <span class="sc">+</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> <span class="st">"mean"</span>,</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"line"</span>) <span class="sc">+</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>Notice the “change in slope”</p></li>
+<li><p>This is indicative of an interaction effect.</p></li>
+</ul>
+</section>
+<section id="check-pre-analysis-assumptions-2" class="level3" data-number="3.9.6">
+<h3 data-number="3.9.6" class="anchored" data-anchor-id="check-pre-analysis-assumptions-2"><span class="header-section-number">3.9.6</span> Check pre-analysis assumptions</h3>
+</section>
+<section id="assumption-equal-variance-2" class="level3" data-number="3.9.7">
+<h3 data-number="3.9.7" class="anchored" data-anchor-id="assumption-equal-variance-2"><span class="header-section-number">3.9.7</span> Assumption: equal variance</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>These data look to have approximately equal variation across the treatment groups. The <code>D1:VC</code> and <code>D2:OJ</code> look to have slightly less variation, but this is probably close enough.</li>
+</ul>
+</section>
+<section id="assumptions-normality-of-residuals-2" class="level3" data-number="3.9.8">
+<h3 data-number="3.9.8" class="anchored" data-anchor-id="assumptions-normality-of-residuals-2"><span class="header-section-number">3.9.8</span> Assumptions: Normality of residuals</h3>
+<section id="qq-plot" class="level4" data-number="3.9.8.1">
+<h4 data-number="3.9.8.1" class="anchored" data-anchor-id="qq-plot"><span class="header-section-number">3.9.8.1</span> QQ-plot</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">sample =</span> len)) <span class="sc">+</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>()<span class="sc">+</span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Most of the observations (points) fall close to the reference line. There’s a few that are off near the low and high end of the data, but this should be ok.</p>
+</section>
+</section>
+<section id="two-way-anova-hypotheses" class="level3" data-number="3.9.9">
+<h3 data-number="3.9.9" class="anchored" data-anchor-id="two-way-anova-hypotheses"><span class="header-section-number">3.9.9</span> Two-way ANOVA Hypotheses</h3>
+<section id="main-effect-of-supplement-supp" class="level4" data-number="3.9.9.1">
+<h4 data-number="3.9.9.1" class="anchored" data-anchor-id="main-effect-of-supplement-supp"><span class="header-section-number">3.9.9.1</span> Main effect of supplement (<code>supp</code>)</h4>
+<p><span class="math display">\[ H0: \text{There is NO effect of supplement on tooth growth} \]</span></p>
+<p><span class="math display">\[HA: \text{There IS AN EFFECT of supplement on tooth growth}\]</span></p>
+</section>
+</section>
+<section id="main-effect-of-dose" class="level3" data-number="3.9.10">
+<h3 data-number="3.9.10" class="anchored" data-anchor-id="main-effect-of-dose"><span class="header-section-number">3.9.10</span> Main effect of (<code>dose</code>)</h3>
+<p>Null and alternative hypotheses:</p>
+<p><span class="math display">\[H0: \text{There is NO effect of Dose on tooth growth}\]</span></p>
+<p><span class="math display">\[HA: \text{There IS AN EFFECT of Dose on tooth growth}\]</span></p>
+</section>
+<section id="interactive-effect-of-dosesupp" class="level3" data-number="3.9.11">
+<h3 data-number="3.9.11" class="anchored" data-anchor-id="interactive-effect-of-dosesupp"><span class="header-section-number">3.9.11</span> Interactive effect of <code>dose:supp</code></h3>
+<p><span class="math display">\[H0: \text{The effect of one factor DOES NOT depend on the other factor}\]</span> <span class="math display">\[H0: \text{The effect of one factor DOES depend on the other factor}\]</span></p>
+</section>
+</section>
+<section id="two-way-anova-with-lm" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="two-way-anova-with-lm"><span class="header-section-number">3.10</span> Two-way ANOVA with <code>lm()</code></h2>
+<p>Let’s first fit a linear model to the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>tooth_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(len <span class="sc">~</span> supp <span class="sc">*</span> dose, <span class="at">data =</span> dat)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>tooth_lm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = len ~ supp * dose, data = dat)
+
+Coefficients:
+  (Intercept)         suppVC         doseD1         doseD2  suppVC:doseD1  
+        13.23          -5.25           9.47          12.83          -0.68  
+suppVC:doseD2  
+         5.33  </code></pre>
+</div>
+</div>
+<section id="assumption-equal-variance-of-residuals-2" class="level3" data-number="3.10.1">
+<h3 data-number="3.10.1" class="anchored" data-anchor-id="assumption-equal-variance-of-residuals-2"><span class="header-section-number">3.10.1</span> Assumption: Equal variance of residuals</h3>
+<p>Before we look at the results, let’s check our post-model fit assumption with a fitted vs.&nbsp;residuals plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tooth_lm,</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="fu">position_jitter</span>(</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.1</span>,</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">height =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>the absolute magnitude of the maximum and minimum y-values are approximately the same (~ -7.5, ~ 7.5), although there are a couple of points above the 1.25 region.</li>
+<li>There may be slightly more variation on the right side (points are further from the line). However, there is no clear pattern in the spread of the points, so this looks OK.</li>
+</ul>
+</section>
+<section id="two-way-anova-table" class="level3" data-number="3.10.2">
+<h3 data-number="3.10.2" class="anchored" data-anchor-id="two-way-anova-table"><span class="header-section-number">3.10.2</span> Two-way ANOVA table</h3>
+<ul>
+<li>use the <code>anova()</code> function on the model fit object to get the statistical results.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(tooth_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: len
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+supp       1  205.35  205.35  15.572 0.0002312 ***
+dose       2 2426.43 1213.22  92.000 &lt; 2.2e-16 ***
+supp:dose  2  108.32   54.16   4.107 0.0218603 *  
+Residuals 54  712.11   13.19                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>We have a row for each of the main factors and a row for the interaction effect (<code>supp:dose</code>) as well as a fourth row for the residuals (unexplained variation).</p></li>
+<li><p>We interpret the F-value and p-value for each factor as before. Our interpretation of the main effects is the same as before. For example, there is a significant main effect of supplement (<code>supp</code>) and dose (<code>dose</code>).</p></li>
+<li><p>We can now also make a statement of the statistical significance for the interactive effect. In this case, the p-value for the <code>supp:dose</code> interaction is p = 0.02 and this is less than our <span class="math inline">\(\alpha = 0.05\)</span> cutoff, so there <em>is an interactive effect</em>.</p></li>
+<li><p>In other words, the effect of supplement depends on the dose applied (or the effect of the dose depends on the supplement type). <strong>Reminder</strong> do not try and interpret what the interaction effect is, just say that there is one.</p></li>
+</ul>
+</section>
+<section id="two-way-anova-interpretation" class="level3" data-number="3.10.3">
+<h3 data-number="3.10.3" class="anchored" data-anchor-id="two-way-anova-interpretation"><span class="header-section-number">3.10.3</span> Two-way ANOVA Interpretation</h3>
+<p>Remember that the hypotheses for ANOVA are either that all means are the same, or that at least one was different. ANOVA can only tell us that there is a difference. Therefore, our interpretation would look something like this:</p>
+<blockquote class="blockquote">
+<p>Based on a 2-way ANOVA with interaction, there were significant main effects of supplement (<span class="math inline">\(F_{1, 54}= 15.572, p &lt; 0.001\)</span>) and dose (<span class="math inline">\(F_{2, 54}= 92, p &lt; 0.001\)</span>). Furthermore, there was a significnat interaction (<span class="math inline">\(F_{2, 54}= 4.1, p = 0.02\)</span>) which means that the effect of one factor depended on the level of the other factor.</p>
+</blockquote>
+</section>
+<section id="relate-anova-table-to-intercation-plot" class="level3" data-number="3.10.4">
+<h3 data-number="3.10.4" class="anchored" data-anchor-id="relate-anova-table-to-intercation-plot"><span class="header-section-number">3.10.4</span> Relate ANOVA table to intercation plot</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="main-effect-of-supp" class="level4" data-number="3.10.4.1">
+<h4 data-number="3.10.4.1" class="anchored" data-anchor-id="main-effect-of-supp"><span class="header-section-number">3.10.4.1</span> Main effect of <code>supp</code></h4>
+<p>“Average” the y-values for each line individually across the x-values. Overall, the average of the red line is not equal to the average of the blue line: Significant main effect.</p>
+</section>
+<section id="main-effect-of-dose-1" class="level4" data-number="3.10.4.2">
+<h4 data-number="3.10.4.2" class="anchored" data-anchor-id="main-effect-of-dose-1"><span class="header-section-number">3.10.4.2</span> Main effect of <code>dose</code></h4>
+<p>“Average” the y-values for each x-category across the lines. The average for <code>D0.5</code> is low, and <code>D1</code> is medium, while <code>D2</code> is high. This means we have a significant effect of dose.</p>
+</section>
+<section id="interaction" class="level4" data-number="3.10.4.3">
+<h4 data-number="3.10.4.3" class="anchored" data-anchor-id="interaction"><span class="header-section-number">3.10.4.3</span> Interaction</h4>
+<p>Look at the lines to see if they are parallel or if they have a different slope. Both lines are parallel at the lower doses, but the slope changes between <code>D1</code> and <code>D2</code>. This means there is a significant interaction.</p>
+</section>
+</section>
+<section id="two-way-anova-multiple-comparisons" class="level3" data-number="3.10.5">
+<h3 data-number="3.10.5" class="anchored" data-anchor-id="two-way-anova-multiple-comparisons"><span class="header-section-number">3.10.5</span> Two-way ANOVA Multiple Comparisons</h3>
+<ul>
+<li>In order to see <em>which</em> means are different, we can view the summary output from the <code>lm()</code> model, as well as calculate Tukey’s HSD.</li>
+</ul>
+</section>
+</section>
+<section id="lm-summary" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="lm-summary"><span class="header-section-number">3.11</span> <code>lm()</code> summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tooth_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = len ~ supp * dose, data = dat)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -8.20  -2.72  -0.27   2.65   8.27 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     13.230      1.148  11.521 3.60e-16 ***
+suppVC          -5.250      1.624  -3.233  0.00209 ** 
+doseD1           9.470      1.624   5.831 3.18e-07 ***
+doseD2          12.830      1.624   7.900 1.43e-10 ***
+suppVC:doseD1   -0.680      2.297  -0.296  0.76831    
+suppVC:doseD2    5.330      2.297   2.321  0.02411 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.631 on 54 degrees of freedom
+Multiple R-squared:  0.7937,    Adjusted R-squared:  0.7746 
+F-statistic: 41.56 on 5 and 54 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The summary output with multiple-levels of a factor and an interaction becomes much more complicated. However, if we take them one at-a-time we can see there’s not much different.</p></li>
+<li><p>The intercept is the mean estimate for our reference group, which in this case is the OJ supplement at D0.5. We will need to keep this in mind when we look at all of the other coefficient estimates.</p></li>
+</ul>
+<p>Other Coefficients:</p>
+<ul>
+<li><p><code>suppVC</code> = <code>OJ:D0.5</code> - <code>VC:D0.5</code></p></li>
+<li><p><code>doseD1</code> = <code>OJ:D0.5</code> - <code>OJ:D1</code></p></li>
+<li><p><code>doseD2</code> = <code>OJ:D0.5</code> - <code>OJ:D2</code></p></li>
+<li><p><code>suppVC:doseD1</code> = <code>OJ:D0.5</code> - <code>VC:D1</code></p></li>
+<li><p><code>suppVC:doseD2</code> = <code>OJ:D0.5</code> - <code>VC:D2</code></p></li>
+</ul>
+<section id="interpretation-of-p-values" class="level3" data-number="3.11.1">
+<h3 data-number="3.11.1" class="anchored" data-anchor-id="interpretation-of-p-values"><span class="header-section-number">3.11.1</span> Interpretation of p-values</h3>
+<ul>
+<li>Intercept: Is mean length of <code>OJ:D0.5</code> = 0?
+<ul>
+<li>Low p-value, Reject null. Value is different from 0<br>
+</li>
+</ul></li>
+<li>Is the difference of the treatment group different from our reference group?
+<ul>
+<li>reference group in this case is: <code>OJ:D0.5</code><br>
+</li>
+<li><code>suppVC:doseD1</code> has a high p-value, failt to reject (FTR) the null. In other words, it is not different from ’OJ:D0.5` (refer back to box plot)<br>
+</li>
+<li>All other coefficients have p &lt; 0.05, so reject the null hypothesis that those differences = 0. (In other words, there <strong>IS</strong> a difference between means.)</li>
+</ul></li>
+</ul>
+</section>
+<section id="tukeys-hsd-2" class="level3" data-number="3.11.2">
+<h3 data-number="3.11.2" class="anchored" data-anchor-id="tukeys-hsd-2"><span class="header-section-number">3.11.2</span> Tukey’s HSD</h3>
+<p>Before we run the Tukey HSD test, we need to run an ANOVA on our linear model fit using the <code>aov()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA of our lm model</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>tooth_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(tooth_lm)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Tukey's test on the plant_aov object</span></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>tooth_tukey <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(tooth_aov)</span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print out results</span></span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>tooth_tukey</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = tooth_lm)
+
+$supp
+      diff       lwr       upr     p adj
+VC-OJ -3.7 -5.579828 -1.820172 0.0002312
+
+$dose
+          diff       lwr       upr   p adj
+D1-D0.5  9.130  6.362488 11.897512 0.0e+00
+D2-D0.5 15.495 12.727488 18.262512 0.0e+00
+D2-D1    6.365  3.597488  9.132512 2.7e-06
+
+$`supp:dose`
+                 diff        lwr        upr     p adj
+VC:D0.5-OJ:D0.5 -5.25 -10.048124 -0.4518762 0.0242521
+OJ:D1-OJ:D0.5    9.47   4.671876 14.2681238 0.0000046
+VC:D1-OJ:D0.5    3.54  -1.258124  8.3381238 0.2640208
+OJ:D2-OJ:D0.5   12.83   8.031876 17.6281238 0.0000000
+VC:D2-OJ:D0.5   12.91   8.111876 17.7081238 0.0000000
+OJ:D1-VC:D0.5   14.72   9.921876 19.5181238 0.0000000
+VC:D1-VC:D0.5    8.79   3.991876 13.5881238 0.0000210
+OJ:D2-VC:D0.5   18.08  13.281876 22.8781238 0.0000000
+VC:D2-VC:D0.5   18.16  13.361876 22.9581238 0.0000000
+VC:D1-OJ:D1     -5.93 -10.728124 -1.1318762 0.0073930
+OJ:D2-OJ:D1      3.36  -1.438124  8.1581238 0.3187361
+VC:D2-OJ:D1      3.44  -1.358124  8.2381238 0.2936430
+OJ:D2-VC:D1      9.29   4.491876 14.0881238 0.0000069
+VC:D2-VC:D1      9.37   4.571876 14.1681238 0.0000058
+VC:D2-OJ:D2      0.08  -4.718124  4.8781238 1.0000000</code></pre>
+</div>
+</div>
+<ul>
+<li><p>We have a section for each factor as well as a section for the interaction.</p></li>
+<li><p>Within each section there is a row for every pairwise combination. The table gives us an estimated and 95% CI for the differences, as well as an adjusted p value.</p></li>
+<li><p>We can also plot these differences. Any coefficient estimates which cross zero are not considered to be significantly different.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tooth_tukey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-42-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_07_ANOVA_files/figure-html/unnamed-chunk-42-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

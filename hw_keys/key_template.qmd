@@ -67,7 +67,7 @@ library(tidyverse)
 #| eval: false
 #| echo: true
 
-finch <- read.csv(here::here("data/galapago-finches.csv"),
+finch <- read.csv("data/galapago-finches.csv",
                   stringsAsFactors = TRUE)
 
 ```

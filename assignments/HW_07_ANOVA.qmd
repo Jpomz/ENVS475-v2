@@ -1,0 +1,642 @@
+---
+title: "KEY 07 ANOVA"
+execute: 
+  echo: false
+  eval: false
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+crop <- read.csv(here::here("data/crop_anova.csv"),
+                  stringsAsFactors = TRUE)
+moth <- read.csv(here::here("data/moth_data.csv"),
+                  stringsAsFactors = TRUE)
+wheat <- read.csv(here::here("data/wheat_2-way.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Learning Objectives
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download `crop_anova.csv`, `moth_data.csv`, and `wheat_2-way.csv` from D2L
+
+-   Place them in your `data/` folder
+
+-   Load the data at the top of your script with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+crop <- read.csv("data/crop_anova.csv",
+                  stringsAsFactors = TRUE)
+
+moth <- read.csv("data/moth_data.csv",
+                  stringsAsFactors = TRUE)
+
+wheat <- read.csv("data/wheat_2-way.csv",
+                  stringsAsFactors = TRUE)
+
+```
+
+# Problems
+
+### Problem 1: `crop_anova.csv`
+
+An experiment on the effects of fertilizer addition on the yield (in kg) of crops. Agricultural fields received one of three treatments: control (no fertilizer), Nitrogen addition, or Phosphorous addition. This experimental design has a single factor (`fertilizer`) with three levels (`control`, `N`, `P`). 
+
+For this problem, I will not be asking you to print out the names, dimensions, etc. of this data set as a question, but you should always be in the habit of doing that whenever you load a new data object.  
+
+We will be formally testing whether there is at least one inequality between the three groups.  
+
+### data wrangling 
+
+For this analysis, we will only be looking at the "low" `density` plantings and will also be ignoring the `block` variable (we will use these variables in a future assignment). 
+
+Enter the following code into your script and run it:
+
+```{r }
+#| echo: true
+#| 
+crop1 <- crop %>%
+  filter(density == "low") %>%
+  select(fertilizer, yield)
+```
+
+
+
+1.1 Add a comment to your homework script stating the null and alternative hypotheses for a one-way ANOVA.  
+
+```{r}
+# 1.1
+# HO: All means are equal
+# HA: at least one is different
+```
+
+1.2 Make a plot of all the observations of yield, ignoring any other grouping variables. Be sure to include a box plot and the raw data points.    
+
+```{r}
+ggplot(crop1,
+       aes(x = 0, 
+           y = yield)) +
+  geom_boxplot()+
+  geom_point(position = position_jitter(width = 0.05))
+```
+
+
+1.3 Make a plot of the yield separated by fertilizer treatment. Be sure to include a box plot and the raw observations. 
+
+```{r}
+# 1.3 x groups
+ggplot(crop1,
+       aes(x = fertilizer, 
+           y = yield,
+           color = fertilizer))+
+  geom_boxplot() +
+  geom_point(position = position_jitter(width = 0.05))
+```
+
+
+1.4 Based on the box plots made in question 1.3, add a comment to your script interpreting the assumption of equal variance. Do these data appear to have equal variation between the groups? Why or why not?
+
+```{r}
+# 1.4 - box plots look good. the N group is maybe a slight bit smaller than the rest, but generally looks like the boxes are all the same widths.
+```
+
+
+1.5 Check the assumption of the normality of residuals by making a QQ-plot of this data.  
+
+```{r}
+# 1.5 qqplot Normality of residuals
+ggplot(crop1, aes(sample = yield)) +
+  stat_qq() + # plot qq points
+  stat_qq_line() # reference line
+```
+
+1.6 Add a comment to your script interpreting the QQ-plot you made in 1.5 above. Does it appear that the residuals are normally distributed? Why or why not?  
+
+```{r}
+# 1.6 - Nearly all the points are one the reference line, so we can conclude that the residuals are normally distributed.
+```
+
+1.7 Use `lm()` to fit a model to formally test the effect of fertilizer treatment on plant yield. Save your model fit as a new object (i.e., `lm_crop`)  
+
+```{r}
+# 1.7 ANOva in lm()
+lm_crop <- lm(yield ~ fertilizer, data = crop1)
+```
+
+
+1.8 Before we look at the model output, let's make a fitted vs. residual plot to check our last assumption: Equal variance of residuals.  
+
+  * Use the model-fit object you made in 1.7 above to make a fitted vs residual plot.  
+  
+```{r}
+# 1.8
+ggplot(lm_crop,
+       aes(x = .fitted, y = .resid)) +
+  geom_point(
+    position = position_jitter(
+      width = 0.05)) +
+  geom_hline(yintercept = 0)
+```
+
+1.9 Add a comment to Interpret the plot made in 1.8. Does this model appear to have equal variance in the residuals? Why or why not?  
+
+```{r}
+#1.9 - Magnitude of high and low points is similar, no obvious pattern or correlation in the spread of the points.
+```
+
+1.10 Now, use the `anova()` function on your model fit object created in 1.7 above to print out an ANOVA table in your output.  
+1.11 Add a comment to your script and manually type out the following values from the table.  
+  
+  * The two degrees of freedom  
+  
+  * The mean square of the among-group variation (treatment effect)  
+  
+  * The Mean square of the unexplained variation (the residual, or the "noise")  
+  
+  * The F-value  
+  
+  * The p-value (rounded if necessary)  
+
+```{r}
+anova(lm_crop)
+```
+  
+1.11 Add a comment to your script which has the following vlaues:
+-   Two degrees of freedom  
+
+-   Mean Square Error of the among-group variation (Treatment effect)  
+-   Mean Square Error of the unexaplained variation (Residual, or "Noise")
+
+-   The F-value  
+
+-   The p-value (appropriately rounded if necessary)  
+
+```{r}
+# * The two degrees of freedom  
+# 2, 45
+
+# * The mean square of the among-group variation (treatment effect)  
+# 1.938
+
+# * The Mean square of the unexplained variation (the residual, or the "noise")  
+# 0.2990
+
+# * The F-value  
+# 6.48 
+
+# * The p-value (rounded if necessary)  
+# 0.003
+```
+
+
+1.12 Add a comment to your script interpreting the results of our one-way ANOVA analysis. Do we reject or fail to reject our null hypothesis? Make sure to include all the appropriate statistics in your interpretation.  
+
+```{r}
+# 1.12
+# Based on the data, we reject the null hypothesis and conclude that at least one of the means is different (df: 2, 45, F-value = 6.48, p = 0.003)
+```
+
+
+1.13 Regardless of what your answer to 1.12 was, let's now look at pairwise comparisons between the groups. We will start by looking at the output from the `lm()` analysis.  
+  
+  * Use the `summary()` function to print out your lm model fit object here.  
+
+```{r}
+# 1.13
+
+summary(lm_crop)
+```
+
+  
+1.14 Interpret what the Intercept coefficient means.  
+  
+  * What is the coefficient estimate of?  
+  
+  * What does the p-value mean? (What is the null and alternative hypothesis?)    
+
+```{r}
+# 1.14 
+# the intercept coefficient is the mean estimated yield for the control group. In other words, it is estimated that the mean yield (+- 1 SEM) is 176.44 (+-0.1367). 
+# the null is that the mean yield = 0
+# The low p-value means that we are pretty sure the mean is not 0. 
+```
+
+1.15 Interpret the other two coefficient estimates here.  
+  
+  * What is the coefficient estimating?  
+  
+  * What do the p-values mean?  
+
+```{r}
+# 1.15 
+# estimate the difference between the control and N and P groups respectively. 
+# N on average has a 0.696 (SEM: 0.1933) higher yield. P-value is < 0.05, so this difference is significant
+# P on average has a 0.3387 (SEM: 0.1933) higher yield. P-value is > 0.05, so this difference is not significant
+```  
+
+1.16 Use the coefficient estimates from the `lm()` model to estimate the mean yield for the N and P groups. 
+
+```{r}
+# 1.16
+# N group:
+coef(lm_crop)[1]+coef(lm_crop)[2]
+# P group
+coef(lm_crop)[1]+coef(lm_crop)[3]
+```
+  
+1.17 Perform a Tukey HSD multiple comparison on the linear model fit object that you created in problem 1.7.  
+  
+  * You will first need to create a new object with the `aov()` function  
+  
+  * You can then use `TukeyHSD()` on your aov object.  
+  
+  * print out the results of the Tukey HSD here.  
+  
+```{r}
+#1.17
+aov_crop <- aov(lm_crop)
+TukeyHSD(aov_crop)
+```
+
+
+1.18 Also make a plot of the Tukey HSD results. 
+
+```{r}
+# 1.18
+plot(TukeyHSD(aov_crop))
+```
+1.19 Finally, interpret the results of the Tukey HSD here. 
+
+```{r}
+# 1.19
+# Based on the Tukey HSD, the only significant differences between groups was for the N vs Control groups (Tukey adjusted p-value = 0.002). It was estimated that the difference in yield was 0.696 (95%CI 0.228, 1.165). The other pairwise differences were not significant (95%CI contianed 0, adjusted p-values > 0.05)
+```
+
+### Problem 2 `moth` data  
+
+
+This is simulated data looking at the effects of different pesticides for controlling the abundance of a moth pest species. The experiment was blocked based on different regions in the SE US. 
+
+You should always print out the `names()` and `head()` of data objects when you load them into your R environment.
+
+You may also want to look at the distinct/unique levels of each of the categorical/factor variables. 
+
+### Wrangle the data
+
+You may have noticed that the `Region` variable is a number. If we plug the data as-is into a linear model, R will treat this as a continuous variable. Since this represents different groups, we need to change the class of this variable to be a factor. 
+
+Run the following code **before** answering the problems below. 
+
+```{r}
+#| echo: true
+
+moth <- moth %>%
+  mutate(Region = factor(Region))
+```
+
+2.1 Make a box plot of the response variable (`caterpillar`) grouped with the herbicide treatment.  
+
+  * **Note** do **not** include `Region` as a grouping variable. There is only one observation for each treatment in each region, and this is not enough to make a box plot.  
+
+```{r}
+# do not include region, there is only one obervation for each treatment in each region
+ggplot(moth, 
+       aes(y = caterpillar, 
+           x = Treatment)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+2.2 Interpret the box plots here. Does it appear that there is equal variance across the different treatments? Why or why not?  
+
+```{r}
+#widths look close, Dimilin may be a little narrow
+```
+2.3 Now, make a box plot of the response variable grouped by region (ignore the treatment variable)  
+
+```{r}
+ggplot(moth, 
+       aes(y = caterpillar, 
+           x = Region)) +
+         geom_boxplot() +
+         theme_bw()
+```         
+
+
+2.4 Interpret the box plots here. Does it appear that there is equal variance across the different regions? Why or why not?  
+
+```{r}
+#Maybe a little uneven
+```
+
+
+2.5 Fit a linear model using the `lm()` function, and save it as a new data object. Make sure to include both the `Treatment` and `Region` variables as main effects in the model.  
+
+```{r}
+moth_lm <- lm(caterpillar ~ Treatment + Region, data = moth)
+```
+
+
+2.6 Write out the null and alternative hypotheses for this model.  
+
+```{r}
+# Treatment
+# HO All TREATMENT means are the same
+# HA at least one treatment mean is different
+
+# REGION
+# HO All REGION means are the same
+# HA at least one REGION mean is different
+
+```
+
+2.7 Print out the ANOVA table for the linear model you fit in problem 2.5.  
+
+```{r}
+anova(moth_lm)
+```
+
+
+2.8 Write out your statistical interpretation of the ANOVA table. Make sure to report all appropriate statistics. 
+
+```{r}
+# There were significant main effects on the number of caterpillars based on treatment (df = 2, 6, F = 5.8, P < 0.05) and Region (df = 3, 6, F = 7.5, p < 0.05). 
+```
+
+2.9 Write out an interpretation of these results using plain words.  
+
+```{r}
+# the number of caterpillars changes based on region. This means that some areas have more or less just based on geography, independent of the treatment effect. 
+
+# likewise, even when controlling for the regional effects, there were changes in the number of caterpillars based on the pesticide treatment. 
+```
+
+2.10 To see how accounting for blocking effects can affect our model, fit a linear model without the region factor, and save it as a new data object.  
+
+```{r}
+moth_lm_2 <- lm(caterpillar ~ Treatment, data = moth)
+```
+
+2.11 Print out the ANOVA table for your second model (without region)  
+
+```{r}
+anova(moth_lm_2)
+```
+
+2.12 Write out the statistical interpretation of this second model. 
+
+```{r}
+# TReatment no longer significant (df = 2, 9, f = 1.84, p = 0.21)
+```
+
+
+2.13 What does this mean in your own words? What happened?  
+
+```{r}
+# there was large variation in the regions. If we ignore this variability, it masks the treatment effect. Controlling for this variability (i.e, including it in the model) allows us to detect the changes based on treatments. 
+```
+
+
+### Problem 3: `wheat_2-way.csv`
+
+An experiment on the effects of fertilizer addition on the yield (in kg) of wheat. Agricultural fields received one of four treatments: control (no fertilizer), Nitrogen addition, Phosphorous addition, or addition of N+P in combination. This experimental design has a two factors (`Nitrogen`, `Phosphorous`) each with two levels (`no`, `yes`). 
+
+For this problem, I will not be asking you to print out the names, dimensions, etc. of this data set as a question, but you should always be in the habit of doing that whenever you load a new data object.  
+
+We will perform a two-way ANOVA looking for both main and interactive effects. 
+
+
+3.1 Add a comment to your homework script stating the null and alternative hypotheses for a two-way ANOVA.  
+
+  * **Hint**: you should have three pairs of hypotheses. 
+
+```{r}
+# main effect of Nitrogen
+# HO: there is no effect of Nitrogen on wheat yield
+# HA: there is an effect of Nitrogen on wheat yield
+
+# main effect of Phosphorous
+# HO: there is no effect of Phosphorous on wheat yield
+# HA: there is an effect of Phosphorous on wheat yield
+
+# Interactive effects
+# HO: the effect of one factor does not depend on the level of the other factor
+# HA: the effect of one factor does depend on the level of the other factor
+```
+  
+3.2 Make a box plot of all the observations of yield for all groups in the experimental design.  
+
+  * **Hint**: put one factor in as `x` and the other factor in as the `color. 
+
+```{r}
+ggplot(wheat,
+       aes(x = Nitrogen, 
+           y = yield, 
+           color = Phosphorus)) +
+  geom_boxplot()+
+  theme_bw()
+```
+
+3.3 Make an interaction plot of the yield.  
+
+  * **Hint**: The lab showed two two ways of doing this.  
+
+```{r}
+ggplot(wheat, 
+       aes(x = Nitrogen,
+           y = yield,
+           color = Phosphorus,
+           group = Phosphorus)) +
+  geom_point() +
+  stat_summary(fun = mean,
+               geom = "line") +
+  theme_bw()
+
+with(data = wheat, 
+     interaction.plot(Nitrogen, Phosphorus, yield))
+```
+
+
+3.4 Based on the box plots made in question 1.2, add a comment to your script interpreting the assumption of equal variance. Do these data appear to have equal variation between the groups? Why or why not?
+
+```{r}
+# the widths of the boxes are all approximately the same, which means that it appears that there is equal variance across the different groups. 
+```
+
+3.5 Check the assumption of the normality of residuals by making a QQ-plot of this data. 
+
+```{r}
+ggplot(wheat,
+       aes(sample=yield)) +
+  stat_qq()+
+  stat_qq_line()+
+  theme_bw()
+```
+
+3.6 Add a comment to your script interpreting the QQ-plot you made in 1.5 above. Does it appear that the residuals are normally distributed? Why or why not?  
+
+```{r}
+# all the points are very close to the referebce line, so we pass our assumption of residuals being normally distributed and can proceed with the analysis. 
+```
+
+
+3.7 Use `lm()` to fit a model and formally test the two-way ANOVA. Make sure to include the interaction. Save your model fit as a new object (i.e., `wheat_lm`) 
+
+```{r}
+wheat_lm <- lm(yield ~ Nitrogen * Phosphorus, data = wheat)
+```
+
+3.8 Before we look at the model output, let's make a fitted vs. residual plot to check our last assumption: Equal variance of residuals.  
+  * Use the model-fit object you made in 1.7 above to make a fitted vs residual plot.  
+
+```{r}
+ggplot(wheat_lm, 
+       aes(x = .fitted, 
+           y = .resid)) +
+  geom_point() +
+    geom_hline(yintercept = 0) +
+  theme_bw()
+```
+
+3.9 Add a comment to Interpret the plot made in 1.8. Does this model appear to have equal variance in the residuals? Why or why not?  
+
+```{r}
+# magnitude of points is about the same (-10 and 10). There is no apprent pattern in the spread of the points from left to right. We have passed our assumption of equal variance in the residuals. 
+```
+
+
+3.10 Now, use the `anova()` function on your model fit object created in 1.7 above to print out an ANOVA table for your 2-way analysis of varianvce. 
+
+```{r}
+anova(wheat_lm)
+```
+
+3.11 Add a comment to your script interpreting the results of our two-way ANOVA analysis. Do we reject or fail to reject our null hypotheses? Be sure to specifically address all three pairs of hypotheses and include all the appropriate statistics in your interpretation.  
+
+```{r}
+# Main effect of Nitrogen
+# based on our data, there was a significant effect of Nitrogen fertilizer on the yield of wheat (F_1_20 = 5.76, p = 0.02627). 
+
+# Main effect of Phosphorous
+# based on our data, there was not a significant effect of Nitrogen fertilizer on the yield of wheat (F_1_20 = 0.2556, p = 0.619). 
+# Interaction
+# based on our data, there was no interactive effect (F_1_20 = 0.6474, p = 0.43). 
+```
+
+3.12 Let's now look at pairwise comparisons between the groups. We will start by looking at the output from the `lm()` analysis.  
+  
+  * Use the `summary()` function to print out your lm model fit object here.  
+
+```{r}
+summary(wheat_lm)
+```
+
+
+3.13 Add a comment to your script describing what each coefficient means. Pay close attention to how you define the groups.  
+
+```{r}
+# Intercept: This is the estimate of the average yield for the reference group (Nitrogen = no, Phosphorus = no) 
+
+# Nitrogenyes: this is the estimated difference in yield between the reference group and the yield when nitrogen was added (nitrogen = yes, phosphorous = no)
+
+# Phosphorusyes: this is the estimated difference in yield between the reference group and the yield when Phosphorus was added (nitrogen = no, phosphorous = yes)
+
+# Nitrogenyes:Phosphorusyes this is the estimated difference in yield between the reference group and the yield when both Nitrogen and Phosphorus were added (nitrogen = yes, phosphorous = yes)
+
+```
+
+3.14 Add a comment to your script describing which coefficients are significantly different from 0, including the *t*- and *p*-value. For each coefficient that is significant, also include a brief description of what this means using plain language. 
+
+```{r}
+# Intercept is significantly different from 0 (t = 22.096, p < 0.001). All this means is that the mean yield of our reference group (no nitrogen or phosphorus fertilizer) does not equal 0. 
+
+# Nitrogenyes is also significant (t = 2.266, p = 0.0347). This means that the difference in yield between our reference group (no fertilizers) and the group which added nitrogen was not equal to 0. In other words, the addition of Nitrogen fertilizer did change the mean yield of wheat. 
+```
+
+
+3.15 Use the coefficient estimates from the `lm()` model to estimate the mean yield for the N and P groups.  
+
+  * **Hint** the code for this using the `coef()` function is described in the "Mean estimatesfor treatment groups" seciton in **Lab 10**  
+
+```{r}
+# all coefficients
+coef(wheat_lm)
+
+# reference group (no fertilizer)
+coef(wheat_lm)[1]
+
+# N fertilizer
+as.numeric(coef(wheat_lm)[1] + coef(wheat_lm)[2])
+
+# P fertilizer
+as.numeric(coef(wheat_lm)[1] + coef(wheat_lm)[3])
+
+# N + P fertilizer
+as.numeric(coef(wheat_lm)[1] + coef(wheat_lm)[4])
+```
+
+
+3.16 Perform a Tukey HSD multiple comparison on the linear model fit object that you created in problem 1.7.  
+  
+  * You will first need to create a new object with the `aov()` function  
+  
+  * You can then use `TukeyHSD()` on your aov object.  
+  
+  * print out the results of the Tukey HSD here.  
+
+```{r}
+wheat_aov <- aov(wheat_lm)
+TukeyHSD(wheat_aov)
+```
+
+
+3.17 Make a plot of the Tukey HSD results.
+
+```{r}
+plot(TukeyHSD(wheat_aov))
+```
+
+
+3.18 Finally, interpret the results of the Tukey HSD here. You can be broad and summarize these results generally.  
+
+```{r}
+# 1.18
+# the results of the TukeyHSD indicate that the only difference in this experiment was when Nitrogen was added (adjusted p-value = 0.026). All the other pairwise comparisons were not significant (adjusted p-value > 0.05)
+```
+
+3.19 Based on the interaction plot above, you may have guessed that there would be a significant interaction effect. However, the last few questions should have made it clear that there was not a statistically significant interaction effect (if you got a different result, double check your code and/or ask me). Here, add a comment discussing why you think the interaction plot disagrees with the statistical analyses.  
+
+```{r}
+# it appeared that there was a difference in slope in the interaction plot  
+# however, this difference in slope must not have been large enough to be statistically meaningful. 
+# similar to how we may estimate a difference in means between groups but the variation is too high for this to be statistically meaningful. 
+```

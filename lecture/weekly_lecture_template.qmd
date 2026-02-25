@@ -2,7 +2,6 @@
 title: "Lecture Week Number: Topic"
 html:
     embed-resources: true
-    link-external-newwindow: true
 editor: visual
 toc: true
 toc-depth: 2
