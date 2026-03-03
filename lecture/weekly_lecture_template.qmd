@@ -1,6 +1,7 @@
 ---
 title: "Lecture Week Number: Topic"
-html:
+format: 
+  html:
     embed-resources: true
 editor: visual
 toc: true
@@ -9,6 +10,8 @@ number-sections: true
 theme:
   light: flatly
   dark: darkly
+execute: 
+  cache: true
 ---
 
 ```{r}

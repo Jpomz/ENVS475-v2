@@ -1,8 +1,8 @@
 ---
 title: "Lecture 07 ANOVA"
-html:
+format: 
+  html:
     embed-resources: true
-    link-external-newwindow: true
 editor: visual
 toc: true
 toc-depth: 2
@@ -10,6 +10,8 @@ number-sections: true
 theme:
   light: flatly
   dark: darkly
+execute: 
+  cache: true
 ---
 
 ```{r}
