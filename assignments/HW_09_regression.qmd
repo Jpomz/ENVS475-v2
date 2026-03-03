@@ -1,0 +1,395 @@
+---
+title: "HW 09 Regression"
+execute: 
+  echo: false
+  eval: false
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+trout <- read_csv(here::here("data/trout_cu.csv")) %>%
+  as_tibble()
+island <- read_csv(here::here("data/island_plants.csv")) %>%
+  as_tibble()
+```
+
+# Learning Objectives
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+-   Download the "trout_cu.csv" and the "island_plants.csv" from D2L
+
+-   Place it in your `data/` folder
+
+-   Load the data into your Quarto document by placing the following in the "setup" code block at the top of your document with the following:
+
+```{r}
+#| eval: false
+#| echo: true
+
+trout <- read_csv("data/trout_cu.csv") 
+island <- read_csv("data/island_plants.csv") 
+
+```
+
+# Problems
+
+## Problem 1: `trout_cu`
+
+This is a simulated data set illustrating the impacts of increasing copper concentration `cu_ppb` measured in parts per billion on the number of trout surviving after chronic exposure. All treatments began with 100 trout, and the number surviving at the end of the experiment are recorded in the `trout` variable.
+
+1.1 Print the `names()` and `head()` of your data object here.
+
+```{r}
+# 
+names(trout)
+head(trout)
+```
+
+1.2 What class are the two variables in this data set? Is this appropriate for a linear regression? Why or why not?
+
+```{r}
+# the classes are integer and double. This is appropriate becasue they are both continuous variables. 
+```
+
+1.3 Produce a scatter plot of the data with `trout` as the response variable and `cu_ppb` as the predictor variable.
+
+```{r}
+ggplot(trout, 
+       aes(y = trout, 
+           x = cu_ppb)) +
+  geom_point() +
+  theme_bw()
+```
+
+1.4 Does there appear to be a linear relationship between trout survival and increasing copper concentration? Why or why not?
+
+```{r}
+# Yes, it appears that the number of trout surviving declines with increasing copper concentration. There does not appear to be any curvature in the response, or any changes in slope across the x-variable. 
+```
+
+1.5 Does the distribution of the x-variable ( `cu_ppb` ) appear to be uniformly distributed? In other words, are there "clumps" of observations across the x-axis?
+
+```{r}
+# The distribution does look uniform. There are trout observations across the range of x-values, and there does not appear to be any clumping of observations. 
+```
+
+1.6 Add a comment to your homework script stating the null and alternative hypotheses for a linear regression.
+
+-   **Hint**: you should have two pairs of hypotheses, one for the intercept ($\beta_0$) and one for the regression coefficient ($\beta_1$).
+
+```{r}
+# intercept
+# HO: the intercept is = 0
+# HA: the Intercept is not = 0
+
+# Beta_1, regression coefficient
+# HO: Beta_1 = 0, no relationship between x and y
+# HA: Beta_1 != 0, the value of y does depend on the value of x
+```
+
+1.7 Check the assumption of the normality of residuals by making a QQ-plot of this data.
+
+```{r}
+ggplot(trout,
+       aes(sample = trout)) +
+  stat_qq()+
+  stat_qq_line()+
+  theme_bw()
+```
+
+1.8 Add a comment to your script interpreting the QQ-plot you made in 1.7 above. Does it appear that the residuals are normally distributed? Why or why not?
+
+```{r}
+# There are some points off the line at the high and low values. This may indicate that the residuals are not normally distributed. 
+```
+
+1.9 Regardless of your answer to 1.8 above, we will continue with a simple linear regression analysis of this data. Fit a model using `lm()` for the trout data, and save it as a new data object.
+
+```{r}
+trout_lm <- lm(trout ~ cu_ppb, data = trout)
+```
+
+1.10 Before we look at the model output, let's make a fitted vs. residual plot to check our assumption of Equal variance of residuals.
+
+-   Use the model-fit object you made in 1.9 above to make a fitted vs residual plot.
+
+```{r}
+ggplot(trout_lm, 
+       aes(x = .fitted, 
+           y = .resid)) +
+  geom_point() +
+    geom_hline(yintercept = 0) +
+  theme_bw()
+```
+
+1.11 Add a comment to Interpret the fitted vs residual plot made above. Does this model appear to have equal variance in the residuals? Why or why not?
+
+```{r}
+#  the magnitude of the values appears similar (~-7.5, 7.5)
+# There does not appear to be an obvious pattern to the residuals
+```
+
+1.12 Now, use the `anova()` function on your model fit object above to print out an ANOVA table for your linear regression.
+
+```{r}
+anova(trout_lm)
+```
+
+1.13 Add a comment to your script interpreting the ANOVA table for our linear regression analysis. Which of the two hypotheses stated above does this table refer to? Do we reject or fail to reject that null hypotheses?
+
+```{r}
+# The ANOVA table is only related to our null hypotheses regarding the regression coefficient (beta_1). There is no information in the ANOVA table related to our intercept coefficient (beta_0)
+
+# Based on our data, we reject the null hypothesis for the beta-1 coefficient and conclude that trout survival does depend on copper concentration (F_1, 23 = 696.12, p < 0.001)
+```
+
+1.14 Print out the `summary()` of the linear model object you created.
+
+```{r}
+summary(trout_lm)
+```
+
+1.15 Add a comment to your script describing what each coefficient means.
+
+```{r}
+# Intercept: This is the estimated number of trout when x (copper concentration) = 0
+
+# cu_ppb: this coefficient is the estimated change in the number of surviving trout with every 1-unit increase in our x-variable (copper concentration). 
+
+```
+
+1.16 Add a comment which has the adjusted R-squared value from our model as well as an interpretation for what it means.
+
+```{r}
+# adj R^2 = 0.9666
+# This means that the model explains 96.66% of the variation in the response variable. 
+```
+
+1.17 Add a comment to your script writing out the full equation for our linear model.
+
+```{r}
+# trout = 97.37 - 7.99 * cu_ppb 
+```
+
+1.18 Make a scatter plot of the data which includes a line of best fit on the plot.
+
+-   hint: you will need to add a `geom_smooth(method = "lm")` argument to your ggplot code above.
+
+```{r}
+ggplot(trout, 
+       aes(y = trout, 
+           x = cu_ppb)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+1.19 Use the coefficient estimates from the `lm()` model to estimate the number of surviving trout when copper concentration is 5 ppb.
+
+```{r}
+97.37 - 7.99 * 5
+```
+
+1.20 Use the `predict()` function to estimate the number of surviving trout when the copper concentration is 0.9 ppb.
+
+```{r}
+predict(trout_lm, newdata = list(cu_ppb = 0.9))
+```
+
+1.21 Estimate the copper concentration for an experiment which has 35 trout surviving at the conclusion of the experiment.
+
+-   Hint: You will need to rearrange your linear model equation to have `cu_ppb` on its own on the left side of the equation.
+
+```{r}
+# original equation: trout = 97.37 - 7.99 * cu_ppb 
+# rearranged equation: cu_ppb = (trout - 97.37) / -7.99
+
+(35 - 97.37) / -7.99
+```
+
+1.22 Use the `predict()` function to estimate the 95% *prediction* interval for the full range of copper concentrations. Once you have your prediction, make a `ggplot()` which shows the:
+
+-   Raw data
+
+-   The line of best fit (with SE)
+
+-   The prediction interval
+
+-   **Hint**
+
+    -   Make a vector covering the full range of coppoer concentrations\
+    -   Make a new data frame called `cu_prediction` using the `predict()` function with your linear model and your vector as the newdata argument
+
+```{r}
+cu_v <- seq(min(trout$cu_ppb), max(trout$cu_ppb), length.out = 100)
+
+cu_prediction <- predict(trout_lm, newdata = list(cu_ppb = cu_v), interval = "predict")
+
+pred_plot_df <- data.frame(cu_ppb = cu_v,
+                       cu_prediction) |>
+  rename(trout = fit)
+
+ggplot(trout,
+       aes(x = cu_ppb, 
+           y = trout)) +
+  geom_point() +
+  geom_smooth(method = "lm",
+              fill = "grey30") +
+  geom_ribbon(data = pred_plot_df, 
+              aes(ymin = lwr,
+                  ymax = upr),
+              fill = "dodgerblue",
+              alpha = 0.5) +
+  theme_bw()
+```
+
+## Problem 2: `island_plants`
+
+### Data background
+
+The theory of island biogeography predicts that the number of species will increase with island area. This data set is from an observational study of the number of plants occurring on islands of different sizes.
+
+### Problem 2 questions
+
+2.1 You should always get to know your data by looking at `names()`, `head()`.
+
+```{r}
+names(island)
+head(island)
+
+```
+
+2.2 Produce a scatter plot of the data with `Nspecies` as the response variable and `Area` as the predictor variable.
+
+```{r}
+ggplot(island,
+       aes(y = Nspecies,
+           x = Area)) +
+  geom_point() +
+  theme_bw()
+```
+
+2.3 Add a comment to your script interpreting this scatter plot. Does it appear that there is a linear relationship between the number of species and island area?
+
+```{r}
+# this looks terrible. It looks like there is nearly a vertical increase in species with island area, and there is one observation which is way far away from the rest of the observations. 
+```
+
+2.4 Make another scatter plot but this time use `log10_Nspp` as the response variable and `log10_area` as the predictor variable.
+
+```{r}
+ggplot(island,
+       aes(y = log10_Nspp,
+           x = log10_area)) +
+  geom_point() +
+  theme_bw()
+```
+
+2.5 Add a comment to your script interpreting this scatter plot. Does it appear that there is a linear relationship between the log10-transformed number of species and island area?
+
+```{r}
+# this looks much better, and it appears that there is a linear relationship. 
+```
+
+## We will continue this analysis using the log10 transformed data.
+
+### A Brief note
+
+The transformation of data is a very common thing to do in an analysis. Technically speaking, our assumptions of normality, equal variance, etc. also apply to data which has been transformed. In other words, if our assumptions are met *after* transformation, this constitutes a legitimate statistical analysis. You will often see language in publications that say "we transformed the variable(s) to meet the assumptions of normality" or similar.
+
+Unfortunately, I ran out of time in class to go over this in detail, but just know that this is OK, and that there are a number of other common transformations out there.
+
+### Continuing on with the homework...
+
+2.6 Perform a linear regression using the `lm()` function using the log10 variables and save this model in a new data object.
+
+```{r}
+island_lm <- lm(log10_Nspp ~ log10_area, data = island)
+```
+
+2.7 Make a fitted vs. residual plot to check our assumption of equal variance in the residuals.
+
+```{r}
+ggplot(island_lm,
+       aes(x = .fitted, 
+           y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+2.8 Add a comment to your script interpreting the fitted vs. residual plot.
+
+```{r}
+# the magnitude of variation looks similar above and below the line, and there is no obvious pattern to the data points. 
+```
+
+2.9 Print out an ANOVA table of the `lm` object and interpret it here.
+
+```{r}
+anova(island_lm)
+
+# the log10_area variable is significant (DF_1_15 = 21.118, p < 0.001). This means that the response variable does change with island area. 
+```
+
+2.10 Print out the `summary()` of your lm object here.
+
+```{r}
+summary(island_lm)
+```
+
+2.11 For each coefficient, write out the estimate and standard error and interpret the results. Be sure to list all appropriate statistics, and relate it back to the null and alternative hypotheses for each.
+
+```{r}
+# Intercept
+# the mean estimate and SE for the intercept coefficient is 1.32 (0.14). We reject the null hypothesis for the intercept, and conclude that it is not equal to 0 (t = 9.286, p < 0.001). 
+
+# beta_1, log10_area
+# # the mean estimate and SE for the regression coefficient is 0.33 (0.07). We reject the null hypothesis for the intercept, and conclude that it is not equal to 0 (t = 4.595, p < 0.001). 
+```
+
+2.12 what is the adjusted R-squared for this model, and what does it mean?
+
+```{r}
+# The adjusted R-squared is 0.557 which means that ~56% of the variation in the response variable is explained by this model. 
+```
+
+2.13 Write out the full equation for this linear model. Be sure to put "log10" in the appropriate places for these variables.
+
+```{r}
+# log10_nspp = 1.32 + 0.33 * log10_area
+```
+
+2.14 Make another scatter plot of the transformed data and include a line of best fit.
+
+```{r}
+ggplot(island,
+       aes(y = log10_Nspp, 
+           x = log10_area)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
