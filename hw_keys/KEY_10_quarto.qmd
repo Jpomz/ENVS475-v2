@@ -1,0 +1,121 @@
+---
+title: "HW 10 Quarto"
+author: "Justin Pomeranz"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+finch <- read.csv(here::here("data/galapago-finches.csv"))
+```
+
+# Problems
+
+## Problem 1: preliminaries
+
+# My level 1 header
+
+## My level 2 header
+
+### My level 3 header
+
+## Problem 2: Lists
+
+## My favorite animals
+
+1.  Bugs (obviously)
+2.  Here's another bug
+3.  And a third
+
+## Why Use Quarto
+
+-   You can make lots of outputs
+
+-   You can incorporate code/analysis/results directly in (don't need to copy/paste plots and stuff every time analysis changes
+
+-   Focus on writing, not formatting
+
+## Sub Bulleted list
+
+-   Mountain Running
+
+    -   Get to see all the sites on a backpacking trip without having to carry so much stuff
+
+    -   Makes me feel cool
+
+-   Playing the banjo
+
+    -   Also makes me feel cool
+
+## Problem 3: Equations
+
+inline: $x \sim Normal(\mu = 0, \sigma = 1)$
+
+Block equations:
+
+$$ Y = \beta_0 + \beta_1 * X + $$
+
+$$
+HA: \mu_{reference} \neq \mu_{treatment}
+$$
+
+$$
+s^2 = \frac{\Sigma(y_i - \bar{y})^2}{n-1}
+$$
+
+## Problem 4: Code Chunks
+
+1.  Add a code chunk which loads the tidyverse and reads in the galapago-finches.csv file as an object called `finch` . At the end of the code chunk, display the `finch` object as a tibble
+
+```{r}
+library(tidyverse)
+finch <- read.csv(here::here("data/galapago-finches.csv"))
+as_tibble(finch)
+```
+
+2.  Add a code chunk which adds a new column. Name the column `year_factor` and create it by converting the original `year` column into a factor. Make sure to save this calculation as a new object called `finch2` , and display it as a tibble
+
+```{r}
+finch2 <- finch |>
+  mutate(year_factor = factor(year))
+as_tibble(finch2)
+```
+
+3.  Using `finch2`, make a scatterplot with `bdpeth` on the x-axis and `blength` on the y-axis. Also map the `shape` of the points to change with `year_factor`, and the `color` of the points to change with `species`. Also, add a line of best fit to the plot by using `stat_smooth(method = "lm")`
+
+```{r}
+ggplot(finch2,
+       aes(x = bdepth,
+           y = blength,
+           color = species, 
+           shape = year_factor)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+
+## Problem 5: Miscellany
+
+1.  
+2.  my cmu email address is [jpomeranz\@colroadomesa.edu](jpomeranz@colroadomesa.edu)
+3.  Include a line of text which includes at least one
+    1.  **bold**
+    2.  *italicized*
+    3.  subscript H~2~O
+    4.  superscript M^2^
+
+## 

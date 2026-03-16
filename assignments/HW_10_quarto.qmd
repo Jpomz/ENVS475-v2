@@ -1,0 +1,146 @@
+---
+title: "HW 10 Quarto"
+execute: 
+  echo: false
+  eval: false
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+finch <- read.csv(here::here("data/galapago-finches.csv"))
+```
+
+# Learning Objectives
+
+-   You will make your first Quarto document and render the final product as an html document
+
+-   Practice editing the YAML header
+
+-   Change text formats (headings, fonts, lists)
+
+-   Write mathematical equations
+
+-   Produce simple summaries and plots of `finch` data
+
+-   Run a simple statistical analysis and interpret the results
+
+# Setup
+
+-   Start a new quarto document
+
+-   **Title**: HW 10 Quarto
+
+-   **Author**: Put your name in the author section
+
+# Problems
+
+## Problem 1: preliminaries
+
+Edit the YAML header in your R Markdown file to include the following:
+
+1.  Add the code to include a table of contents with `toc_depth : 2`\
+
+2.  Add a level 1 Header called "My level 1 header"\
+
+3.  Add a level 2 Header called "My level 2 header"\
+
+4.  Add a level 3 Header called "My level 3 header"\
+
+5.  click `Render` to ensure that an html document is created.
+
+    -   Double check that the author field is correct
+
+    -   Make sure that you have three headers, one of each level (1-3)
+
+    -   Make sure that the table of contents at the top of your document *only* includes the first two levels.
+
+-   **NOTE** You may want to `render` your document after you complete each problem to ensure that the out put format is correct.
+
+## Problem 2: Lists
+
+1.  Create a level 1 header titled "Problem 2: Lists".
+
+2.  Create a level 2 header titled "My favorite animals". Then create a numbered list, ranking your top three favorite animals.
+
+3.  Create a level 2 header called "Why use Quarto?". Then make a bulleted list (min 3 bullets) with a few of the benefits for using Quarto in your own words.
+
+4.  Create a level 2 header called "Sub bulleted list". Then create a bulleted list (min 2 main bullets) with some of your favorite hobbies. For each main bullet, add at least one sub bullet briefly explaining why you like that hobby.
+
+## Problem 3: Equations
+
+1.  Create a level 1 header titled "Problem 3: Equations".
+2.  Create an inline equation which produces the following: $x \sim Normal(\mu = 0, \sigma = 1)$
+    -   **hint** the $\sim$ symbol can be added by typing `\sim` in your equation
+3.  Create a block (AKA display) equation for a simple linear model. Your equation should look like this:
+    1.  **Hint** the greek letters in use are beta and epsilon
+
+$$ Y = \beta_0 + \beta_1 * X + $$
+
+4.  Create a block equation that looks like this:
+
+$$
+HA: \mu_{reference} \neq \mu_{treatment}
+$$
+
+5.  Create the following block equation:
+    -   **Hint** the symbol on the top is capital Sigma
+    -   You can add a bar above a variable with `\bar{y}`
+
+$$
+s^2 = \frac{\Sigma(y_i - \bar{y})^2}{n-1}
+$$
+
+## Problem 4: Code Chunks
+
+1.  Add a code chunk which loads the tidyverse and reads in the galapago-finches.csv file as an object called `finch` . At the end of the code chunk, display the `finch` object as a tibble
+
+```{r}
+library(tidyverse)
+finch <- read.csv(here::here("data/galapago-finches.csv"))
+as_tibble(finch)
+```
+
+2.  Add a code chunk which adds a new column. Name the column `year_factor` and create it by converting the original `year` column into a factor. Make sure to save this calculation as a new object called `finch2` , and display it as a tibble
+
+```{r}
+finch2 <- finch |>
+  mutate(year_factor = factor(year))
+as_tibble(finch2)
+```
+
+3.  Using `finch2`, make a scatterplot with `bdpeth` on the x-axis and `blength` on the y-axis. Also map the `shape` of the points to change with `year_factor`, and the `color` of the points to change with `species`. Also, add a line of best fit to the plot by using `stat_smooth(method = "lm")`
+
+```{r}
+ggplot(finch2,
+       aes(x = bdepth,
+           y = blength,
+           color = species, 
+           shape = year_factor)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+
+## Problem 5: Miscellany
+
+1.  Create a level 1 header titled "Problem 5: Miscellany".
+2.  Make a line with the following: "My CMU email address is:". Then, include your email address as a hyperlink.
+3.  Include a line of text which includes at least one **bold** and one *italicized* word as well as one subscript and one superscript.
+
+## Submission
+
+Once your homework file is completed, you will need to render the document into an html. **Be sure to go over the rendered document to see if all the answer formats are correct.**
+
+For credit, you will submit both the .qmd and .html files on D2L.
