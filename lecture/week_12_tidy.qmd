@@ -1,0 +1,238 @@
+---
+title: "Lecture Week 12: Tidy"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+execute: 
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+
+# data objects
+rxp <- read.csv(here::here("data/RxP.csv"), stringsAsFactors = TRUE)
+```
+
+# Overview
+
+This week, we will discuss "tidy" data and how to enter data into spreadsheet software in a tidy format. This will help you get your own data into R in the future.
+
+# Setup
+
+### Libraries
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+### Data
+
+We will be using built-in data sets on Tuberculosis cases that are part of the tidyverse
+
+-   `table1`, `table2`, `table3`, `who2`
+
+-   All these data objects are automatically loaded with the `tidyverse`
+
+# Lecture Outline
+
+## What is tidy data?
+
+1)  Each variable is a column; Each column is a variable
+
+2)  Each Observation is a row; Each row is an observation
+
+3)  Each value is a cell; Each cell is a value
+
+Figure 1 shows these rules visually.
+
+## [![Figure 1. The following three rules make a dataset tidy: variables are columns, #\| observations are rows, and values are cells. Fig from R4DS (2e)](tidy-1.png){alt="Figure 1. The following three rules make a dataset tidy: variables are columns, #|   observations are rows, and values are cells. Fig from R4DS (2e)"}](https://r4ds.hadley.nz/data-tidy)
+
+## Why use tidy data
+
+1.  One consistent way of storing data.\
+
+-   Easier to learn the tools\
+-   Underlying uniformity
+
+2.  Specific advantage to placing variables in columns\
+
+-   Allows R's vectorized nature to shine.\
+
+-   most built-in R functions work with vectors of values.\
+
+-   That makes transforming tidy data feel particularly natural.
+
+-   `tidyverse`
+
+    -   Designed to work with tidy data.
+
+## Long and Wide data
+
+-   Data can be described as long (lots or rows)\
+
+-   or wide (lots of columns)
+
+-   Generally, tidy data is "long", but not always.\
+
+-   The `tidyr` package (part of the `tidyverse`) is made to make data tidy\
+
+-   `pivot_longer()` and `pivot_wider()` are the two primary functions
+
+-   A full examination of `tidyr` is outside the scope of this course
+
+    -   but if you're interested, consider taking my intro to R course in the fall semester.
+
+## Untidy examples
+
+-   Both of these examples use data on the number of TB cases
+
+-   Data is presented for different countries by year
+
+### `table2`
+
+-   `table2` is in a long format
+
+```{r}
+table2
+```
+
+-   What's wrong with this data?
+
+    -   How would you fix it?
+
+-   Long data, one column has many variables in it
+
+-   The problem here is that the `type` column actually has two variables in it:
+
+    -   `cases` and `population`
+
+-   To fix this data, we need to make two new columns called `cases` and `population`\
+
+-   We would remove the `count` column, and move the values into the appropriate new columns.
+
+-   Here is an example of what the first two rows would look like.
+
+```{r}
+tibble(country = "Afghanistan",
+       year = 1999,
+       cases = c(745, 2666),
+       population = c(19987071, 20595360))
+```
+
+### `table3`
+
+-   `table3` is untidy but in a different way
+
+```{r}
+table3
+```
+
+-   What's wrong here?
+
+-   How would you enter this in a tidy format?
+
+-   Both datasets needs to be modified in different ways\
+
+-   End up in the same place
+
+> "Happy families are all alike; every unhappy family is unhappy in its own way." --- Leo Tolstoy (Russian Writer, 1828-1910)
+
+> "Tidy datasets are all alike, but every messy dataset is messy in its own way." --- Hadley Wickham (Lead author of the tidyverse)
+
+## Working with Tidy data
+
+-   `table1` is a small, tidy version of Tuberculosis infection data through time and by country.
+
+```{r}
+table1
+```
+
+-   Every column is one variable, and every variable is one column
+
+    -   country, year, cases, population\
+
+-   Every row is one observation.
+
+    -   row 1 is the observation of TB cases and total population for Afghanistan in 1999, etc.\
+
+-   Every cell is a single value.
+
+-   Consistent data set up\
+
+-   Takes advantage of R's vectorized functions
+
+-   Calculate the infection rate per 1000 people:
+
+```{r}
+table1 |>
+  mutate(rate = cases / population * 10000)
+```
+
+-   It also allows for easy grouping\
+-   What is the total TB-infection numbers per year?\
+
+```{r}
+table1 |> 
+  group_by(year) |> 
+  summarize(total_cases = sum(cases))
+```
+
+-   And we can easily plug this into `ggplot`\
+-   Map aesthetics to variables.
+    -   i.e., `color = country`
+
+```{r}
+ggplot(table1, aes(x = year,
+                   y = cases,
+                   color = country)) +
+  geom_line() +
+  geom_point(size = 4) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(1999, 2000)) 
+```
+
+## `who2` data
+
+-   Another common problem is that the columns have multiple variables in the names.\
+-   let's look at a subset of the `who2` data
+    -   `who2` is also a part of the `tidyverse`\
+    -   The `who2` has TB data reported by country and year\
+    -   the column names has information on the:
+        -   Test type, i.e., `sp`, `sn`, `ep`\
+        -   Patient sex: `m` or `f`\
+        -   Patient age range `014` = "0 to 14", `1524` = "15 to 24" ..., `65` = "65 and older"
+
+```{r}
+who2 |>
+  select(country:sp_m_1524, sn_f_5564:sn_f_65) |>
+  filter(country == "Albania",
+         year > 2005) |>
+  as_tibble()
+```
+
+-   This is a wide data format\
+-   In this example, the `who2` data has `r ncol(who2) - 2` columns which could be presented in 3 columns (test type, sex, age range) and many more rows\
+-   In other words, this data needs to be transformed into a long format.
+
+### Your assignment will be to work on tidying a smaller version of this data
+
+# Summary
+
+-   Tidy data makes it easy to summarize, analyze, and wrangle data\
+-   The `tidyverse` is a popular suite of packages designed to work with tidy data\
+-   Always enter data in a tidy format when possible\
+-   Sometimes need to tidy data by hand\
+-   This week's assignment will give you practice doing that.

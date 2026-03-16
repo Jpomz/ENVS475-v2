@@ -1,0 +1,172 @@
+---
+title: "HW 12 tidy"
+execute: 
+  echo: false
+  eval: false
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+df-print: kable
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+#| eval: true
+
+library(tidyverse)
+
+tb_argentina <- read_csv(here::here("data/tb_argentina.csv"))
+
+tb_tidy <- tb_argentina |> 
+  pivot_longer(sp_m_014:sp_f_65,
+               names_to = c("diagnosis", "sex", "age"), 
+               names_sep = "_",
+               values_to = "count", values_drop_na = TRUE)
+```
+
+# Learning Objectives
+
+You will be working with an untidy data set. Your goal is to enter the data into a tidy format in spreadsheet software, save it as a .csv file, import it into R and run some simple calculations.
+
+# Setup
+
+## Libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+## Data
+
+The data you will be working with is a simplified version of the \`who2\` data set. The \`who2\` data is automatically loaded with the \`tidyverse\`, and documents Tuberculosis cases by country through time.
+
+The simplified data set has information on "smear positive" TB tests from Argentina for 2000 to 2010. "Smear positive" is abbreviated as sp and is one of the testing methodologies available for detecting TB cases.
+
+Students in class will receive a print out of the data set, and the full data can be viewed below:
+
+```{r}
+#| eval: true
+#| 
+tb_argentina
+```
+
+## Assignment details
+
+-   This week, most of your assignment will take place outside of an R script.
+
+-   You will need to make a new csv file (i.e., using Microsoft Excel, or Google Sheets) which has all the `tb_argentina` information stored in a tidy format.
+
+-   The second half of your assignment will be an R script that imports your tidy csv and performs a few basic calculations.
+
+## Submission files
+
+Two files will need to be submitted on D2L this week.
+
+1.  A tidy .csv file with the following naming convention: `week_12_tidy_yourlastname.csv`
+2.  A rendered html document completing the second half of the assignment.
+    -   You will calculate this in a Quarto document, but only the html needs to be submitted
+
+# Problems
+
+# Problem 1
+
+1.  Create a tidy .csv file with the TB information from Argentina.
+
+-   Column names have data in them.
+
+-   `sp` indicates the test (same for all columns)
+
+-   Patient sex is indicated with an `m` or an `f`
+
+-   Patient age range is indicated by numbers.
+
+    -   i.e., `014` is 0-14; `1524` is 15-24; `65` is $\ge$ 65.
+
+-   Your tidy data file should end up with 154 rows and 6-7 columns (depending on if you keep the `sp` or not).
+
+-   Save your .csv file in your `data/` folder.
+
+    -   Make sure your lastname is in your filename so I can keep them straight when I grade it.
+
+    -   i.e., `week_09_tidy_yourlastname.csv`
+
+```{r}
+# should have 6-7 columns
+# country, year, population, sex, age, count, diagnosis (optional)
+# 154 rows
+
+```
+
+# Problem 2
+
+-   Make a new assignment R Script.\
+-   Load the `tidyverse`\
+-   Read in your tidy csv file.
+
+1.  Print the `head()` of your tidy data.\
+
+    ```{r}
+    head(tb_tidy)
+    ```
+
+2.  Print out the `dim()` of your tidy data.\
+
+```{r}
+    dim(tb_tidy)
+```
+
+3.  Calculate the rate per 1000 people (number of cases / population \* 1000) of TB infections.
+
+    -   Display the country, year, and rate in your quarto document
+
+```{r}
+        tb_tidy |>
+          mutate(rate = count/population * 1000) |>
+          select(country, year, rate)
+```
+
+4.  Calculate the total number of cases per year.
+
+```{r}
+    tb_tidy |>
+      group_by(year) |>
+      summarise(tot_cases = sum(count))
+```
+
+5.  Plot the total number of cases (y-axis) by year (x-axis.
+
+```{r}
+    tb_tidy |>
+      group_by(year) |>
+      summarise(tot_cases = sum(count)) |>
+      ggplot(aes(x = year, 
+                 y = tot_cases)) +
+      geom_point() +
+      geom_line()
+```
+
+6.  Use `lm()` to perform a t-test comparing the average number of TB-infections based on sex (i.e., `count ~ sex`). Display the `summary()` of the model to your screen.
+
+```{r}
+summary(lm(count~sex, data = tb_tidy))
+```
+
+7.  Interpret the results of your model in part F above.
+
+```{r}
+# * The reference group is females.  
+# * The number of TB infections for females is greater than 0 (estimate = 283, SE = 18, p < 0.001). 
+# * The number of TB cases for males is significantly different from females (estimated difference = 102, SE = 26, p < 0.001).  
+# * The model only explains 8% of the variation in the data. 
+```
