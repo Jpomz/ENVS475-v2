@@ -1,0 +1,407 @@
+---
+title: "Lecture Week 11: ANCOVA"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 2
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+execute: 
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+library(Sleuth3)
+
+df <- case1402
+```
+
+# Overview
+
+Here we will expand upon our linear-models by combining both a categorical explanatory variable with a continuous explanatory variable. This is essentially combining a regression and a two-way ANOVA.
+
+# Setup
+
+### Libraries
+
+For this lab, we will be using the `tidyverse`, and `Sleuth3` packages. Make sure all packages are installed on your computer (you may need to install `Sleuth3`), and then run the following code:
+
+```{r}
+#| eval: false
+library(tidyverse)
+library(Sleuth3)
+```
+
+### Data
+
+```{r}
+#| eval: false
+df <- case1402
+```
+
+# Lecture Outline
+
+# ANCOVA
+
+-   This week, we will be using the `lm()` function to fit a linear regression to data which has a continuous *AND* a categorical variable.
+-   Essentially, we will be fitting two linear regression models (one for each level of the categorical variable), and testing whether these lines are different from each other or not.
+
+## Hypotheses, plain words
+
+-   Is the intercept for the reference level = 0?\
+-   Is there a *difference* in intercepts between the groups (Think ANOVA)\
+-   Is there a relationship between the response and continuous predictor variable *regardless* of groups? (Think a "global" linear regression, ignoring/averaging across groups)\
+-   Does the relationship between the response and continous predictor *differ* between groups? i.e., are the slopes different?
+
+## Hypotheses, graphs
+
+```{r}
+#| echo: false
+#| eval: true
+dat <- data.frame(x = -10:10, y = -10:10)
+ggplot(dat,
+       aes(x, y)) +
+  geom_blank() +
+  theme_bw() +
+  geom_abline(intercept = 0,
+              slope = 0,
+              color = "dodgerblue",
+              size = 2) +
+  geom_abline(intercept = 0.5,
+              slope = 0,
+              color = "black",
+              linetype = "dashed",
+              size = 2) +
+  labs(title = "No relationship, same intercept")
+```
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(dat,
+       aes(x, y)) +
+  geom_blank() +
+  theme_bw() +
+  geom_abline(intercept = -5,
+              slope = 0,
+              color = "dodgerblue",
+              size = 2) +
+  geom_abline(intercept = 5,
+              slope = 0,
+              color = "black",
+              linetype = "dashed",
+              size = 2) +
+  labs(title = "No relationship, Different intercepts")
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(dat,
+       aes(x, y)) +
+  geom_blank() +
+  theme_bw() +
+  geom_abline(intercept = 0.5,
+              slope = 1,
+              color = "dodgerblue",
+              size = 2) +
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "black",
+              linetype = "dashed",
+              size = 2) +
+  labs(title = "Same Relationship, Same intercepts")
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(dat,
+       aes(x, y)) +
+  geom_blank() +
+  theme_bw() +
+  geom_abline(intercept = 2.5,
+              slope = 1,
+              color = "dodgerblue",
+              size = 2) +
+  geom_abline(intercept = -2.5,
+              slope = 1,
+              color = "black",
+              linetype = "dashed",
+              size = 2) +
+  labs(title = "Same Relationship, Different intercepts")
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(dat,
+       aes(x, y)) +
+  geom_blank() +
+  theme_bw() +
+  geom_abline(intercept = 3.5,
+              slope = 1,
+              color = "dodgerblue",
+              size = 2) +
+  geom_abline(intercept = -2.5,
+              slope = 2,
+              color = "black",
+              linetype = "dashed",
+              size = 2) +
+  labs(title = "Different Relationship (Interaction), Different intercepts")
+
+```
+
+## Parameters, two linear equations
+
+Equation for the line of the reference (REF) level
+
+$$\hat{y}_{REF} = \beta_0 + \beta_1*x_1$$
+
+Equation for the line of the alternative (ALT) level
+
+$$\hat{y}_{ALT} = (\beta_0 +\beta_{0\Delta}) + (\beta_1 +\beta_{1\Delta})*x_1$$
+
+-   $\Delta$ is the Greek letter Delta, and is commonly used to represent *differences*
+
+-   $\beta_0$ = intercept for reference level
+
+-   $(\beta_{0\Delta})$ = Difference between intercepts
+
+-   $\beta_1$ = Slope for reference level
+
+-   $(\beta_{1\Delta})$ = Difference between slopes (Interactive effect)
+
+::: callout-note
+**NOTE** We are keeping things simple with just two levels of the categorical variable. For each additional level, $i$, there will be two more parameters estimated in the linear model, one each for the difference in intercepts between the reference level and level $i$ ($\beta_{0\Delta_i}$, and one for the difference in slopes between the reference level and level $i$ ($\beta_{1\Delta_i}$.
+:::
+
+## Data
+
+We will be using a data set from the `Sleuth3` package called `case1402` . This is data from an experiment examining the yield of different soybean varieties under different conditions of Ozone, SO2 and drought. See `?case1402` for more information.
+
+### Load data and rename object
+
+```{r, eval = FALSE}
+df <- case1402
+```
+
+```{r}
+head(df)
+```
+
+-   `William`: Response variable, continuous, needs to be `log()` transformed\
+-   `O3`: Predictor variable, continuous\
+-   `Stress`: Predictor variable, categorical/factor
+    -   Levels: `Stressed`, `Well-watered`
+
+### Transform `William` variable
+
+```{r}
+df <- df %>%
+  mutate(log_william = log(William))
+```
+
+## Plot data
+
+Scatterplot with continuous *x*- and *y*-variables.
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william)) +
+  geom_point() +
+  theme_bw()
+```
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william)) +
+  geom_point() +
+  theme_bw() +
+  geom_smooth(method = "lm")
+```
+
+### Factor
+
+```{r}
+ggplot(df, 
+       aes(y = log_william, 
+           x = Stress,
+           color = Stress)) +
+  geom_boxplot() +
+  geom_point(position = position_jitter(width = 0.1, height = NULL)) +
+  theme_bw()
+```
+
+### Plot both predictor variables
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william,
+           color = Stress)) +
+  geom_point() +
+  theme_bw()
+```
+
+#### With `geom_smooth()`
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william,
+           color = Stress,
+           fill = Stress)) +
+  geom_point() +
+  theme_bw() +
+  geom_smooth(method = "lm")
+```
+
+## Fit ANCOVA model
+
+```{r}
+df_lm <- lm(log_william ~ O3 * Stress, data = df)
+```
+
+## Assumptions
+
+```{r}
+ggplot(df, 
+       aes(sample = log_william)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+```{r}
+ggplot(df_lm, 
+       aes( x = .fitted, 
+            y = .resid)) +
+  geom_point()
+```
+
+## ANOVA table
+
+```{r}
+anova(df_lm)
+```
+
+**Interpretation**: There is a significant main effect of `O3` ($F_{1, 26} = 51.92$, $p < 0.001$) and a significant main effect of `Stress` ($F_{1, 26} = 10.84$, $p = 0.002$). There was no significant interactive effect ($F_{1, 26} = 0.46$, $p = 0.5$).
+
+Plain words: There was a relationship between yield ( `log_william` ) and `O3` (continuous predictor variable). Likewise, there was a difference in average yield based on the `Stress` factor (categorical predictor variable, different intercepts for each group). The relationship between yield and ozone was not dependent on the stress factor, and vice versa (both groups had the same slope).
+
+## Linear model summary
+
+```{r}
+summary(df_lm)
+```
+
+### Equation for line 1: `Stressed`
+
+$$Yield_{Stressed} = \beta_0 + \beta_1 * \text{Ozone} $$
+
+-   (Intercept) $\beta_0$: Estimate = 8.49; This is the average yield for the `Stressed` treatment when Ozone = 0.
+
+-   `O3` $\beta_1$: Estimate = -6.47; For every 1-unit increase in Ozone, the average yield changes by -6.47.\
+    \#### Full equation
+
+$$ \text{Yield}_{Stressed} = 8.49 - 6.47 * \text{Ozone}$$
+
+### Equation for line 2: `Well-watered`
+
+$$Yield_{well-watered} = (\beta_0+\beta_{0 \Delta}) + (\beta_1 +\beta_{1 \Delta}) * \text{Ozone} $$
+
+-   `StressWell-watered`: This is the estimated difference ($\beta_0+\beta_{0 \Delta}$) in intercepts for the two treatment groups. Estimate = $\beta_0 + \beta_{well-watered} = 8.49 + 0.2642 = 8.75$; This is the average yield for the `Well-watered` treatment when Ozone = 0.
+
+-   `O3:Stresswell-watered`: This is the estimated difference ($\beta_1 +\beta_{1 \Delta}$) in slopes for the two treatment groups (but note that the p-value \> 0.05, so we fail to reject the NULL that this coefficient is 0). Estimate = $-6.47 - 1.35 = -7.82$.
+
+$$ \text{Yield}_{well-watered} = (8.49 + 0.2642) - (6.47 - 1.35) * \text{Ozone} = 8.75 - 7.82 * \text{Ozone}$$
+
+Note that these equations will be slightly different from what `geom_smooth(method = "lm")` will estimate. To see how to plot the estimated model fits in `ggplot`, see the appendix of this lab.
+
+## Using `predict()` 
+
+-   Make a new data frame with values of predictor variables
+
+```{r}
+new_x <- expand.grid(
+  O3 = seq(from = min(df$O3),
+           to = max(df$O3), 
+                    length.out = 10),
+  Stress = levels(df$Stress))
+head(new_x)
+```
+
+-   Predict values of y based on model fit (`df_lm`) and `new_x`
+
+```{r}
+new_y <- predict(df_lm, 
+                 newdata = new_x,
+                 interval = "confidence")
+head(new_y)
+```
+
+:::callout-note
+For the homework, you will be calculating a *prediciton* interval.  
+
+-   Change the above to be: `interval = "predict"`
+:::
+
+-   combine `new_x` and `new_y` in a data frame to add to the plot
+
+```{r}
+fit_data <- data.frame(new_x,
+                       new_y)
+head(fit_data)
+```
+
+-   Plot original data
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william,
+           color = Stress,
+           fill = Stress)) +
+  geom_point() +
+  theme_bw() 
+```
+
+-   add a `geom_smooth()` layer
+
+-   instead of using automatic calculations (`method = "lm"`), specify `fit_data`
+
+```{r}
+ggplot(df,
+       aes(x = O3, 
+           y = log_william,
+           color = Stress,
+           fill = Stress)) +
+  geom_point(size = 3) +
+  theme_bw() +
+  geom_smooth(data = fit_data,
+              aes(y = fit, 
+                  ymin = lwr, 
+                  ymax = upr), 
+              stat = "identity")
+```
+
+# Summary
+
+-   ANCOVA combines a linear regression with ANOVA  
+-   It is useful to see if the relationship between y and a continuous predictor (x) is different based on some grouping predictor variable (categorical x)  
+-   ANCOVA models can be much more complex with multiple categorical variables, multiple continuous variables  
+-   They can also be used to estimate non-linear relationships  
