@@ -1,5 +1,5 @@
 ---
-title: "HW 09 Regression"
+title: "KEY 09 Regression"
 execute: 
   echo: false
   eval: false
@@ -300,36 +300,36 @@ ggplot(island,
 # this looks terrible. It looks like there is nearly a vertical increase in species with island area, and there is one observation which is way far away from the rest of the observations. 
 ```
 
-2.4 Make another scatter plot but this time use `log10_Nspp` as the response variable and `log10_area` as the predictor variable.
+2.4 Make another scatter plot but this time log-transform the `Nspecies` and the `Area` variables.
 
 ```{r}
 ggplot(island,
-       aes(y = log10_Nspp,
-           x = log10_area)) +
+       aes(y = log(Nspecies),
+           x = log(Area))) +
   geom_point() +
   theme_bw()
 ```
 
-2.5 Add a comment to your script interpreting this scatter plot. Does it appear that there is a linear relationship between the log10-transformed number of species and island area?
+2.5 Add a comment to your script interpreting this scatter plot. Does it appear that there is a linear relationship between the log-transformed number of species and island area?
 
 ```{r}
 # this looks much better, and it appears that there is a linear relationship. 
 ```
 
-## We will continue this analysis using the log10 transformed data.
+## We will continue this analysis using the log transformed data.
 
-### A Brief note
+### 
+
+::: callout-note
+## A Brief note
 
 The transformation of data is a very common thing to do in an analysis. Technically speaking, our assumptions of normality, equal variance, etc. also apply to data which has been transformed. In other words, if our assumptions are met *after* transformation, this constitutes a legitimate statistical analysis. You will often see language in publications that say "we transformed the variable(s) to meet the assumptions of normality" or similar.
+:::
 
-Unfortunately, I ran out of time in class to go over this in detail, but just know that this is OK, and that there are a number of other common transformations out there.
-
-### Continuing on with the homework...
-
-2.6 Perform a linear regression using the `lm()` function using the log10 variables and save this model in a new data object.
+2.6 Perform a linear regression using the `lm()` function using the log variables and save this model in a new data object.
 
 ```{r}
-island_lm <- lm(log10_Nspp ~ log10_area, data = island)
+island_lm <- lm(log(Nspecies) ~ log(Area), data = island)
 ```
 
 2.7 Make a fitted vs. residual plot to check our assumption of equal variance in the residuals.
@@ -353,7 +353,7 @@ ggplot(island_lm,
 ```{r}
 anova(island_lm)
 
-# the log10_area variable is significant (DF_1_15 = 21.118, p < 0.001). This means that the response variable does change with island area. 
+# the log_area variable is significant (DF_1_15 = 21.118, p < 0.001). This means that the response variable does change with island area. 
 ```
 
 2.10 Print out the `summary()` of your lm object here.
@@ -366,9 +366,9 @@ summary(island_lm)
 
 ```{r}
 # Intercept
-# the mean estimate and SE for the intercept coefficient is 1.32 (0.14). We reject the null hypothesis for the intercept, and conclude that it is not equal to 0 (t = 9.286, p < 0.001). 
+# the mean estimate and SE for the intercept coefficient is 3.04 (0.33). We reject the null hypothesis for the intercept, and conclude that it is not equal to 0 (t = 9.286, p < 0.001). 
 
-# beta_1, log10_area
+# beta_1, log_area
 # # the mean estimate and SE for the regression coefficient is 0.33 (0.07). We reject the null hypothesis for the intercept, and conclude that it is not equal to 0 (t = 4.595, p < 0.001). 
 ```
 
@@ -381,15 +381,15 @@ summary(island_lm)
 2.13 Write out the full equation for this linear model. Be sure to put "log10" in the appropriate places for these variables.
 
 ```{r}
-# log10_nspp = 1.32 + 0.33 * log10_area
+# log_nspp = 1.32 + 0.33 * log_area
 ```
 
 2.14 Make another scatter plot of the transformed data and include a line of best fit.
 
 ```{r}
 ggplot(island,
-       aes(y = log10_Nspp, 
-           x = log10_area)) +
+       aes(y = log(Nspecies), 
+           x = log(Area))) +
   geom_point() +
   geom_smooth(method = "lm")
 ```
