@@ -390,10 +390,10 @@ summary(island_lm)
 
 ## GRADED island equation
 
-2.13 Write out the full equation for this linear model. Be sure to put "log10" in the appropriate places for these variables.
+2.13 Write out the full equation for this linear model. Be sure to put "log" in the appropriate places for these variables.
 
 ```{r}
-# log_nspp = 1.32 + 0.33 * log_area
+# log_nspp = 3.04 + 0.33 * log_area
 ```
 
 2.14 Make another scatter plot of the transformed data and include a line of best fit.

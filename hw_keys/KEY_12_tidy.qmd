@@ -1,5 +1,5 @@
 ---
-title: "Key_template"
+title: "Key 12 tidy"
 execute: 
   echo: true
   eval: true
@@ -76,7 +76,8 @@ Two files will need to be submitted on D2L this week.
 
 # Problem 1
 
-## Graded  
+## Graded
+
 1.  Create a tidy .csv file with the TB information from Argentina.
 
 -   Column names have data in them.
@@ -96,7 +97,7 @@ Two files will need to be submitted on D2L this week.
     -   Make sure your lastname is in your filename so I can keep them straight when I grade it.
 
     -   i.e., `week_09_tidy_yourlastname.csv`
-    
+
 ```{r}
 # should have 6-7 columns
 # country, year, population, sex, age, count, diagnosis (optional)
@@ -104,14 +105,13 @@ Two files will need to be submitted on D2L this week.
 
 ```
 
-
 # Problem 2
 
 -   Make a new assignment R Script.\
 -   Load the `tidyverse`\
 -   Read in your tidy csv file.
 
-## Graded  
+## Graded
 
 1.  Print the `head()` of your tidy data.\
 
@@ -127,7 +127,7 @@ Two files will need to be submitted on D2L this week.
 
 3.  Calculate the rate per 1000 people (number of cases / population \* 1000) of TB infections.
 
-    -  Display the country, year, and rate in your quarto document
+    -   Display the country, year, and rate in your quarto document
 
 ```{r}
         tb_tidy |>
@@ -143,8 +143,8 @@ Two files will need to be submitted on D2L this week.
       summarise(tot_cases = sum(count))
 ```
 
+## Graded plot
 
-## Graded plot  
 5.  Plot the total number of cases (y-axis) by year (x-axis.
 
 ```{r}
@@ -157,15 +157,14 @@ Two files will need to be submitted on D2L this week.
       geom_line()
 ```
 
-
 6.  Use `lm()` to perform a t-test comparing the average number of TB-infections based on sex (i.e., `count ~ sex`). Display the `summary()` of the model to your screen.
 
 ```{r}
 summary(lm(count~sex, data = tb_tidy))
 ```
 
+## Graded lm results
 
-## Graded lm results  
 7.  Interpret the results of your model in part F above.
 
 ```{r}

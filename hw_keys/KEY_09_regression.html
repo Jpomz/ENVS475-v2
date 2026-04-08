@@ -3575,19 +3575,19 @@ F-statistic: 696.1 on 1 and 23 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(island)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Island&quot;     &quot;Area&quot;       &quot;log10_area&quot; &quot;Nspecies&quot;   &quot;log10_Nspp&quot;</code></pre>
+<pre><code>[1] &quot;Island&quot;   &quot;Area&quot;     &quot;Nspecies&quot;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(island)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  Island          Area log10_area Nspecies log10_Nspp
-  &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
-1 Albemarle     5825.        3.77      325       2.51
-2 Charles        166.        2.22      319       2.50
-3 Chatham        505.        2.70      306       2.49
-4 James          526.        2.72      224       2.35
-5 Indefatigable 1008.        3.00      193       2.29
-6 Abingdon        51.8       1.71      119       2.08</code></pre>
+<pre><code># A tibble: 6 × 3
+  Island          Area Nspecies
+  &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
+1 Albemarle     5825.       325
+2 Charles        166.       319
+3 Chatham        505.       306
+4 James          526.       224
+5 Indefatigable 1008.       193
+6 Abingdon        51.8      119</code></pre>
 </div>
 </div>
 <p>2.2 Produce a scatter plot of the data with <code>Nspecies</code> as the response variable and <code>Area</code> as the predictor variable.</p>
@@ -3731,9 +3731,9 @@ F-statistic: 21.12 on 1 and 15 DF,  p-value: 0.0003501</code></pre>
 </section>
 <section id="graded-island-equation" class="level2">
 <h2 class="anchored" data-anchor-id="graded-island-equation">GRADED island equation</h2>
-<p>2.13 Write out the full equation for this linear model. Be sure to put “log10” in the appropriate places for these variables.</p>
+<p>2.13 Write out the full equation for this linear model. Be sure to put “log” in the appropriate places for these variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># log_nspp = 1.32 + 0.33 * log_area</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># log_nspp = 3.04 + 0.33 * log_area</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>2.14 Make another scatter plot of the transformed data and include a line of best fit.</p>
 <div class="cell">

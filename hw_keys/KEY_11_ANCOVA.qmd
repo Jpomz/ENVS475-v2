@@ -32,37 +32,43 @@ theme:
         1.  Ensure that code and output are not visible
 :::
 
+# Learning Objectives
 
-# Learning Objectives  
--   Complete a homework using Quarto to render an html document  
+-   Complete a homework using Quarto to render an html document\
 -   Conduct an ANCOVA analysis and interpret the results
 
-# Setup  
+# Setup
 
-## Quarto  
--   This will be the first assignment which asks you to summarize your analysis results using Quarto  
--   Start by opening a new Quarto document  
--   The title will be "Week 11 ANCOVA"  
--   Be sure to put your name in as the Author  
+## Quarto
 
-- After opening a new Quarto document, make sure to include the following in your YAML header:
+-   This will be the first assignment which asks you to summarize your analysis results using Quarto\
 
-```
+-   Start by opening a new Quarto document\
+
+-   The title will be "Homework 11 ANCOVA"\
+
+-   Be sure to put your name in as the Author
+
+-   After opening a new Quarto document, make sure to include the following in your YAML header:
+
+```         
 toc: true
 toc-depth: 2
 embed-resources: true
 ```
 
-## Download the limpet data  
+## Download the limpet data
 
 -   Download the "limpet.csv" from D2L
 -   Place it in your `data/` folder
 
 ## **Setup** code chunk
--   You will need to load the `tidyverse` and the `limpet.csv` data  
+
+-   You will need to load the `tidyverse` and the `limpet.csv` data\
 -   Insert an R code chunk at the top of your Quarto document
--   Include the following in the code chunk to load the library and the data 
-```
+-   Include the following in the code chunk to load the library and the data
+
+```         
 #| label: setup
 #| include: true
 #| eval: true
@@ -70,8 +76,8 @@ embed-resources: true
 library(tidyverse)
 limp <- read.csv(here::here("data/limpet.csv")) |>
   as_tibble()
-
 ```
+
 ```{r}
 #| label: setup
 #| include: false
@@ -84,28 +90,33 @@ limp <- read.csv(here::here("data/limpet.csv")) |>
 
 ```
 
-
 # Data
 
--   The `limpet.csv` data is originally from Quinn and Keough’s 2002 book Experimental Design and Data Analysis for Biologists.  
--   The data relate egg production by limpets to four density conditions in two seasons. 
--   `EGGS` is the response variable (y) and measures the amount of egg production 
+-   The `limpet.csv` data is originally from Quinn and Keough’s 2002 book Experimental Design and Data Analysis for Biologists.\
+
+-   The data relate egg production by limpets to four density conditions in two seasons.
+
+-   `EGGS` is the response variable (y) and measures the amount of egg production
+
 -   `SEASON` is a **categorical** predictor variable (x).
--   `DENSITY` is a **continuous** predictor variable (x) 
--   Because we are examining egg production along a continuous density gradient, this is essentially a study of density-dependent reproduction. 
--   The experimental manipulation of density was implemented in spring and in summer. 
+
+-   `DENSITY` is a **continuous** predictor variable (x)
+
+-   Because we are examining egg production along a continuous density gradient, this is essentially a study of density-dependent reproduction.
+
+-   The experimental manipulation of density was implemented in spring and in summer.
+
 -   Thus, a motivation for collecting these data could be ‘does the density dependence of egg production differ between spring and summer’?
 
 -   Density dependence is the idea that as the number of individuals sharing a food resource increases (e.g. their density goes up), they get a smaller and smaller portion of that food, leading to reduced reproduction success.
 
+# Problems
 
-# Problems  
-
--   Your final assignment will be a rendered html document  
--   As such, you will be writing code and answering questions a little bit differently  
+-   Your final assignment will be a rendered html document\
+-   As such, you will be writing code and answering questions a little bit differently\
 -   For each question, put the question number in your document as a second-level heading, for example:
 
-```
+```         
 ## 1.1
 code chunk or answer
 
@@ -117,29 +128,29 @@ code chunk or answer
 
 etc.
 ```
--   In general, when a question asks you to do anything with the data (modify, calculate, plot, fit a model), you will insert a new code chunk to perform that calculation  
 
--   When a question asks you to interpret your results or answer something in plain words, you will just write out your answer below that problem heading. 
+-   In general, when a question asks you to do anything with the data (modify, calculate, plot, fit a model), you will insert a new code chunk to perform that calculation
 
-- For example:
+-   When a question asks you to interpret your results or answer something in plain words, you will just write out your answer below that problem heading.
 
-```
+-   For example:
+
+```         
 ## 1.4  
 It appears that `EGGS` is related to `DENSITY` because...
 ```
 
-## Problem 1: `limpet`  
+## Problem 1: `limpet`
 
-1.1 Print the `names()` and `head()` of your data object here. 
-  
+1.1 Print the `names()` and `head()` of your data object here.
+
 ```{r}
 # 
 names(limp)
 head(limp)
 ```
 
-
-1.2 Add a code chunk which reports the class of each variable in the limpet data. Recall that `SEASON` and `DENSITY` are our predictor variables and `EGGS` is the response variable.    
+1.2 Add a code chunk which reports the class of each variable in the limpet data. Recall that `SEASON` and `DENSITY` are our predictor variables and `EGGS` is the response variable.
 
 ```{r}
 class(limp$DENSITY) # numeric or continuous also accepted
@@ -147,8 +158,7 @@ class(limp$SEASON) # Character
 class(limp$EGGS) # double <dbl> or continuous also accepted
 ```
 
-
-1.3 Produce a scatter plot of the data with `EGGS` as the response variable and `DENSITY` as the predictor variable. 
+1.3 Produce a scatter plot of the data with `EGGS` as the response variable and `DENSITY` as the predictor variable.
 
 ```{r}
 ggplot(limp, 
@@ -158,17 +168,15 @@ ggplot(limp,
   theme_bw()
 ```
 
-
 1.4 Does there appear to be a linear relationship between the number of eggs and increasing population density? Why or why not?
 
 ```{r}
 # Yes, it appears that the number of eggs declines with increasing density. There does not appear to be any curvature in the response, or any changes in slope across the x-variable. 
 ```
 
+## GRADED global line
 
-## GRADED global line  
-
-1.5 Add a line of best fit to your scatter plot with `geom_smooth(method = "lm")`  
+1.5 Add a line of best fit to your scatter plot with `geom_smooth(method = "lm")`
 
 ```{r}
 ggplot(limp, 
@@ -179,8 +187,7 @@ ggplot(limp,
   geom_smooth(method = "lm")
 ```
 
-
-1.6 Now, make another scatter plot (without the line) which includes `SEASON` mapped to the `color` aesthetic. R 
+1.6 Now, make another scatter plot (without the line) which includes `SEASON` mapped to the `color` aesthetic. R
 
 ```{r}
 ggplot(limp, 
@@ -191,17 +198,15 @@ ggplot(limp,
   theme_bw()
 ```
 
-
-1.7 Does it appear that there is a different relationship between spring and summer? In other words, do the colors seem to "group" on one side/part of the graph, or are the colors randomly or evenly distributed across the graph? 
+1.7 Does it appear that there is a different relationship between spring and summer? In other words, do the colors seem to "group" on one side/part of the graph, or are the colors randomly or evenly distributed across the graph?
 
 ```{r}
 # It does appear that there is a difference based on season. All the spring (red) points are towards the top of the graph, while the summer (blue) points are closer to the bottom of the graph. 
 ```
 
+## GRADED both lines
 
-## GRADED both lines  
-
-1.8 Repeat the plot in 1.6, but now add a line of best fit. Below the plot, say whether or not your answer in 1.7 is supported or if you've changed your mind.  
+1.8 Repeat the plot in 1.6, but now add a line of best fit. Below the plot, say whether or not your answer in 1.7 is supported or if you've changed your mind.
 
 ```{r}
 ggplot(limp, 
@@ -215,8 +220,7 @@ ggplot(limp,
 # There are now two lines. They appear to be parallel (no interaction), but the intercepts seem to be different (Main effect of SEASON)
 ```
 
-
-1.9 Let's check the normality of residuals with a qq-plot. Make the plot in a code chunk, then write your answer below discussing if we meet or fail or assumption. 
+1.9 Let's check the normality of residuals with a qq-plot. Make the plot in a code chunk, then write your answer below discussing if we meet or fail or assumption.
 
 ```{r}
 ggplot(limp, 
@@ -228,16 +232,15 @@ ggplot(limp,
 # even spread and points are close to the line. 
 ```
 
-1.10  Fit a model using `lm()` for the limpet data, and save it as a new data object. Make sure to include main effects of both explanatory AND the interaction between them. 
+1.10 Fit a model using `lm()` for the limpet data, and save it as a new data object. Make sure to include main effects of both explanatory AND the interaction between them.
 
 ```{r}
 limp_lm <- lm(EGGS ~ DENSITY * SEASON, data = limp)
 ```
 
+1.11 Before we look at the model output, let's make a fitted vs. residual plot to check our assumption of Equal variance of residuals.
 
-1.11 Before we look at the model output, let's make a fitted vs. residual plot to check our assumption of Equal variance of residuals.  
-
--   Use the model-fit object you made in 1.9 above to make a fitted vs residual plot.  
+-   Use the model-fit object you made in 1.9 above to make a fitted vs residual plot.
 
 ```{r}
 ggplot(limp_lm, 
@@ -248,25 +251,24 @@ ggplot(limp_lm,
   theme_bw()
 ```
 
-1.12 Interpret the plot made above. Does this model appear to have equal variance in the residuals? Why or why not?  
+1.12 Interpret the plot made above. Does this model appear to have equal variance in the residuals? Why or why not?
 
 ```{r}
 #  the magnitude of the values appears similar (~-.5, .5)
 # There does not appear to be an obvious pattern to the residuals, but maybe less variation on the left side of the plot. 
 ```
 
-1.13 Now, use the `anova()` function on your model fit object  above to print out an ANOVA table for your linear regression. 
+1.13 Now, use the `anova()` function on your model fit object above to print out an ANOVA table for your linear regression.
 
 ```{r}
 anova(limp_lm)
 ```
 
+## GRADED ANOVA interp
 
-## GRADED ANOVA interp   
-
-1.14 Interpret the ANOVA table for our ANCOVA analysis. Discuss what the predictor variable means, and how that relates to a linear model. Recall which variables were continuous or categorical.  
--   HINT: Continuous predictors indicate if there is a relationship (Linear Regression).  
--   Categorical predictors indicate if there is a difference in means between groups (different intercepts)  
+1.14 Interpret the ANOVA table for our ANCOVA analysis. Discuss what the predictor variable means, and how that relates to a linear model. Recall which variables were continuous or categorical.\
+- HINT: Continuous predictors indicate if there is a relationship (Linear Regression).\
+- Categorical predictors indicate if there is a difference in means between groups (different intercepts)
 
 ```{r}
 # DENSITY: small p-value which means that there is a relationship between density and egg production
@@ -276,15 +278,13 @@ anova(limp_lm)
 # DENSITY:SEASON: high p-value means that there is not an interactive effect between density and season. In other words, the effect of one does not depend on another, or the slopes are the same for the two groups. 
 ```
 
-
-1.15 Print out the `summary()` of the linear model object you created. 
+1.15 Print out the `summary()` of the linear model object you created.
 
 ```{r}
 summary(limp_lm)
 ```
 
-
-1.16 Describe what each coefficient means. Be sure to specify what group (if necessary) the coefficient refers to.  
+1.16 Describe what each coefficient means. Be sure to specify what group (if necessary) the coefficient refers to.
 
 ```{r}
 # Intercept: This is the estimated number of eggs when x (DENSITY) = 0 for the SPRING season
@@ -297,7 +297,6 @@ summary(limp_lm)
 
 ```
 
-  
 1.17 Report the adjusted R-squared value from our model and give an interpretation for what it means.
 
 ```{r}
@@ -305,34 +304,29 @@ summary(limp_lm)
 # This means that the model explains ~67%  of the variation in the response variable. 
 ```
 
+## GRADED line equations
 
-## GRADED line equations  
+1.18 Add the full equation for our linear model.\
+- **HINT**: You should have an equation for spring and an equation for summer\
+- Look at the previous lecture notes for Quarto if you need a refresher on how to write math equations. - Write the equations as "block" or "display" equations
 
-1.18 Add the full equation for our linear model.  
--   **HINT**: You should have an equation for spring and an equation for summer  
--   Look at the previous lecture notes for Quarto if you need a refresher on how to write math equations.
--   Write the equations as "block" or "display" equations
+$$EGGS_{spring} = \beta_0 + \beta_1 * DENSITY $$
 
-$$EGGS_{spring} = \beta_0 + \beta_1 * DENSITY $$  
-
-$$EGGS_{summer} = (\beta_0+\beta_{0 \Delta}) + (\beta_1 +\beta_{1 \Delta}) * DENSITY $$  
+$$EGGS_{summer} = (\beta_0+\beta_{0 \Delta}) + (\beta_1 +\beta_{1 \Delta}) * DENSITY $$
 
 ```{r}
 # EGGS_spring = 2.66 - 0.034 * DENSITY  
 # EGGS_summer = (2.66 - 0.81) - (0.034 - 0.003) * DENSITY  = 1.85 - 0.031 * DENSITY
 ```
 
+## GRADED prediction ribbons
 
-## GRADED prediction ribbons   
-
-1.19 Calculate the "prediction" interval for this model and make a plot which includes the original data as points, and the prediction interval. The groups should have different colors/fills, and should be facet wrapped so each group appears in its own panel.  
--   **HINTS**  
--   Make a "new" data frame with predictor variables
--   use `length.out = 50` for the continuous predictor
--   use the "new" data to predict y-value with `interval = "predict"`  
--   combine the new x and new y data  
--   in `ggplot`, use the original data for your points, and the new combined data for your smooth layer  
--   Also add a title explaining that it's a 95% prediction interval  
+1.19 Calculate the "prediction" interval for this model and make a plot which includes the original data as points, and the prediction interval. The groups should have different colors/fills, and should be facet wrapped so each group appears in its own panel.\
+- **HINTS**\
+- Make a "new" data frame with predictor variables - use `length.out = 50` for the continuous predictor - use the "new" data to predict y-value with `interval = "predict"`\
+- combine the new x and new y data\
+- in `ggplot`, use the original data for your points, and the new combined data for your smooth layer\
+- Also add a title explaining that it's a 95% prediction interval
 
 ```{r}
 new_x <- expand.grid(
@@ -364,4 +358,3 @@ ggplot(limp,
   scale_color_viridis_d() +
   labs(title = "95% Prediction Interval for Egg Production related to density and season")
 ```
-
