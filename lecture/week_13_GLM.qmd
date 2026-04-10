@@ -1,0 +1,312 @@
+---
+title: "Lecture Week 13: GLM"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+toc: true
+toc-depth: 3
+number-sections: true
+theme:
+  light: flatly
+  dark: darkly
+execute: 
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+library(Sleuth3)
+
+# data objects
+elephant <- case2201
+```
+
+# Overview
+
+-   Generalized linear models are useful when your response variable is not normally distributed.
+
+-   GLMs are often an alternative to transformations of data
+
+-   GLMs work by using linear predictors, a variance function, and a link function
+
+-   Linear predictors are what we have used before - they can be categorical or continuous
+
+-   The linear models we have used so far use the normal distribution for our variance function (hence meeting the assumptions previously discussed), but now we can pick different functions
+
+    -   Here we will look at the $Poisson(\lambda)$ and the $Binomial(n, p)$ distributions
+
+-   The link function is new - this takes the place of transformations, but instead of transforming the raw data (as before), it transforms the predictions made by the linear component
+
+# Setup
+
+### Libraries
+
+```{r}
+#| eval: false
+# libraries
+library(tidyverse)
+library(Sleuth3)
+
+```
+
+### Data
+
+```{r}
+#| eval: false
+# data objects
+elephant <- case2201
+```
+
+# Lecture Outline
+
+## Poisson distribution
+
+-   The Poisson distribution is useful when the variable takes on discrete, positive, whole numbers
+
+-   This is often the count of something
+
+    -   Minimum bound is 0
+
+    -   Maximum bound is $+\infty$
+
+-   The Poisson is described by a single parameter $\lambda$
+
+-   Therefore, we would say that:
+
+$$
+Y \sim Poisson(\lambda)
+$$
+
+-   Recall that a normal distribution is defined with two parameters: $N(\mu, \sigma)$, where $\mu$ is the average or expected value, and $\sigma$ is the spread of the data, but it is a fixed entity
+
+-   With a poisson, $\lambda$ described the expected value and the variance or noise around that value:
+
+-   
+
+$$
+\lambda = E(Y) = Var(Y) 
+$$
+
+-   So as the expected value increases, so does the variation
+
+```{r}
+#| message: false
+#| warning: false
+pois_df <- expand_grid(iter = 0:30,
+                       lambda = c(1, 5, 10, 20)) |>
+  mutate(y = dpois(iter, lambda))
+
+ggplot(pois_df,
+       aes(y = y, 
+           x = iter, 
+           fill = as_factor(lambda))) +
+  geom_density(stat = "identity",
+               alpha = 0.5) +
+  scale_fill_viridis_d(option = "turbo") +
+  theme_bw()
+
+ggplot(pois_df,
+       aes(y = y, 
+           x = iter, 
+           fill = as_factor(lambda))) +
+  geom_histogram(stat = "identity",
+               alpha = 0.35,
+               position = "identity",
+               color = "black") +
+  scale_fill_viridis_d() +
+  theme_minimal()
+```
+
+## Elephant Data
+
+-   `case2201` is observational data on the number of mates that male elephants have and their age
+
+-   Male elephants are sexually mature at \~15 years old, but can rarely out compete older, larger males for access to females
+
+```{r}
+as_tibble(elephant)
+ggplot(elephant,
+       aes(x = Age, 
+           y = Matings)) +
+  geom_point() 
+```
+
+-   This looks like a positive relationship, and we can put a linear regression line here:
+
+```{r}
+ggplot(elephant,
+       aes(x = Age, 
+           y = Matings)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+-   Note that if we extended the line, it would quickly predict "negative" mates, which is not possible
+
+```{r}
+ggplot(elephant,
+       aes(x = Age, 
+           y = Matings)) +
+  geom_point() +
+  geom_smooth(method = "lm",
+              fullrange = TRUE) +
+  scale_x_continuous(limits = c(0, 50))+
+  scale_y_continuous(limits = c(-10, 10))
+```
+
+## Poisson Regression with `glm()` 
+
+-   The `lm()` function produces linear models
+
+-   The `glm()` function produces generalized linear models
+
+-   The syntax is generally the same with a formula and a data argument
+
+-   What is added is a `family =` argument which allows you to designate other distribution families.
+
+-   We will set `family = poisson`
+
+    -   There is also a `link =` argument inside of the family call
+
+    -   The default link for Poisson is `log`
+
+    -   Other links exist, but we will just stick with the defaults here
+
+    -   Note that the back-transformation for a `log()` value is to exponentiate the value; `exp()` in R
+
+        -   i.e., `log(4)` = 1.386294
+
+        -   `exp(1.386296)` = 3.999999 = 4
+
+```{r}
+ele_glm <- glm(Matings ~ Age,
+               data = elephant,
+               family = poisson(link = "log"))
+summary(ele_glm) 
+```
+
+-   Before we go into the model estimates, we first need to ask if Poisson is a reasonable fit for this data.
+
+-   A Poisson distributed variable should have its mean and variance be approximately equal.
+
+-   We can check this by looking at the ratio of residual deviance to the degrees of freedom
+
+    -   A perfect ratio would be 1
+
+    -   General rule of thumb is anything \> 2 could be problematic
+
+```{r}
+51/39
+```
+
+-   This model looks good
+
+## Describe the link function here?
+
+## Working with the model
+
+```{r}
+summary(ele_glm)
+```
+
+-   We have coefficient estimates for our intercept and $\beta_1$ So we can write out our equation
+
+-   An important note though, is that the equation will predict the number of mates on the *transformed* scale
+
+    -   With every 1-year increase in age, a male will have an increase of 0.069 mates *on the log-scale*
+
+    -   `exp(0.069)` = 1.07. This is **not** an increase of 1.07 mates. It's an increase of 7% more mates than the year before
+
+    -   This is a percentage change, not an absolute change
+
+-   It is usually easier to estimate the response on the log-scale, and then back-transform our result to get back on the same scale as the original data
+
+    -   i.e., the number of mates
+
+$$
+Log(Mates) = \beta_0 + \beta_1 * Age
+$$
+
+-   Let's fill out the equation, and estimate the number of mates for a 40 year old male
+
+$$
+Log(Mates) = -1.58 + 0.069 * 40
+$$
+
+```{r}
+# log-scale
+-1.58 + 0.069*40
+```
+
+-   To put this on the "real" scale, we need to exponentiate
+
+$$
+e^{1.18}
+$$
+
+```{r}
+exp(1.18)
+# "real" scale
+```
+
+-   A 40 year old male elephant will have had an average of **3.25 mates**
+
+::: callout-note
+## Prediction with GLM's
+
+-   It is possible to use `predict()` with `newdata` for GLM models
+
+-   There are a few extra steps to accurately estimate the interval (either confidence or prediction)
+
+-   I'm not going to go into the details here, but there are a number of resources online which explain it in detail
+
+-   For the home work problems in this class, I will only ask you to calculate the estimated response for a given value of a predictor variable one at a time
+
+    -   i.e., like we did above
+
+    -   Plug in one x-value to the equation
+
+    -   calculate the estimate on the log-scale
+
+    -   Exponentiate to get the estimate back on the same scale as the data
+:::
+
+## Plot model results
+
+-   We can plot the model results with ggplot
+
+```{r}
+ggplot(elephant,
+       aes(x = Age, 
+           y = Matings)) +
+  geom_point() +
+  geom_smooth(method = "glm",
+              method.args = list("poisson")) 
+```
+
+-   Note the "curved" nature of the line
+
+-   And the increasing uncertainty at higher x-values
+
+    -   Reflecting the increasing variance of a Poisson distribution
+
+-   And when we extend our model, the fitted line approaches 0 but never goes negative.
+
+```{r}
+ggplot(elephant,
+       aes(x = Age, 
+           y = Matings)) +
+  geom_point() +
+  geom_smooth(method = "glm",
+              method.args = list("poisson"),
+              fullrange = TRUE) +
+  scale_x_continuous(limits = c(0, 50))+
+  scale_y_continuous(limits = c(-10, 10))
+```
+
+# Summary
