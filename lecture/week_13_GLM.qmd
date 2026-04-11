@@ -24,6 +24,7 @@ library(Sleuth3)
 
 # data objects
 elephant <- case2201
+beetle <- read.csv(here::here("data/beetle.csv"))
 ```
 
 # Overview
@@ -60,11 +61,12 @@ library(Sleuth3)
 #| eval: false
 # data objects
 elephant <- case2201
+beetle <- read.csv(here::here("data/beetle.csv"))
 ```
 
 # Lecture Outline
 
-## Poisson distribution
+# Poisson distribution
 
 -   The Poisson distribution is useful when the variable takes on discrete, positive, whole numbers
 
@@ -85,8 +87,6 @@ $$
 -   Recall that a normal distribution is defined with two parameters: $N(\mu, \sigma)$, where $\mu$ is the average or expected value, and $\sigma$ is the spread of the data, but it is a fixed entity
 
 -   With a poisson, $\lambda$ described the expected value and the variance or noise around that value:
-
--   
 
 $$
 \lambda = E(Y) = Var(Y) 
@@ -159,7 +159,7 @@ ggplot(elephant,
   scale_y_continuous(limits = c(-10, 10))
 ```
 
-## Poisson Regression with `glm()` 
+## Poisson Regression with `glm()`
 
 -   The `lm()` function produces linear models
 
@@ -256,24 +256,31 @@ exp(1.18)
 
 -   A 40 year old male elephant will have had an average of **3.25 mates**
 
+## Use `predict()`; designate output
+
+-   `predict()` allows us to designate if we want the estimate on the `"link"` or the `"response"` scale
+
+```{r}
+predict(ele_glm,
+        newdata = list(Age = 40),
+        type = "link")
+predict(ele_glm,
+        newdata = list(Age = 40),
+        type = "response")
+```
+
+-   These values reasonably match our manual calculations above (with rounding)
+
 ::: callout-note
-## Prediction with GLM's
+## GLM Intervals with `predict()`
 
--   It is possible to use `predict()` with `newdata` for GLM models
+-   Note that it is not possible to use get intervals out of `predict()` when using GLM models
 
--   There are a few extra steps to accurately estimate the interval (either confidence or prediction)
+-   You can calculate them manually, and there also appear to be other packages which you can download which will do it.
 
 -   I'm not going to go into the details here, but there are a number of resources online which explain it in detail
 
--   For the home work problems in this class, I will only ask you to calculate the estimated response for a given value of a predictor variable one at a time
-
-    -   i.e., like we did above
-
-    -   Plug in one x-value to the equation
-
-    -   calculate the estimate on the log-scale
-
-    -   Exponentiate to get the estimate back on the same scale as the data
+-   For the home work problems in this class, I will only ask you to calculate the estimated response for a given value of a predictor variable, and not any of the intervals
 :::
 
 ## Plot model results
@@ -309,4 +316,242 @@ ggplot(elephant,
   scale_y_continuous(limits = c(-10, 10))
 ```
 
+# Binomial Distribution
+
+-   The binomial distribution is useful when the response variable is bounded by 0 and 1.
+
+-   Proportion data commonly takes this form
+
+-   Proportions can be used themselves (i.e., 0.25, 0.5, etc.)
+
+-   However, when the number of trial varies, it is best to supply a "weight" column
+
+    -   For example, 1/2 and 50/100 are the same proportion, but the 50/100 has more weight, or is more consistent
+
+        -   It would be hard to have 50/100 by random chance, but 1/2 by random chance may not be unexpected
+
+-   This way, the model can weight data with more trials more heavily
+
+-   The binomial distribution is described as:
+
+$$
+Y \sim Binomial(n, p)
+$$
+
+Where $n$ is the number of trials and $p$ is the probability of success
+
+-   Note that you can define "success" either way, but it'll change your interpretation.
+
+    -   Be sure to define it at the beginning and then stay consistent
+
+-   The expected value of a variable with $Binomial(n, p)$ is $E[Y] = np$
+
+-   Variance is: $Var(Y) = np(1-p)$
+
+```{r}
+#| warning: false
+binom_df <- expand_grid(success = 0:10,
+                       size = c(10),
+                       p = c(0.1, 0.5, 0.9)) |>
+  mutate(y = dbinom(success, size, p))
+
+ggplot(binom_df,
+       aes(y = y, 
+           x = success)) +
+  geom_histogram(stat = "identity",
+               alpha = 0.75,
+               color = "black") +
+  theme_bw() +
+  facet_wrap(~p, labeller = labeller(p = label_both))
+
+
+```
+
+-   Note that the values can "pile up" on 0 or 1 when $p$ is low or high, respectively.
+
+## Beetle data  
+
+-   The `beetle.csv` contains examining the lethal effects of a pesticide on the flour beetle *Tribolium confusum*. The data was originally published in 1935 and has been used extensively in introductory statistics texts
+
+```{r}
+as_tibble(beetle)
+```
+
+-   Let's plot the data and see what a binomial distribution can look like
+
+```{r}
+ggplot(beetle, 
+       aes(x = Dose, 
+           y = Mortality_rate)) +
+  geom_point()
+```
+
+-   you can see that this looks linear, but note the slight curves near 0 and 1
+
+-   If we were to put a line through this, we would find negative mortality rates at doses \~\<50, and mortality rates \>100% at doses \~\>80
+
+    -   Both of these are impossible
+
+-   You might think that we could just use a linear regression and only interpolate to avoid these issues
+
+-   Let's jump ahead a bit and show the Binomial regression line to emphasize the curved relationship and compare it to a normal regression line
+
+```{r}
+ggplot(beetle, 
+       aes(x = Dose, 
+           y = Mortality_rate)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "glm",
+              method.args = list(binomial),
+              aes(weight = Number_tested)) +
+  geom_smooth(method = "lm",
+              color = "red",
+              fill = "pink") +
+  theme_bw()
+```
+
+## Fit a glm model
+
+-   We can use `glm()` again, but this time we will designate `family = binomial`
+
+-   We will use the default link function of `logit` for a binomial regression
+
+    -   As before, there are other links, but we won't explore them here
+
+```{r}
+beetle_glm <- glm(Mortality_rate ~ Dose,
+                  data = beetle, 
+                  family = binomial(link = "logit"), 
+                  weight = Number_tested)
+beetle_glm
+```
+
+### The logit link function
+
+$$ 
+Logit(p) = log(\frac{p}{1-p}) 
+$$
+
+### Logits, log-odds, probability
+
+-   The `logit` link function puts the prediction on the logit scale
+
+-   Logits are weird
+
+-   Logits are the natural logarithm of the odds, and the odds are a ratio of the successes to failures
+
+-   Let's say we had 10 trials, which resulted in 5 successes and 5 failures
+
+-   So the odds are 5/5, and the logit is the log of that:
+
+```{r}
+log(5/5)
+```
+
+-   One important logit to remember is 0, which equates to a 50% probability
+
+    -   Negative logits means lower odds
+
+    -   positive logits means higher odds
+
+| Probablity | Odds (success / failure) | Logits (log-odds) |
+|------------|--------------------------|-------------------|
+| 0.01       | 0.010101                 | -4.595            |
+| 0.2        | 0.2500                   | -1.386            |
+| 0.5        | 1.00000                  | 0.000             |
+| 0.8        | 4.0000                   | 1.386             |
+| 0.99       | 99.0000                  | 4.595             |
+
+: Table comparing probability, odds, and log odds (logits)
+
+-   If you `exp()` your coefficients, that will give you the odds.
+
+## Working with the model
+
+-   our model coefficients are:
+
+```{r}
+coef(beetle_glm)
+```
+
+-   The $\beta_1$ coefficient is \> 0.0, indicating that probability of success (i.e., death) increases as dose increases, which should make sense.
+
+<!-- -->
+
+-   We can estimate the response on the logit-scale when `Dose = 60` by plugging in the numbers
+
+$$
+\eta = Logit(Mortality) = -14.578 + 0.2455 * 60 
+$$
+
+```{r}
+eta <- coef(beetle_glm)[1] + coef(beetle_glm)[2] * 60
+eta
+```
+
+-   To back transform to the original scale, we need to do the following:
+
+$$
+Mortality = \frac{exp(\eta)}{1 + exp(\eta)}
+$$
+
+```{r}
+exp(eta) / (1+exp(eta))
+```
+
+## Use `predict()`; designate output
+
+-   We can simplify this by using predict
+
+-   `predict()` allows us to designate if we want the estimate on the `"link"` or the `"response"` scale
+
+```{r}
+predict(beetle_glm,
+        newdata = list(Dose = 60),
+        type = "link")
+predict(beetle_glm,
+        newdata = list(Dose = 60),
+        type = "response")
+```
+
+-   We can add multiple predictions by creating a new data frame
+
+-   Predict the response on the link scale for doses of 50, 60, and 70
+
+```{r}
+predict(beetle_glm,
+        newdata = list(Dose = c(50, 60, 70)),
+        type = "response")
+```
+
+::: callout-note
+## Homework has two predictor variables
+
+-   When you predict the response in the binomial homework problem, there are 2 predictor variables.
+
+-   You have two options
+
+    1.  Make a dataframe which `expand.grid()` like we did in the ANCOVA notes
+
+    2.  Add another variable in the `list()` argument in `predict()`
+
+        -   If you go this route, you need to make sure the lengths are the same
+
+        -   i.e., `Dose = c(1, 2, 3)` and `other_x = c("a", "b", "c")`
+:::
+
 # Summary
+
+-   GLM's are useful for when our response variable is not normal
+
+-   They can be compared to transforming the data, but are generally better since they account for differences in distributions and variance structures.
+
+-   We looked at two distributions here:
+
+    -   Poisson - Positive whole numbers
+
+    -   Binomial - continuous numbers bounded by 0 and 1
+
+-   There are many other distribution families that are available for use in `glm()`
+
+-   Likewise, we looked at the default link functions, but more are available, making glm's a flexible and powerful analytical tool.
