@@ -3,3 +3,44 @@ First week was too much. Simplify or split into 2
 Split ANOVA
   - one-way + factorial
   - two-way, add BACI as a specific case study/design
+  - add model selection here?
+
+How did the project go?
+  - Might drop this or maybe give them a data set?
+
+week 1 of glm
+  - Just count data
+  - model selection
+  - fit a OLS, poisson, neg-binom
+  - maybe add overdispersion?
+  - HW P1 could be a poisson model
+    - dispersion factor is good
+  - P2 could be a neg binomial
+    - dispersion is bad
+    - fit all three and select best model
+
+week 2
+  - proportion data and HW are good I think
+  - add a binary example, or separate week?
+    - mayflies CCU example
+    - Donner party?
+    - ppmr example
+    - I think I found some other examples while googling, but I don't recall them now. 
+
+Multiple linear regressions
+  - before GLM? 
+  - could do model selection here and free up space in W1 of glm
+  - Then glm examples with multiple predictors could be ready to go?
+
+##===================##
+##===================##
+##===================##
+
+Notes as of 2026-04-11
+Change readings back to Hector book - I dind't like Touchon and we didn't end up using it
+Simplify intro to R
+Move Quarto earlier - add pdf render for easier grading
+Split ANOVA into 2 weeks as suggested above
+Add multiple linear regression
+2 weeks of GLM
+final project or no final and just the last HW?
