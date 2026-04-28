@@ -65,7 +65,7 @@ spp <- read.csv(here::here("data/plant_spp_nitrogen.csv"),
 -   As such, you will be writing code and answering questions a little bit differently
 -   For each question, put the question number in your document as a second-level heading
 -   Then place your answer below that
--    for example:
+-   for example:
 
 ```         
 ## 1.1 
@@ -191,7 +191,7 @@ ggplot(spp,
 
 The peppered moth (*Biston betularia*) is a classic example of biological evolution in response to anthropogenic impacts. A detailed description is available [here](https://branchcollective.org/?ps_articles=nathan-k-hensley-and-john-patrick-james-soot-moth-biston-betularia-and-the-victorian-end-of-nature) (and is also where I got the below images from). Briefly, as the industrial revolution ramped up in England, soot from coal smoke made white barked trees appear black. The peppered moth before this time was white and camouflaged with the tree bark. As the trees became black, a dark "morph" of the peppered moth appeared and became more abundant, presumably because it was better able to hide from predators.
 
-[![Image showing peppered moths on a light background, which would have been typical pre-industrialization. The light moth is well camouflaged and is likely to avoid predation. ](peppered2.jpg){width="345"}](https://branchcollective.org/?ps_articles=nathan-k-hensley-and-john-patrick-james-soot-moth-biston-betularia-and-the-victorian-end-of-nature)
+[![Image showing peppered moths on a light background, which would have been typical pre-industrialization. The light moth is well camouflaged and is likely to avoid predation.](peppered2.jpg){width="345"}](https://branchcollective.org/?ps_articles=nathan-k-hensley-and-john-patrick-james-soot-moth-biston-betularia-and-the-victorian-end-of-nature)
 
 [![Image of a light and dark morph on a dark background. The light morph stands out and would be easy prey for a predator.](peppered1.jpg){width="726"}](https://branchcollective.org/?ps_articles=nathan-k-hensley-and-john-patrick-james-soot-moth-biston-betularia-and-the-victorian-end-of-nature)
 
@@ -207,8 +207,9 @@ We will test the hypothesis that survival depends on the distance from the city 
 #| eval: true
 #| echo: true
 
-data("case2102")
-as_tibble(case2102)
+moth <- data("case2102") |>
+  as_tibble()
+moth
 ```
 
 -   `Morph` indicates if the individual was light or dark
@@ -217,7 +218,7 @@ as_tibble(case2102)
 
 -   `Placed` is the total number of individuals that were put out into the field
 
--   `Removed` is the number that were missing 24 hours later (i.e., this is the number that "died"). This is what we are classifying as **successes**
+-   `Removed` is the number that were still on the trees 24 hours later (i.e., this is the number that "survived"). This is what we are classifying as **successes**
 
 ### Modify the data
 
@@ -227,13 +228,19 @@ as_tibble(case2102)
 
     -   Calculate the proportion that survived
 
+        -   i.e., `Removed / Placed`
+
     -   Set the levels of the `Morph` variable so that "light" is the reference
 
+        -   i.e., make a new `Morph` column, by calling the `factor()` function on the original `Morph` column.
+
+        -   Inside the `factor()` function, you can use the `levels` argument to manually designate light and dark.
+
 ```{r}
-moth <- case2102 |>
+moth <- moth |>
   mutate(prop = Removed / Placed,
          Morph = factor(Morph, levels = c("light", "dark"))) 
-as_tibble(moth)
+
 ```
 
 2.1 Plot the `moth` data with `prop` on the y-axis, `Distance` on the x-axis, and map `Morph` to color. Add a line of best fit based on a binomial glm with `Placed` as the weight in your `stat_smooth()` function
