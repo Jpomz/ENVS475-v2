@@ -207,8 +207,9 @@ We will test the hypothesis that survival depends on the distance from the city 
 #| eval: true
 #| echo: true
 
-data("case2102")
-as_tibble(case2102)
+moth <- data("case2102") |>
+  as_tibble()
+moth
 ```
 
 -   `Morph` indicates if the individual was light or dark
@@ -217,7 +218,7 @@ as_tibble(case2102)
 
 -   `Placed` is the total number of individuals that were put out into the field
 
--   `Removed` is the number that were missing 24 hours later (i.e., this is the number that "died"). This is what we are classifying as **successes**
+-   `Removed` is the number that were still on the trees 24 hours later (i.e., this is the number that "survived"). This is what we are classifying as **successes**
 
 ### Modify the data
 
@@ -227,13 +228,19 @@ as_tibble(case2102)
 
     -   Calculate the proportion that survived
 
+        -   i.e., `Removed / Placed`
+
     -   Set the levels of the `Morph` variable so that "light" is the reference
 
+        -   i.e., make a new `Morph` column, by calling the `factor()` function on the original `Morph` column.
+
+        -   Inside the `factor()` function, you can use the `levels` argument to manually designate light and dark.
+
 ```{r}
-moth <- case2102 |>
+moth <- moth |>
   mutate(prop = Removed / Placed,
          Morph = factor(Morph, levels = c("light", "dark"))) 
-as_tibble(moth)
+
 ```
 
 2.1 Plot the `moth` data with `prop` on the y-axis, `Distance` on the x-axis, and map `Morph` to color. Add a line of best fit based on a binomial glm with `Placed` as the weight in your `stat_smooth()` function
