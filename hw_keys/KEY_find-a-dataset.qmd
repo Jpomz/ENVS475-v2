@@ -1,0 +1,77 @@
+---
+title: "Key_template"
+execute: 
+  echo: true
+  eval: true
+  message: false
+  warning: false
+format: html
+editor: visual
+toc: true
+toc-depth: 2
+embed-resources: true
+theme:
+  light: flatly
+  dark: darkly
+---
+
+::: callout-warning
+## Instructions for writing KEY and HW
+
+1.  update libraries and data
+    1.  In setup block (hidden) and in **SETUP** sections below
+2.  Add graded comment to code block and as a 2nd-level header above problem
+3.  Once Key is complete
+    1.  Delete this instruction callout
+    2.  Render
+4.  After key is complete
+    1.  "save as" appropriate HW in `assignment/` folder
+    2.  Change `echo:` and `eval:` to `false` in YAML
+    3.  Delete GRADED headers
+    4.  Render assignment
+        1.  Ensure that code and output are not visible
+:::
+
+```{r}
+#| label: setup
+#| include: false
+#| eval: true
+
+library(tidyverse)
+
+finch <- read.csv(here::here("data/galapago-finches.csv"),
+                  stringsAsFactors = TRUE)
+```
+
+# Overview
+
+For your final assignment, you will need to find a data set (or data sets) from a published paper to perform statistical analyses on.
+
+# Setup
+
+## Libraries
+
+-   Load all libraries that you need
+
+-   At a minimum, you will want to use the `tidyverse`
+
+-   Look through old lecture notes and load any other appropriate libraries
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+```
+
+# Data
+
+-   The first thing you will need to do is to locate a data set or multiple data sets to analyze.
+
+-   Once you find data, you will save it as a .csv in your `"data/"` folder and load it appropriately in your Quarto document.
+
+## Finding Data
+
+-   [DataDRYAD](https://datadryad.org/)
+
+# Problems
