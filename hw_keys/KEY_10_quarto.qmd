@@ -111,8 +111,11 @@ ggplot(finch2,
 ## Problem 5: Miscellany
 
 1.  
+
 2.  my cmu email address is [jpomeranz\@colroadomesa.edu](jpomeranz@colroadomesa.edu)
+
 3.  Include a line of text which includes at least one
+
     1.  **bold**
     2.  *italicized*
     3.  subscript H~2~O
