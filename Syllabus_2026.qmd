@@ -56,9 +56,17 @@ This course follows the "I do, we do, you do" format. Generally, we will cover o
 
 ## PROGRAM STUDENT LEARNING OUTCOMES
 
-1)  Demonstrate the ability to design an environmental study. (Quantitative skills, critical thinking skills)
+1)  Demonstrate the ability to import data into statistical software. (Specialized knowledge, quantitative fluency)
 
-2)  Demonstrate the ability to analyze quantitative environmental data, effectively translate data into graphs or tables, and interpret the results. (Quantitative skills, critical thinking skills)
+2)  Develop a workflow to clean and prepare data for analysis. (Quantitative fluency, applied learning).
+
+3)  Choose appropriate statistical models to answer scientific questions. (Quantitative fluency, critical thinking)
+
+4)  Assess model output to ensure statistical model is appropriate. (Quantitative fluency, critical thinking, applied learning)
+
+5)  Interpret model output to answer scientific questions. (Quantitative fluency, critical thinking)
+
+6)  Create graphs and tables to effectively communicate data and conclusions. (Quantitative fluency, critical thinking, applied learning)
 
 ## COURSE COMMUNICATION
 
@@ -187,11 +195,11 @@ Solutions to homework will generally be posted on the Wednesday after they are d
 
     -   50% penalty for submissions made after the grace period.
 
-| Attribute    | Full points                                                                                                       | Most points                                                                                                                                                | Partial points                                                                                                       | No Points                                                                                                                                          |
+| Attribute | Full points | Most points | Partial points | No Points |
 |---------------|---------------|---------------|---------------|---------------|
-| Completeness | 5 points. Complete assignment is submitted. An attempt is made to answer all questions.                           | 3 points. At least half the assignment is complete. An attempt is made to answer most questions                                                            | 2 Point. Less than half the assignment is complete.                                                                  | 0 Points. Assignment is not turned in.                                                                                                             |
-| Values       | 4 points. All the graded parts are correct. The values/plots/interpretations match the solution key.              | 3 points. Most of the graded sections are correct and match the solution key.                                                                              | 2 points. Some of the graded sections are correct and match the solution key.                                        | 0 points. None of the graded sections are correct and match the solution key.                                                                      |
-| Syntax       | 1 point. All code runs correctly. There is no superfluous code in the document. Quarto documents render correctly | 0.9 points. Nearly all code runs correctly, with only a minor error and/or very little superfluous code in the document. Quarto documents render correctly | 0.5 points. Not all the code runs correctly. There are a few minor or one major errors and/or some superfluous code. | 0 points. Very little or none of the code runs correctly. There are several minor or more than two major errors and/or excessive superfluous code. |
+| Completeness | 5 points. Complete assignment is submitted. An attempt is made to answer all questions. | 3 points. At least half the assignment is complete. An attempt is made to answer most questions | 2 Point. Less than half the assignment is complete. | 0 Points. Assignment is not turned in. |
+| Values | 4 points. All the graded parts are correct. The values/plots/interpretations match the solution key. | 3 points. Most of the graded sections are correct and match the solution key. | 2 points. Some of the graded sections are correct and match the solution key. | 0 points. None of the graded sections are correct and match the solution key. |
+| Syntax | 1 point. All code runs correctly. There is no superfluous code in the document. Quarto documents render correctly | 0.9 points. Nearly all code runs correctly, with only a minor error and/or very little superfluous code in the document. Quarto documents render correctly | 0.5 points. Not all the code runs correctly. There are a few minor or one major errors and/or some superfluous code. | 0 points. Very little or none of the code runs correctly. There are several minor or more than two major errors and/or excessive superfluous code. |
 
 Solutions to assignments will be posted on D2L and/or will be gone over in class. Solutions will generally be posted on Wednesdays, after the late submission window closes.
 
